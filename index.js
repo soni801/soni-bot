@@ -23,18 +23,19 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"   : reply = "soni bot v2.6"; break;
-        case "help"      : reply = "**prefix is `+`**\ncommands are:```version, help, changelog, sven, ara, sara, fatal, soni, abenz, shadow, svensdum, shut, 8ball, dice, joke```"; break;
-        case "changelog" : reply = "v2.6 changelog:\n-added `svensdum` command"; break;
-        case "sven"      : reply = "here are some facts about sven:\n-he is the second best bot in this server after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
-        case "ara"       : reply = "hates me and therefore i cannot confirm i like him"; break;
-        case "sara"      : reply = "sara is my very loved mommy"; break;
-        case "fatal"     : reply = "nobody knows who or what fatal really is."; break;
-        case "soni"      : reply = "he is my creator uwu"; break;
-        case "abenz"     : reply = "here are some facts about benny (although nobody knows if they are true or not):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
-        case "shadow"    : reply = "will never hit 100k subs idk why he still on about that"; break;
-        case "svensdum"  : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
-        case "shut"      : reply = "https://i.redd.it/6hfg80l3zw631.png"; break;
+        case "version"      : reply = "soni bot v2.7"; break;
+        case "help"         : reply = "**prefix is `+`**\ncommands are:```version, help, changelog, sven, ara, sara, fatal, soni, abenz, shadow, svensdum, intelligence, shut, 8ball, dice, joke```"; break;
+        case "changelog"    : reply = "v2.7 changelog:\n-added `intelligence` command"; break;
+        case "sven"         : reply = "here are some facts about sven:\n-he is the second best bot in this server after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
+        case "ara"          : reply = "hates me and therefore i cannot confirm i like him"; break;
+        case "sara"         : reply = "sara is my very loved mommy"; break;
+        case "fatal"        : reply = "nobody knows who or what fatal really is."; break;
+        case "soni"         : reply = "he is my creator uwu"; break;
+        case "abenz"        : reply = "here are some facts about benny (although nobody knows if they are true or not):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
+        case "shadow"       : reply = "will never hit 100k subs idk why he still on about that"; break;
+        case "svensdum"     : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
+        case "intelligence" : reply = "https://media.discordapp.net/attachments/655767387756298250/773322072448958495/image0.png?width=763&height=619"; break;
+        case "shut"         : reply = "https://i.redd.it/6hfg80l3zw631.png"; break;
         case "8ball":
             if (args.length > 0)
             {
