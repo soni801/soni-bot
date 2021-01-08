@@ -11,23 +11,24 @@ function randomNumber(min, max)
 
 client.on("message", function(message)
 {
-    if (message.content.includes("ew")) message.react(message.guild.emojis.cache.get('769328775979728926'));
+    if (message.content.toLowerCase().includes("ew")) try { message.react(message.guild.emojis.cache.get('769328775979728926')).then(console.log("Reacted with ew in #" + message.channel.name + ", " + message.guild.name)); }
+    catch (err) { console.log("Failed to react with ew in #" + message.channel.name + ", " + message.guild.name) }
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
     if (message.author.id === "275989054082777088") return;     // Ignore if message author is Araveila
 
     const commandBody = message.content.slice(prefix.length);   // Remove prefix from string
-    const args = commandBody.split(' ');                        // Split args from command
+    const args = commandBody.split(' ');                // Split args from command
     const command = args.shift().toLowerCase();                 // Store command in const command
 
-    var reply = null;                                           // Initialise reply to null
+    let reply = null;                                           // Initialise reply to null
 
     switch (command)
     {
-        case "version"      : reply = "soni bot v2.8"; break;
+        case "version"      : reply = "soni bot v2.8.1"; break;
         case "help"         : reply = "**prefix is `+`**\ncommands are:```version, help, changelog, sven, ara, sara, fatal, soni, abenz, shadow, svensdum, intelligence, shut, 8ball, dice, joke, remind```"; break;
-        case "changelog"    : reply = "v2.8 changelog:\n-added `remind` command\n-added a secret feature"; break;
+        case "changelog"    : reply = "v2.8.1 changelog:\n-fixed reactions"; break;
         case "sven"         : reply = "here are some facts about sven:\n-he is the second best bot in this server after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
         case "ara"          : reply = "is ugly"; break;
         case "sara"         : reply = "is mommy uwu"; break;
