@@ -4,6 +4,8 @@ const config = require("../../Discord Bots/soni bot/config.json");
 const client = new Discord.Client();
 const prefix = "+";
 
+const date = new Date();
+
 function randomNumber(min, max)
 {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -122,8 +124,6 @@ client.on("message", function(message)
 
     if (reply != null)
     {
-        const date = new Date();
-
         message.channel.send(reply);
         console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Responded to command '" + command + "' with arguments [" + args + "] in #" + message.channel.name + ", " + message.guild.name);
         reply = null;
