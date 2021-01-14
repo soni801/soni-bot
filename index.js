@@ -4,8 +4,6 @@ const config = require("../../Discord Bots/soni bot/config.json");
 const client = new Discord.Client();
 const prefix = "+";
 
-const date = new Date();
-
 function randomNumber(min, max)
 {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -13,8 +11,22 @@ function randomNumber(min, max)
 
 client.on("message", function(message)
 {
-    if (message.content.toLowerCase().includes("ew")) try { message.react(message.guild.emojis.cache.get('769328775979728926')).then(console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with ew in #" + message.channel.name + ", " + message.guild.name)); }
-    catch (err) { console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with ew in #" + message.channel.name + ", " + message.guild.name) }
+    // Initialise Date
+    const date = new Date();
+
+    // React if message has 'ew'
+    if ((message.content.length === 2 && message.content.toLowerCase().includes("ew")) || message.content.toLowerCase().includes(" ew"))
+    {
+        try
+        {
+            message.react(message.guild.emojis.cache.get('769328775979728926'));
+            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with ew in #" + message.channel.name + ", " + message.guild.name);
+        }
+        catch (err)
+        {
+            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with ew in #" + message.channel.name + ", " + message.guild.name);
+        }
+    }
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
