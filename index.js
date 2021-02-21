@@ -9,24 +9,58 @@ function randomNumber(min, max)
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function react(emote, message, date)
+{
+    switch (emote)
+    {
+        case "ew":
+            try
+            {
+                // Use 'ew' emote from guild 'WTF Incorporated'
+                message.react(message.guild.emojis.cache.get("769328775979728926")).then(r => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name));
+            }
+            catch (err)
+            {
+                try
+                {
+                    // Use 'ew' emote from guild 'Friends from Everywhere'
+                    message.react(message.guild.emojis.cache.get("808988372948615178")).then(r => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name));
+                }
+                catch (err)
+                {
+                    console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name);
+                }
+            }
+            break;
+        case "dbrug":
+            try
+            {
+                // Use 'dbrug' emote from guild 'Friends from Everywhere'
+                message.react(message.guild.emojis.cache.get("808989500058894376")).then(r => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name));
+            }
+            catch (err)
+            {
+                console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name);
+            }
+            break;
+    }
+
+}
+
 client.on("message", function(message)
 {
     // Initialise Date
     const date = new Date();
 
     // React if message has 'ew'
-    if ((message.content.length === 2 && message.content.toLowerCase().includes("ew")) || message.content.toLowerCase().includes(" ew"))
-    {
-        try
-        {
-            message.react(message.guild.emojis.cache.get('769328775979728926'));
-            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with ew in #" + message.channel.name + ", " + message.guild.name);
-        }
-        catch (err)
-        {
-            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with ew in #" + message.channel.name + ", " + message.guild.name);
-        }
-    }
+    if (message.content.toLowerCase() === "ew" ||
+        message.content.toLowerCase().includes(" ew") ||
+        message.content.toLowerCase().includes(":ew:")) react("ew", message, date);
+
+    // React if message has 'dbrug'
+    if (message.content.toLowerCase() === "dbrug" ||
+        message.content.toLowerCase().includes(" dbrug") ||
+        message.content.toLowerCase().includes(":dbrug:")) react("dbrug", message, date);
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
