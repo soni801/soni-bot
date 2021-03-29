@@ -55,16 +55,15 @@ client.on("message", function(message)
     // React if message has 'ew'
     if (message.content.toLowerCase() === "ew" ||
         message.content.toLowerCase().includes(" ew") ||
-        message.content.toLowerCase().includes(":ew:")) react("ew", message, date);
+        message.content.toLowerCase().includes(":ew")) react("ew", message, date);
 
     // React if message has 'dbrug'
     if (message.content.toLowerCase() === "dbrug" ||
         message.content.toLowerCase().includes(" dbrug") ||
-        message.content.toLowerCase().includes(":dbrug:")) react("dbrug", message, date);
+        message.content.toLowerCase().includes(":dbrug")) react("dbrug", message, date);
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
-    if (message.author.id === "275989054082777088") return;     // Ignore if message author is Araveila
 
     const commandBody = message.content.slice(prefix.length);   // Remove prefix from string
     const args = commandBody.split(' ');                // Split args from command
@@ -74,14 +73,16 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "soni bot v2.9"; break;
-        case "help"           : reply = "**prefix is `+`**\ncommands are:```version, help, changelog, sven, ara, sara, fatal, soni, abenz, shadow, svensdum, intelligence, understandable, shut, 8ball, dice, joke, remind```"; break;
-        case "changelog"      : reply = "v2.9 changelog:\n-added `understandable` command"; break;
-        case "sven"           : reply = "here are some facts about sven:\n-he is the second best bot in this server after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
+        case "version"        : reply = "soni bot v2.10"; break;
+        case "help"           : reply = "**prefix is `+`**\ncommands are:```version, help, changelog, sven, ara, sara, jiggly, fatal, soni, crush, abenz, shadow, svensdum, intelligence, understandable, shut, 8ball, dice, joke, remind```"; break;
+        case "changelog"      : reply = "v2.10 changelog:\n-added `jiggly` command\n-added `crush` command"; break;
+        case "sven"           : reply = "here are some facts about sven:\n-he is the second best bot after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
         case "ara"            : reply = "is ugly"; break;
         case "sara"           : reply = "is mommy uwu"; break;
+        case "jiggly"         : reply = "is mommy uwu"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
-        case "soni"           : reply = "is my creator uwu"; break;
+        case "soni"           : reply = "is daddy uwu"; break;
+        case "crush"          : reply = "i have a crush on riki bot :flushed:"; break;
         case "abenz"          : reply = "here are some facts about benny (nobody knows if they are true):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
         case "shadow"         : reply = "will never hit 100k subs"; break;
         case "svensdum"       : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
