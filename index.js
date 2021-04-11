@@ -47,22 +47,43 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "soni bot v2.10"; break;
-        case "help"           : reply = "**prefix is `+`**\ncommands are:```version, help, changelog, sven, ara, sara, jiggly, fatal, soni, crush, abenz, shadow, svensdum, intelligence, understandable, shut, 8ball, dice, joke, remind```"; break;
-        case "changelog"      : reply = "v2.10 changelog:\n-added `jiggly` command\n-added `crush` command"; break;
+        case "version"        : reply = "soni bot v2.11"; break;
+        case "changelog"      : reply = "v2.11 changelog:\n-improved `help` command\n-removed `ara` command\n-removed `shadow` command"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is the second best bot after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
-        case "ara"            : reply = "is ugly"; break;
-        case "sara"           : reply = "is mommy uwu"; break;
-        case "jiggly"         : reply = "is mommy uwu"; break;
+        case "sara"           : reply = "is daddy's mommy uwu"; break;
+        case "jiggly"         : reply = "is daddy's mommy uwu"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
         case "crush"          : reply = "i have a crush on riki bot :flushed:"; break;
         case "abenz"          : reply = "here are some facts about benny (nobody knows if they are true):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
-        case "shadow"         : reply = "will never hit 100k subs"; break;
         case "svensdum"       : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
         case "intelligence"   : reply = "https://media.discordapp.net/attachments/655767387756298250/773322072448958495/image0.png?width=763&height=619"; break;
         case "understandable" : reply = "https://en.meming.world/images/en/thumb/a/af/Understandable%2C_Have_a_Great_Day.jpg/300px-Understandable%2C_Have_a_Great_Day.jpg"; break;
         case "shut"           : reply = "https://i.redd.it/6hfg80l3zw631.png"; break;
+        case "help":
+            reply = "**prefix is `" + prefix + "`**\n" +
+                "commands are:\n" +
+                "```json\n" +
+                "\"version\": displays my current version\n" +
+                "\"changelog\": displays the changes in the latest version\n" +
+                "\"sven\": displays facts about sven\n" +
+                "\"sara\": displays fact about sara\n" +
+                "\"jiggly\": displays fact about jiggly\n" +
+                "\"fatal\": idk\n" +
+                "\"soni\": displays fact about daddy uwu\n" +
+                "\"crush\": :flushed:\n" +
+                "\"abenz\": displays facts about benny\n" +
+                "\"svensdum\": svensdum\n" +
+                "\"intelligence\": we are hitting intelligence levels that shouldn't even be possible\n" +
+                "\"understandable\": understandable have a great day\n " +
+                "\"shut\": shut\n" +
+                "\"help\": displays this message\n" +
+                "\"8ball\": need help with decisions?\n" +
+                "\"dice\": roll a die\n" +
+                "\"joke\": haha funny\n" +
+                "\"remind\": get a reminder\n" +
+                "```";
+            break;
         case "8ball":
             if (args.length > 0)
             {
