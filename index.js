@@ -9,42 +9,21 @@ function randomNumber(min, max)
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function react(emote, message, date)
+function react(name, id, message, date)
 {
-    switch (emote)
+    if (message.content.toLowerCase() === name ||
+        message.content.toLowerCase().includes(" " + name) ||
+        message.content.toLowerCase().includes(":" + name))
     {
-        case "ew":
-            try
-            {
-                // Use 'ew' emote from guild 'WTF Incorporated'
-                message.react(message.guild.emojis.cache.get("769328775979728926")).then(r => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name));
-            }
-            catch (err)
-            {
-                try
-                {
-                    // Use 'ew' emote from guild 'Friends from Everywhere'
-                    message.react(message.guild.emojis.cache.get("808988372948615178")).then(r => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name));
-                }
-                catch (err)
-                {
-                    console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name);
-                }
-            }
-            break;
-        case "dbrug":
-            try
-            {
-                // Use 'dbrug' emote from guild 'Friends from Everywhere'
-                message.react(message.guild.emojis.cache.get("808989500058894376")).then(r => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name));
-            }
-            catch (err)
-            {
-                console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + emote + " in #" + message.channel.name + ", " + message.guild.name);
-            }
-            break;
+        try
+        {
+            message.react(message.guild.emojis.cache.get(id)).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + name + " in #" + message.channel.name + ", " + message.guild.name));
+        }
+        catch (err)
+        {
+            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + name + " in #" + message.channel.name + ", " + message.guild.name + "with error " + err);
+        }
     }
-
 }
 
 client.on("message", function(message)
@@ -52,15 +31,10 @@ client.on("message", function(message)
     // Initialise Date
     const date = new Date();
 
-    // React if message has 'ew'
-    if (message.content.toLowerCase() === "ew" ||
-        message.content.toLowerCase().includes(" ew") ||
-        message.content.toLowerCase().includes(":ew")) react("ew", message, date);
-
-    // React if message has 'dbrug'
-    if (message.content.toLowerCase() === "dbrug" ||
-        message.content.toLowerCase().includes(" dbrug") ||
-        message.content.toLowerCase().includes(":dbrug")) react("dbrug", message, date);
+    // Reactions
+    react("ew", "769328775979728926", message, date);
+    react("ew", "808988372948615178", message, date);
+    react("dbrug", "808989500058894376", message, date);
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
@@ -103,7 +77,7 @@ client.on("message", function(message)
                     case 5: reply = "ask sven"; break;
                     case 6: reply = "i cant be bothered to answer"; break;
                     case 7: reply = "idk"; break;
-                    case 8: reply = "i dont know if thats true tbh"; break;
+                    case 8: reply = "i dont know if that's true tbh"; break;
                     case 9: reply = "hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"; break;
                 }
             }
@@ -162,20 +136,15 @@ client.on("message", function(message)
 
                 setTimeout(function ()
                 {
-                    message.reply("remember " + query);
+                    message.reply("remember " + query).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reminded " + message.author.username + " of " + query));
                 }, parseInt(args[0]) * 1000);
                 reply = "ok i will remind u after " + parseInt(args[0]) + " seconds";
             }
-            else reply = "thats not how it works (use `" + prefix + "remind [delay in seconds] [thing to remind]`";
+            else reply = "that's not how it works (use `" + prefix + "remind [delay in seconds] [thing to remind]`";
             break;
     }
 
-    if (reply != null)
-    {
-        message.channel.send(reply);
-        console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Responded to command '" + command + "' with arguments [" + args + "] in #" + message.channel.name + ", " + message.guild.name);
-        reply = null;
-    }
+    if (reply != null) message.channel.send(reply).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Responded to command '" + command + "' with arguments [" + args + "] in #" + message.guild.channels.cache.get(message.channel.id).name + ", " + message.guild.name));
 });
 
-client.login(config.BOT_TOKEN);
+client.login(config.BOT_TOKEN).then(() => console.log("Successfully logged in!"));
