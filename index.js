@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const config = require("../../Discord Bots/soni bot/config.json");
+const config = require("../../Discord Bots/soni bot/config.json"); // TODO: New path
 
 const client = new Discord.Client();
 const prefix = "+";
@@ -21,7 +21,7 @@ function react(name, id, message, date)
         }
         catch (err)
         {
-            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + name + " in #" + message.channel.name + ", " + message.guild.name + "with error " + err);
+            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + name + " in #" + message.channel.name + ", " + message.guild.name + " with error " + err);
         }
     }
 }
@@ -29,7 +29,7 @@ function react(name, id, message, date)
 client.on("message", function(message)
 {
     // Initialise Date
-    const date = new Date();
+    const date = new Date(); // TODO: Fix time formatting
 
     // Reactions
     react("ew", "769328775979728926", message, date);
@@ -47,13 +47,12 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "soni bot v2.11"; break;
-        case "changelog"      : reply = "v2.11 changelog:\n-improved `help` command\n-removed `ara` command\n-removed `shadow` command"; break;
-        case "sven"           : reply = "here are some facts about sven:\n-he is the second best bot after me\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-someone calls him special\n-thief"; break;
-        case "sara"           : reply = "is daddy's mommy uwu"; break;
-        case "jiggly"         : reply = "is daddy's mommy uwu"; break;
+        case "version"        : reply = "soni bot v2.12"; break;
+        case "changelog"      : reply = "**v2.12 changelog:**\n-removed `sara` command\n-removed `jiggly` command\n-modified some replies\n-added `riki` command"; break;
+        case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
+        case "riki"           : reply = "is mommy uwu"; break;
         case "crush"          : reply = "i have a crush on riki bot :flushed:"; break;
         case "abenz"          : reply = "here are some facts about benny (nobody knows if they are true):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
         case "svensdum"       : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
@@ -67,10 +66,9 @@ client.on("message", function(message)
                 "\"version\": displays my current version\n" +
                 "\"changelog\": displays the changes in the latest version\n" +
                 "\"sven\": displays facts about sven\n" +
-                "\"sara\": displays fact about sara\n" +
-                "\"jiggly\": displays fact about jiggly\n" +
                 "\"fatal\": idk\n" +
                 "\"soni\": displays fact about daddy uwu\n" +
+                "\"riki\": displays fact about mommy uwu\n" +
                 "\"crush\": :flushed:\n" +
                 "\"abenz\": displays facts about benny\n" +
                 "\"svensdum\": svensdum\n" +
@@ -87,19 +85,21 @@ client.on("message", function(message)
         case "8ball":
             if (args.length > 0)
             {
-                const i = randomNumber(0, 9);
+                const i = randomNumber(0, 11);
                 switch (i)
                 {
-                    case 0: reply = "why do you ask me"; break;
-                    case 1: reply = "find out yourself"; break;
-                    case 2: reply = "that may be the case"; break;
-                    case 3: reply = "i dont think it matters"; break;
-                    case 4: reply = "im not sure actually"; break;
-                    case 5: reply = "ask sven"; break;
-                    case 6: reply = "i cant be bothered to answer"; break;
-                    case 7: reply = "idk"; break;
-                    case 8: reply = "i dont know if that's true tbh"; break;
-                    case 9: reply = "hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"; break;
+                    case 0:  reply = "why do you ask me"; break;
+                    case 1:  reply = "find out yourself"; break;
+                    case 2:  reply = "that may be the case"; break;
+                    case 3:  reply = "i dont think it matters"; break;
+                    case 4:  reply = "im not sure actually"; break;
+                    case 5:  reply = "ask sven"; break;
+                    case 6:  reply = "i cant be bothered to answer"; break;
+                    case 7:  reply = "idk"; break;
+                    case 8:  reply = "ask riki bot"; break;
+                    case 9:  reply = "hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"; break;
+                    case 10: reply = "why would i know"; break;
+                    case 11: reply = "do you expect me to know?"; break;
                 }
             }
             else reply = "you didnt even type in a question smH";

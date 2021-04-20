@@ -1,2 +1,2 @@
 # soni bot
- A Discord bot made for the discord community 'WTF Incorporated'.
+ A small Discord bot made for small friends communities.
