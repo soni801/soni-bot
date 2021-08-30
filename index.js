@@ -47,18 +47,18 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "soni bot v2.12"; break;
-        case "changelog"      : reply = "**v2.12 changelog:**\n-removed `sara` command\n-removed `jiggly` command\n-modified some replies\n-added `riki` command"; break;
+        case "version"        : reply = "soni bot v2.13"; break;
+        case "changelog"      : reply = "**v2.13 changelog:**\n-removed `crush` command\n-added `family` command"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
         case "riki"           : reply = "is mommy uwu"; break;
-        case "crush"          : reply = "i have a crush on riki bot :flushed:"; break;
         case "abenz"          : reply = "here are some facts about benny (nobody knows if they are true):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
         case "svensdum"       : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
         case "intelligence"   : reply = "https://media.discordapp.net/attachments/655767387756298250/773322072448958495/image0.png?width=763&height=619"; break;
         case "understandable" : reply = "https://en.meming.world/images/en/thumb/a/af/Understandable%2C_Have_a_Great_Day.jpg/300px-Understandable%2C_Have_a_Great_Day.jpg"; break;
         case "shut"           : reply = "https://i.redd.it/6hfg80l3zw631.png"; break;
+        case "family"         : reply = "https://media.discordapp.net/attachments/824926463908249640/881986397261692938/family_tree_6.png"; break;
         case "help":
             reply = "**prefix is `" + prefix + "`**\n" +
                 "commands are:\n" +
@@ -69,12 +69,12 @@ client.on("message", function(message)
                 "\"fatal\": idk\n" +
                 "\"soni\": displays fact about daddy uwu\n" +
                 "\"riki\": displays fact about mommy uwu\n" +
-                "\"crush\": :flushed:\n" +
                 "\"abenz\": displays facts about benny\n" +
                 "\"svensdum\": svensdum\n" +
                 "\"intelligence\": we are hitting intelligence levels that shouldn't even be possible\n" +
                 "\"understandable\": understandable have a great day\n " +
                 "\"shut\": shut\n" +
+                "\"family\": show my family tree\n" +
                 "\"help\": displays this message\n" +
                 "\"8ball\": need help with decisions?\n" +
                 "\"dice\": roll a die\n" +
