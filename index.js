@@ -9,19 +9,22 @@ function randomNumber(min, max)
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function react(name, id, message, date)
+function react(emoteName, emoteID, message, serverID, date)
 {
-    if (message.content.toLowerCase() === name ||
-        message.content.toLowerCase().includes(" " + name) ||
-        message.content.toLowerCase().includes(":" + name))
+    if (message.guild.id === serverID)
     {
-        try
+        if (message.content.toLowerCase().startsWith(emoteName) ||
+            message.content.toLowerCase().includes(" " + emoteName) ||
+            message.content.toLowerCase().includes(":" + emoteName))
         {
-            message.react(message.guild.emojis.cache.get(id)).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + name + " in #" + message.channel.name + ", " + message.guild.name));
-        }
-        catch (err)
-        {
-            console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + name + " in #" + message.channel.name + ", " + message.guild.name + " with error " + err);
+            try
+            {
+                message.react(message.guild.emojis.cache.get(emoteID)).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emoteName + " in #" + message.channel.name + ", " + message.guild.name));
+            }
+            catch (err)
+            {
+                console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + emoteName + " in #" + message.channel.name + ", " + message.guild.name + " with error " + err);
+            }
         }
     }
 }
@@ -32,9 +35,9 @@ client.on("message", function(message)
     const date = new Date(); // TODO: Fix time formatting
 
     // Reactions
-    react("ew", "769328775979728926", message, date);
-    react("ew", "808988372948615178", message, date);
-    react("dbrug", "808989500058894376", message, date);
+    react("ew", "769328775979728926", message, "329019997894475777", date);
+    react("ew", "808988372948615178", message, "599483748337319955", date);
+    react("dbrug", "808989500058894376", message, "599483748337319955", date);
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
@@ -72,9 +75,9 @@ client.on("message", function(message)
                 "\"abenz\": displays facts about benny\n" +
                 "\"svensdum\": svensdum\n" +
                 "\"intelligence\": we are hitting intelligence levels that shouldn't even be possible\n" +
-                "\"understandable\": understandable have a great day\n " +
+                "\"understandable\": understandable have a great day\n" +
                 "\"shut\": shut\n" +
-                "\"family\": show my family tree\n" +
+                "\"family\": shows my family tree\n" +
                 "\"help\": displays this message\n" +
                 "\"8ball\": need help with decisions?\n" +
                 "\"dice\": roll a die\n" +
