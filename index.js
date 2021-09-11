@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const config = require("../../Discord Bots/soni bot/config.json"); // TODO: New path
 
 const client = new Discord.Client();
+const version = "v2.15";
 const prefix = "+";
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -49,8 +50,8 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "soni bot v2.14"; break;
-        case "changelog"      : reply = "**v2.14 changelog:**\n-react with :neutral_face: on messages sent by boremac\n-bug fixes"; break;
+        case "version"        : reply = "Soni Bot " + version; break;
+        case "changelog"      : reply = "**" + version + " changelog:**\n- New & improved help menu"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
@@ -62,27 +63,81 @@ client.on("message", function(message)
         case "shut"           : reply = "https://i.redd.it/6hfg80l3zw631.png"; break;
         case "family"         : reply = "https://media.discordapp.net/attachments/824926463908249640/881986397261692938/family_tree_6.png"; break;
         case "help":
-            reply = "**prefix is `" + prefix + "`**\n" +
-                "commands are:\n" +
-                "```json\n" +
-                "\"version\": displays my current version\n" +
-                "\"changelog\": displays the changes in the latest version\n" +
-                "\"sven\": displays facts about sven\n" +
-                "\"fatal\": idk\n" +
-                "\"soni\": displays fact about daddy uwu\n" +
-                "\"riki\": displays fact about mommy uwu\n" +
-                "\"abenz\": displays facts about benny\n" +
-                "\"svensdum\": svensdum\n" +
-                "\"intelligence\": we are hitting intelligence levels that shouldn't even be possible\n" +
-                "\"understandable\": understandable have a great day\n" +
-                "\"shut\": shut\n" +
-                "\"family\": shows my family tree\n" +
-                "\"help\": displays this message\n" +
-                "\"8ball\": need help with decisions?\n" +
-                "\"dice\": roll a die\n" +
-                "\"joke\": haha funny\n" +
-                "\"remind\": get a reminder\n" +
-                "```";
+            message.channel.send(
+                {
+                    embed: {
+                        color: 0x3ba3a1,
+                        author: {
+                            name: "Soni Bot Help",
+                            icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
+                        },
+                        fields: [
+                            {
+                                name: "Version",
+                                value: version,
+                                inline: true
+                            },
+                            {
+                                name: "Prefix",
+                                value: prefix,
+                                inline: true
+                            },
+                            {
+                                name: "\u200b",
+                                value: "\u200b"
+                            },
+                            {
+                                name: "`version`",
+                                value: "Display the current version"
+                            },
+                            {
+                                name: "`changelog`",
+                                value: "Display changes in the last version"
+                            },
+                            {
+                                name: "`sven` `fatal` `soni` `riki` `abenz`",
+                                value: "Tell facts about the specified user"
+                            },
+                            {
+                                name: "`svensdum`",
+                                value: "Kinda self explanatory innit bruv"
+                            },
+                            {
+                                name: "`intelligence` `understandable` `shut`",
+                                value: "Post the specified response"
+                            },
+                            {
+                                name: "`family`",
+                                value: "Post our family tree"
+                            },
+                            {
+                                name: "`help`",
+                                value: "Display this message, you idiot"
+                            },
+                            {
+                                name: "`8ball`",
+                                value: "For help with daily decisions"
+                            },
+                            {
+                                name: "`dice`",
+                                value: "Roll a die"
+                            },
+                            {
+                                name: "`joke`",
+                                value: "Tell a joke - what did you think honestly"
+                            },
+                            {
+                                name: "`remind`",
+                                value: "Remind you to do something in the\nspecified amount of seconds"
+                            }
+                        ],
+                        timestamp: date,
+                        footer: {
+                            text: "Made with ❤️ by Soni"
+                        }
+                    }
+                }
+            );
             break;
         case "8ball":
             if (args.length > 0)
