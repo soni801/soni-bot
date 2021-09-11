@@ -37,7 +37,7 @@ client.on("message", function(message)
     react("ew", "808988372948615178", message, "599483748337319955", date);
     react("dbrug", "808989500058894376", message, "599483748337319955", date);
 
-    if (message.author.id === "170927851577671680") message.react("😐"); // React with neutral_face if message author is boremac
+    if (message.author.id === "170927851577671680") message.react("😐").then(() => console.log("Reacted with neutral_face on message from boremac")); // React with neutral_face if message author is boremac
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
@@ -133,7 +133,7 @@ client.on("message", function(message)
                         }
                     }
                 }
-            );
+            ).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Responded to command '" + command + "' with arguments [" + args + "] in #" + message.guild.channels.cache.get(message.channel.id).name + ", " + message.guild.name));
             break;
         case "8ball":
             if (args.length > 0)
