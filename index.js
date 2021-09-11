@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const config = require("../../Discord Bots/soni bot/config.json"); // TODO: New path
 
 const client = new Discord.Client();
-const version = "v2.15";
+const version = "v2.16";
 const prefix = "+";
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -50,12 +50,13 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "changelog"      : reply = "**" + version + " changelog:**\n- New & improved help menu"; break;
+        case "changelog"      : reply = "**" + version + " changelog:**\n- Removed `version` command\n- Added `shadow` command"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
         case "riki"           : reply = "is mommy uwu"; break;
         case "abenz"          : reply = "here are some facts about benny (nobody knows if they are true):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
+        case "shadow"         : reply = "he's just a cringe bri'ish \"\"person\"\" with too much money"; break;
         case "svensdum"       : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
         case "intelligence"   : reply = "https://media.discordapp.net/attachments/655767387756298250/773322072448958495/image0.png?width=763&height=619"; break;
         case "understandable" : reply = "https://en.meming.world/images/en/thumb/a/af/Understandable%2C_Have_a_Great_Day.jpg/300px-Understandable%2C_Have_a_Great_Day.jpg"; break;
@@ -90,7 +91,7 @@ client.on("message", function(message)
                                 value: "Display changes in the last version"
                             },
                             {
-                                name: "`sven` `fatal` `soni` `riki` `abenz`",
+                                name: "`sven` `fatal` `soni` `riki` `abenz` `shadow`",
                                 value: "Tell facts about the specified user"
                             },
                             {
