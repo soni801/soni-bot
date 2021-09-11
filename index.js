@@ -4,10 +4,7 @@ const config = require("../../Discord Bots/soni bot/config.json"); // TODO: New 
 const client = new Discord.Client();
 const prefix = "+";
 
-function randomNumber(min, max)
-{
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 function react(emoteName, emoteID, message, serverID, date)
 {
@@ -39,6 +36,8 @@ client.on("message", function(message)
     react("ew", "808988372948615178", message, "599483748337319955", date);
     react("dbrug", "808989500058894376", message, "599483748337319955", date);
 
+    if (message.author.id === "170927851577671680") message.react("😐"); // React with neutral_face if message author is boremac
+
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
 
@@ -50,8 +49,8 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "soni bot v2.13"; break;
-        case "changelog"      : reply = "**v2.13 changelog:**\n-removed `crush` command\n-added `family` command"; break;
+        case "version"        : reply = "soni bot v2.14"; break;
+        case "changelog"      : reply = "**v2.14 changelog:**\n-react with :neutral_face: on messages sent by boremac\n-bug fixes"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
