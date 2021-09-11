@@ -50,7 +50,6 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "version"        : reply = "Soni Bot " + version; break;
         case "changelog"      : reply = "**" + version + " changelog:**\n- New & improved help menu"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
@@ -85,10 +84,6 @@ client.on("message", function(message)
                             {
                                 name: "\u200b",
                                 value: "\u200b"
-                            },
-                            {
-                                name: "`version`",
-                                value: "Display the current version"
                             },
                             {
                                 name: "`changelog`",
