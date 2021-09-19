@@ -2,12 +2,14 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 
 const client = new Discord.Client();
-const version = "v2.16";
+const version = "v2.16.1";
 const prefix = "+";
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function doubleDigit(number) { return number.toString().length < 2 ? `0${number}` : number; }
+function date() { const date = new Date(); return `[${doubleDigit(date.getHours())}:${doubleDigit(date.getMinutes())}]`; }
 
-function react(emoteName, emoteID, message, serverID, date)
+function react(emoteName, emoteID, message, serverID)
 {
     if (message.guild.id === serverID)
     {
@@ -17,11 +19,11 @@ function react(emoteName, emoteID, message, serverID, date)
         {
             try
             {
-                message.react(message.guild.emojis.cache.get(emoteID)).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reacted with emote " + emoteName + " in #" + message.channel.name + ", " + message.guild.name));
+                message.react(message.guild.emojis.cache.get(emoteID)).then(() => console.log(`${date()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
             }
             catch (err)
             {
-                console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Failed to react with emote " + emoteName + " in #" + message.channel.name + ", " + message.guild.name + " with error " + err);
+                console.log(`${date()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
             }
         }
     }
@@ -29,15 +31,12 @@ function react(emoteName, emoteID, message, serverID, date)
 
 client.on("message", function(message)
 {
-    // Initialise Date
-    const date = new Date(); // TODO: Fix time formatting
-
     // Reactions
-    react("ew", "769328775979728926", message, "329019997894475777", date);
-    react("ew", "808988372948615178", message, "599483748337319955", date);
-    react("dbrug", "808989500058894376", message, "599483748337319955", date);
+    react("ew", "769328775979728926", message, "329019997894475777");
+    react("ew", "808988372948615178", message, "599483748337319955");
+    react("dbrug", "808989500058894376", message, "599483748337319955");
 
-    if (message.author.id === "170927851577671680") message.react("😐").then(() => console.log("Reacted with neutral_face on message from boremac")); // React with neutral_face if message author is boremac
+    if (message.author.id === "170927851577671680") message.react("😐").then(() => console.log(`${date()} Reacted with neutral_face on message from boremac`)); // React with neutral_face if message author is boremac
 
     if (message.author.bot) return;                             // Ignore if message author is a bot
     if (!message.content.startsWith(prefix)) return;            // Ignore if message does not start with prefix
@@ -50,7 +49,7 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "changelog"      : reply = "**" + version + " changelog:**\n- Removed `version` command\n- Added `shadow` command"; break;
+        case "changelog"      : reply = "**" + version + " changelog:**\n- Internal changes"; break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
@@ -127,13 +126,13 @@ client.on("message", function(message)
                                 value: "Remind you to do something in the\nspecified amount of seconds"
                             }
                         ],
-                        timestamp: date,
+                        timestamp: new Date(),
                         footer: {
                             text: "Made with ❤️ by Soni"
                         }
                     }
                 }
-            ).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Responded to command '" + command + "' with arguments [" + args + "] in #" + message.guild.channels.cache.get(message.channel.id).name + ", " + message.guild.name));
+            ).then(() => console.log(`${date()} Responded to command '${command}' with arguments [${args}] in #${message.channel.name}, ${message.guild.name}`));
             break;
         case "8ball":
             if (args.length > 0)
@@ -210,7 +209,7 @@ client.on("message", function(message)
 
                 setTimeout(function ()
                 {
-                    message.reply("remember " + query).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Reminded " + message.author.username + " of " + query));
+                    message.reply("remember " + query).then(() => console.log(`${date()} Reminded ${message.author.username} of ${query}`));
                 }, parseInt(args[0]) * 1000);
                 reply = "ok i will remind u after " + parseInt(args[0]) + " seconds";
             }
@@ -218,7 +217,7 @@ client.on("message", function(message)
             break;
     }
 
-    if (reply != null) message.channel.send(reply).then(() => console.log("[" + date.getHours() + ":" + date.getMinutes() + "] Responded to command '" + command + "' with arguments [" + args + "] in #" + message.guild.channels.cache.get(message.channel.id).name + ", " + message.guild.name));
+    if (reply != null) message.channel.send(reply).then(() => console.log(`${date()} Responded to command '${command}' with arguments [${args}] in #${message.channel.name}, ${message.guild.name}`));
 });
 
 client.login(config.BOT_TOKEN).then(() => console.log("Successfully logged in!"));
