@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const config = require("../../Discord Bots/soni bot/config.json"); // TODO: New path
+const config = require("./config.json");
 
 const client = new Discord.Client();
 const version = "v2.16";
