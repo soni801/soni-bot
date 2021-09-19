@@ -49,7 +49,25 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "changelog"      : reply = "**" + version + " changelog:**\n- Internal changes"; break;
+        case "changelog":
+            message.channel.send(
+                {
+                    embed: {
+                        color: 0x3ba3a1,
+                        author: {
+                            name: "Soni Bot Changelog",
+                            icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
+                        },
+                        fields: [
+                            {
+                                name: `${version} changelog:`,
+                                value: `\u2022 Internal changes`
+                            }
+                        ]
+                    }
+                }
+            )
+            break;
         case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
         case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
         case "soni"           : reply = "is daddy uwu"; break;
@@ -87,7 +105,7 @@ client.on("message", function(message)
                             },
                             {
                                 name: "`changelog`",
-                                value: "Display changes in the last version"
+                                value: "Display changes in the latest version"
                             },
                             {
                                 name: "`sven` `fatal` `soni` `riki` `abenz` `shadow`",
