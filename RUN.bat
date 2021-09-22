@@ -1,4 +1,4 @@
 @echo off
-title soni bot
-node index.js
+title Soni Bot
+node main.js
 pause

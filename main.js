@@ -29,6 +29,27 @@ function react(emoteName, emoteID, message, serverID)
     }
 }
 
+function respond(message, title, description)
+{
+    message.channel.send(
+        {
+            embed: {
+                color: 0x3ba3a1,
+                author: {
+                    name: "Soni Bot",
+                    icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
+                },
+                fields: [
+                    {
+                        name: title,
+                        value: description
+                    }
+                ]
+            }
+        }
+    )
+}
+
 client.on("message", function(message)
 {
     // Reactions
@@ -68,12 +89,12 @@ client.on("message", function(message)
                 }
             )
             break;
-        case "sven"           : reply = "here are some facts about sven:\n-he is fatal's idiot sandwich\n-is everyone's favourite feeder\n-special boi\n-thief"; break;
-        case "fatal"          : reply = "nobody knows who or what fatal really is."; break;
-        case "soni"           : reply = "is daddy uwu"; break;
-        case "riki"           : reply = "is mommy uwu"; break;
-        case "abenz"          : reply = "here are some facts about benny (nobody knows if they are true):\n-he be bri'ish\n-he is a stinky nerd who loves an idiot sandwich\n-father of the chuckens\n-lucio feeder smH\n-gets called Benjamin when in trouble"; break;
-        case "shadow"         : reply = "he's just a cringe bri'ish \"\"person\"\" with too much money"; break;
+        case "sven": respond(message, "Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
+        case "fatal": respond(message, "Fatal", "Nobody knows who or what Fatal really is."); break;
+        case "soni": respond(message, "Soni", "Is daddy uwu"); break;
+        case "riki": respond(message, "Riki", "Is mommy uwu"); break;
+        case "abenz": respond(message, "Some facts about benny", "\u2022 He be bri'ish\n\u2022 He is a stinky nerd who loves an idiot sandwich\n\u2022 Father of the chuckens\n\u2022 Lucio feeder smH\n\u2022 Gets called Benjamin when in trouble"); break;
+        case "shadow": respond(message, "Shadow", `he's just a cringe bri'ish ""person"" with too much money`) ; break;
         case "svensdum"       : reply = "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png"; break;
         case "intelligence"   : reply = "https://media.discordapp.net/attachments/655767387756298250/773322072448958495/image0.png?width=763&height=619"; break;
         case "understandable" : reply = "https://en.meming.world/images/en/thumb/a/af/Understandable%2C_Have_a_Great_Day.jpg/300px-Understandable%2C_Have_a_Great_Day.jpg"; break;
@@ -231,7 +252,7 @@ client.on("message", function(message)
                 }, parseInt(args[0]) * 1000);
                 reply = "ok i will remind u after " + parseInt(args[0]) + " seconds";
             }
-            else reply = "that's not how it works (use `" + prefix + "remind [delay in seconds] [thing to remind]`";
+            else reply = "that's not how it works (use `" + prefix + "remind [delay in seconds] [thing to remind]`"; // TODO: Update this
             break;
     }
 
