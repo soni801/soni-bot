@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 
 const client = new Discord.Client();
-const version = "v3.0";
+const version = "v3.1";
 const prefix = "+";
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -35,10 +35,13 @@ function send(message, content)
     console.log(`${time()} Responded to '${message.content.substr(1)}' in #${message.channel.name}, ${message.guild.name}`);
 }
 
-function respond(message, title, description)
+// TODO: Make message global
+// TODO: Set default value for more parameters
+function respond(message, title, description, content, log = true)
 {
     message.channel.send(
         {
+            content: content,
             embed: {
                 color: 0x3ba3a1,
                 author: {
@@ -53,7 +56,7 @@ function respond(message, title, description)
                 ]
             }
         }
-    ).then(() => console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`));
+    ).then(() => { if (log) console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`); });
 }
 
 client.on("message", function(message)
@@ -74,7 +77,7 @@ client.on("message", function(message)
 
     switch (command)
     {
-        case "changelog": respond(message, `${version} changelog:`, "\u2022 Use embeds for replies as opposed to raw messages"); break;
+        case "changelog": respond(message, `${version} changelog:`, "\u2022 Improved `remind` command"); break;
         case "sven": respond(message, "Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond(message, "Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond(message, "Soni", "Is daddy uwu"); break;
@@ -197,49 +200,48 @@ client.on("message", function(message)
             const j = randomNumber(0, 20);
             switch (j)
             {
-                case 0  : respond(message, "Joke", "two guys stole a calendar. they got six months each."); break;
-                case 1  : respond(message, "Joke", "Autocorrect can go straight to he'll."); break;
-                case 2  : respond(message, "Joke", "two peanuts were walking down the street. one was a salted."); break;
-                case 3  : respond(message, "Joke", "i asked a friend to the gym, but they never showed up. i guess the two of us aren't gonna work out."); break;
-                case 4  : respond(message, "Joke", "today my son asked 'can i have a book mark?' and i burst into tears. 11 years old and he still doesn't know my name is brian."); break;
-                case 5  : respond(message, "Joke", "my wife is really mad at the fact that i have no sense of direction. so i packed up my stuff and right."); break;
-                case 6  : respond(message, "Joke", "how do you make holy water? you boil the hell out of it."); break;
-                case 7  : respond(message, "Joke", "im reading a book about anti-gravity. its impossible to put down!"); break;
-                case 8  : respond(message, "Joke", "what do you call someone with no body and no nose? nobody knows."); break;
-                case 9  : respond(message, "Joke", "a slice of apple pie is $2.50 in Jamaica and $3.00 in the Bahamas. these are the pie rates of the caribbean."); break;
-                case 10 : respond(message, "Joke", "justice is a dish best served cold, if it were served warm it would be justwater."); break;
-                case 11 : respond(message, "Joke", "if you see a robbery at an Apple Store does that make you an iWitness?"); break;
-                case 12 : respond(message, "Joke", "why did the invisible man turn down the job offer? he couldn't see himself doing it."); break;
-                case 13 : respond(message, "Joke", "what has two butts and kills people? an assassin"); break;
-                case 14 : respond(message, "Joke", "why couldn't the bike stand up by itself? it was two tired."); break;
-                case 15 : respond(message, "Joke", "when a woman is giving birth, she is literally kidding."); break;
-                case 16 : respond(message, "Joke", "why was six sad? because seven eight nine."); break;
-                case 17 : respond(message, "Joke", "what did the buffalo say to his son when he dropped him off at school? bison."); break;
-                case 18 : respond(message, "Joke", "why did the crab never share? because he's shellfish."); break;
-                case 19 : respond(message, "Joke", "as a lumberjack, i know that i've cut exactly 2,417 trees. i know because every time i cut one, i keep a log."); break;
-                case 20 : respond(message, "Joke", "what do prisoners use to call each other? cell phones."); break;
+                case 0: respond(message, "Joke", "two guys stole a calendar. they got six months each."); break;
+                case 1: respond(message, "Joke", "Autocorrect can go straight to he'll."); break;
+                case 2: respond(message, "Joke", "two peanuts were walking down the street. one was a salted."); break;
+                case 3: respond(message, "Joke", "i asked a friend to the gym, but they never showed up. i guess the two of us aren't gonna work out."); break;
+                case 4: respond(message, "Joke", "today my son asked 'can i have a book mark?' and i burst into tears. 11 years old and he still doesn't know my name is brian."); break;
+                case 5: respond(message, "Joke", "my wife is really mad at the fact that i have no sense of direction. so i packed up my stuff and right."); break;
+                case 6: respond(message, "Joke", "how do you make holy water? you boil the hell out of it."); break;
+                case 7: respond(message, "Joke", "im reading a book about anti-gravity. its impossible to put down!"); break;
+                case 8: respond(message, "Joke", "what do you call someone with no body and no nose? nobody knows."); break;
+                case 9: respond(message, "Joke", "a slice of apple pie is $2.50 in Jamaica and $3.00 in the Bahamas. these are the pie rates of the caribbean."); break;
+                case 10: respond(message, "Joke", "justice is a dish best served cold, if it were served warm it would be justwater."); break;
+                case 11: respond(message, "Joke", "if you see a robbery at an Apple Store does that make you an iWitness?"); break;
+                case 12: respond(message, "Joke", "why did the invisible man turn down the job offer? he couldn't see himself doing it."); break;
+                case 13: respond(message, "Joke", "what has two butts and kills people? an assassin"); break;
+                case 14: respond(message, "Joke", "why couldn't the bike stand up by itself? it was two tired."); break;
+                case 15: respond(message, "Joke", "when a woman is giving birth, she is literally kidding."); break;
+                case 16: respond(message, "Joke", "why was six sad? because seven eight nine."); break;
+                case 17: respond(message, "Joke", "what did the buffalo say to his son when he dropped him off at school? bison."); break;
+                case 18: respond(message, "Joke", "why did the crab never share? because he's shellfish."); break;
+                case 19: respond(message, "Joke", "as a lumberjack, i know that i've cut exactly 2,417 trees. i know because every time i cut one, i keep a log."); break;
+                case 20: respond(message, "Joke", "what do prisoners use to call each other? cell phones."); break;
             }
             break;
         case "remind":
             if (args.length > 1)
             {
-                let query = args[1];
-                if (args.length > 2)
+                const timeout = Number(args[0]);
+                if (isNaN(timeout)) respond(message, "Wrong syntax", "The specified time is not a number.\nUse `remind [delay (s)] [reminder]`");
+                else
                 {
-                    for (let l = 2; l < args.length; l++)
-                    {
-                        query += " " + args[l];
-                    }
-                }
+                    let reminder = args[1];
+                    if (args.length > 2) for (let l = 2; l < args.length; l++) reminder += " " + args[l];
 
-                // TODO: Store timeout in variable and display timeout on reminder console message
-                setTimeout(function ()
-                {
-                    message.reply("remember " + query).then(() => console.log(`${time()} Reminded ${message.author.username} of ${query}`));
-                }, parseInt(args[0]) * 1000);
-                respond(message, "Reminder", `ok i will remind u after ${parseInt(args[0])} seconds`);
+                    setTimeout(function ()
+                    {
+                        respond(message, "Reminder", `Remember ${reminder}`, message.author, false);
+                        console.log(`${time()} Reminded ${message.author.username} of '${reminder}' after ${timeout} seconds`);
+                    }, timeout * 1000);
+                    respond(message, "Reminder", `Ok, I will remind you of ${reminder} after ${timeout} seconds.`);
+                }
             }
-            else respond(message, "Wrong syntax", "that's not how it works (use `" + prefix + "remind [delay in seconds] [thing to remind]`"); // TODO: Update this
+            else respond(message, "Wrong syntax", "Use `remind [delay (s)] [reminder]`");
             break;
     }
 });
