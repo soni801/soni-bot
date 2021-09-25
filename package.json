@@ -1,5 +1,5 @@
 {
-  "name": "soni",
+  "name": "soni_bot",
   "version": "1.0.0",
   "description": "Discord bot",
   "main": "main.js",
@@ -12,7 +12,7 @@
   ],
   "author": "soni801",
   "license": "ISC",
-  "dependencies": {
-    "discord.js": "^12.3.1"
+  "devDependencies": {
+    "discord.js": "^13.1.0"
   }
 }
