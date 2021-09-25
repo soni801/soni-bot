@@ -81,7 +81,7 @@ client.on("message", function(m)
 
     switch (command)
     {
-        case "changelog": respond(`${version} changelog:`, "\u2022 Performance improvements"); break;
+        case "changelog": respond(`${version} changelog:`, "\u2022 Performance improvements\n\u2022 Added time unit option to `remind` command"); break;
         case "sven": respond("Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond("Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond("Soni", "Is daddy uwu"); break;
@@ -228,25 +228,35 @@ client.on("message", function(m)
             }
             break;
         case "remind":
-            if (args.length > 1)
+            if (args.length > 2)
             {
-                // TODO: Make user able to specify time unit
+                // TODO: Format time unit in singular form if timeout is 1
                 const timeout = Number(args[0]);
-                if (isNaN(timeout)) respond("Wrong syntax", "The specified time is not a number.\nUse `remind [delay (s)] [reminder]`");
+                if (isNaN(timeout)) respond("Wrong syntax", "The specified time is not a number\nUse `remind [delay (s)] <seconds|minutes|hours> [reminder]`");
                 else
                 {
-                    let reminder = args[1];
-                    if (args.length > 2) for (let l = 2; l < args.length; l++) reminder += " " + args[l];
+                    let timeoutUnit = args[1];
+                    let timeoutMilliseconds;
+                    switch (timeoutUnit)
+                    {
+                        case "seconds": timeoutMilliseconds = timeout * 1000; break;
+                        case "minutes": timeoutMilliseconds = timeout * 1000 * 60; break;
+                        case "hours": timeoutMilliseconds = timeout * 1000 * 60 * 60; break;
+                        default: respond("Wrong syntax", "Unrecognised time unit\nUse `remind [delay (s)] <seconds|minutes|hours> [reminder]`"); return;
+                    }
+
+                    let reminder = args[2];
+                    if (args.length > 3) for (let l = 3; l < args.length; l++) reminder += " " + args[l];
 
                     setTimeout(function ()
                     {
                         respond("Reminder", `Remember ${reminder}`, message.author, false);
-                        console.log(`${time()} Reminded ${message.author.username} of '${reminder}' after ${timeout} seconds`);
-                    }, timeout * 1000);
-                    respond("Reminder", `Ok, I will remind you of ${reminder} after ${timeout} seconds.`);
+                        console.log(`${time()} Reminded ${message.author.username} of '${reminder}' after ${timeout} ${timeoutUnit}`);
+                    }, timeoutMilliseconds);
+                    respond("Reminder", `Ok, I will remind you of ${reminder} after ${timeout} ${timeoutUnit}`);
                 }
             }
-            else respond("Wrong syntax", "Use `remind [delay (s)] [reminder]`");
+            else respond("Wrong syntax", "Not enough arguments\nUse `remind [delay (s)] <seconds|minutes|hours> [reminder]`");
             break;
     }
 });
