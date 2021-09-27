@@ -3,7 +3,7 @@ const { token } = require("./config.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v3.2";
+const version = "v3.3";
 const prefix = "+";
 
 let message;
@@ -87,7 +87,7 @@ client.on("messageCreate", function(m)
     // TODO: Add ping command
     switch (command)
     {
-        case "changelog": respond(`${version} changelog:`, "\u2022 Performance improvements\n\u2022 Added time unit option to `remind` command"); break;
+        case "changelog": respond(`${version} changelog:`, "\u2022 Significant backend improvements\n\u2022 Add ability to use singular form time units in `remind` command"); break;
         case "sven": respond("Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond("Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond("Soni", "Is daddy uwu"); break;
@@ -238,19 +238,18 @@ client.on("messageCreate", function(m)
         case "remind":
             if (args.length > 2)
             {
-                // TODO: Format time unit in singular form if timeout is 1
                 const timeout = Number(args[0]);
-                if (isNaN(timeout)) respond("Wrong syntax", "The specified time is not a number\nUse `remind [delay (s)] <seconds|minutes|hours> [reminder]`");
+                if (isNaN(timeout)) respond("Wrong syntax", "The specified time is not a number\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`");
                 else
                 {
                     let timeoutUnit = args[1];
                     let timeoutMilliseconds;
                     switch (timeoutUnit)
                     {
-                        case "seconds": timeoutMilliseconds = timeout * 1000; break;
-                        case "minutes": timeoutMilliseconds = timeout * 1000 * 60; break;
-                        case "hours": timeoutMilliseconds = timeout * 1000 * 60 * 60; break;
-                        default: respond("Wrong syntax", "Unrecognised time unit\nUse `remind [delay (s)] <seconds|minutes|hours> [reminder]`"); return;
+                        case "second": case "seconds": timeoutMilliseconds = timeout * 1000; break;
+                        case "minute": case "minutes": timeoutMilliseconds = timeout * 1000 * 60; break;
+                        case "hour": case "hours": timeoutMilliseconds = timeout * 1000 * 60 * 60; break;
+                        default: respond("Wrong syntax", "Unrecognised time unit\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`"); return;
                     }
 
                     let reminder = args[2];
@@ -258,13 +257,13 @@ client.on("messageCreate", function(m)
 
                     setTimeout(function ()
                     {
-                        respond("Reminder", `Remember ${reminder}`, message.author, false);
+                        respond("Reminder", `Remember ${reminder}`, message.author.toString(), false);
                         console.log(`${time()} Reminded ${message.author.username} of '${reminder}' after ${timeout} ${timeoutUnit}`);
                     }, timeoutMilliseconds);
                     respond("Reminder", `Ok, I will remind you of ${reminder} after ${timeout} ${timeoutUnit}`);
                 }
             }
-            else respond("Wrong syntax", "Not enough arguments\nUse `remind [delay (s)] <seconds|minutes|hours> [reminder]`");
+            else respond("Wrong syntax", "Not enough arguments\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`");
             break;
     }
 });
