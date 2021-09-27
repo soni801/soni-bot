@@ -1,7 +1,8 @@
-const Discord = require("discord.js");
-const config = require("./config.json");
+const { Client, Intents } = require("discord.js");
+const { token } = require("./config.json");
 
-const client = new Discord.Client();
+// Create a Client instance
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const version = "v3.2";
 const prefix = "+";
 
@@ -59,6 +60,7 @@ function respond(title, description, content, log = true)
     ).then(() => { if (log) console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`); });
 }
 
+client.once("ready", () => console.log(`${time()} Ready!`));
 client.on("message", function(m)
 {
     // Ignore message if author is a bot
@@ -261,4 +263,4 @@ client.on("message", function(m)
     }
 });
 
-client.login(config.BOT_TOKEN).then(() => console.log(`${time()} Successfully logged in!`));
+client.login(token).then(() => console.log(`${time()} Successfully logged in`));
