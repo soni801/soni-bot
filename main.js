@@ -83,11 +83,9 @@ client.on("messageCreate", function(m)
     const args = commandBody.split(' ');                        // Split args from command
     const command = args.shift().toLowerCase();                 // Store command in variable
 
-    // TODO: Add uptime command
-    // TODO: Add ping command
     switch (command)
     {
-        case "changelog": respond(`${version} changelog:`, "\u2022 Significant backend improvements\n\u2022 Added ability to use singular form time units in `remind` command\n\u2022 Added `ping` command"); break;
+        case "changelog": respond(`${version} changelog:`, "\u2022 Significant backend improvements\n\u2022 Added ability to use singular form time units in `remind` command\n\u2022 Added `ping` command\n\u2022 Added `uptime` command"); break;
         case "sven": respond("Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond("Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond("Soni", "Is daddy uwu"); break;
@@ -99,6 +97,7 @@ client.on("messageCreate", function(m)
         case "understandable": send("https://en.meming.world/images/en/thumb/a/af/Understandable%2C_Have_a_Great_Day.jpg/300px-Understandable%2C_Have_a_Great_Day.jpg"); break;
         case "shut": send("https://i.redd.it/6hfg80l3zw631.png"); break;
         case "family": send("https://media.discordapp.net/attachments/824926463908249640/881986397261692938/family_tree_6.png"); break;
+        case "uptime": respond("Uptime", `${Math.round(client.uptime / 1000 / 60)} minutes`); break;
         case "ping":
             message.channel.send("Loading data").then(async (msg) =>
             {
@@ -152,8 +151,12 @@ client.on("messageCreate", function(m)
                                     value: "Post our family tree"
                                 },
                                 {
+                                    name: "`uptime`",
+                                    value: "Send the uptime of Soni Bot"
+                                },
+                                {
                                     name: "`ping`",
-                                    value: "Show Soni Bot ping and Discord API ping"
+                                    value: "Send Soni Bot ping and Discord API ping"
                                 },
                                 {
                                     name: "`help`",
