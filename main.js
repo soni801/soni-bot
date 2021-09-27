@@ -2,7 +2,7 @@ const { Client, Intents } = require("discord.js");
 const { token } = require("./config.json");
 
 // Create a Client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const version = "v3.2";
 const prefix = "+";
 
@@ -43,25 +43,27 @@ function respond(title, description, content, log = true)
     message.channel.send(
         {
             content: content,
-            embed: {
-                color: 0x3ba3a1,
-                author: {
-                    name: "Soni Bot",
-                    icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
-                },
-                fields: [
-                    {
-                        name: title,
-                        value: description
-                    }
-                ]
-            }
+            embeds: [
+                {
+                    color: 0x3ba3a1,
+                    author: {
+                        name: "Soni Bot",
+                        icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
+                    },
+                    fields: [
+                        {
+                            name: title,
+                            value: description
+                        }
+                    ]
+                }
+            ]
         }
     ).then(() => { if (log) console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`); });
 }
 
 client.once("ready", () => console.log(`${time()} Ready!`));
-client.on("message", function(m)
+client.on("messageCreate", function(m)
 {
     // Ignore message if author is a bot
     if (m.author.bot) return;
@@ -81,6 +83,8 @@ client.on("message", function(m)
     const args = commandBody.split(' ');                        // Split args from command
     const command = args.shift().toLowerCase();                 // Store command in variable
 
+    // TODO: Add uptime command
+    // TODO: Add ping command
     switch (command)
     {
         case "changelog": respond(`${version} changelog:`, "\u2022 Performance improvements\n\u2022 Added time unit option to `remind` command"); break;
@@ -98,73 +102,75 @@ client.on("message", function(m)
         case "help":
             message.channel.send(
                 {
-                    embed: {
-                        color: 0x3ba3a1,
-                        author: {
-                            name: "Soni Bot Help",
-                            icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
-                        },
-                        fields: [
-                            {
-                                name: "Version",
-                                value: version,
-                                inline: true
+                    embeds: [
+                        {
+                            color: 0x3ba3a1,
+                            author: {
+                                name: "Soni Bot Help",
+                                icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
                             },
-                            {
-                                name: "Prefix",
-                                value: prefix,
-                                inline: true
-                            },
-                            {
-                                name: "\u200b",
-                                value: "\u200b"
-                            },
-                            {
-                                name: "`changelog`",
-                                value: "Display changes in the latest version"
-                            },
-                            {
-                                name: "`sven` `fatal` `soni` `riki` `abenz` `shadow`",
-                                value: "Tell facts about the specified user"
-                            },
-                            {
-                                name: "`svensdum`",
-                                value: "Kinda self explanatory innit bruv"
-                            },
-                            {
-                                name: "`intelligence` `understandable` `shut`",
-                                value: "Post the specified response"
-                            },
-                            {
-                                name: "`family`",
-                                value: "Post our family tree"
-                            },
-                            {
-                                name: "`help`",
-                                value: "Display this message, you idiot"
-                            },
-                            {
-                                name: "`8ball`",
-                                value: "For help with daily decisions"
-                            },
-                            {
-                                name: "`dice`",
-                                value: "Roll a die"
-                            },
-                            {
-                                name: "`joke`",
-                                value: "Tell a joke - what did you think honestly"
-                            },
-                            {
-                                name: "`remind`",
-                                value: "Remind you to do something in the\nspecified amount of seconds"
+                            fields: [
+                                {
+                                    name: "Version",
+                                    value: version,
+                                    inline: true
+                                },
+                                {
+                                    name: "Prefix",
+                                    value: prefix,
+                                    inline: true
+                                },
+                                {
+                                    name: "\u200b",
+                                    value: "\u200b"
+                                },
+                                {
+                                    name: "`changelog`",
+                                    value: "Display changes in the latest version"
+                                },
+                                {
+                                    name: "`sven` `fatal` `soni` `riki` `abenz` `shadow`",
+                                    value: "Tell facts about the specified user"
+                                },
+                                {
+                                    name: "`svensdum`",
+                                    value: "Kinda self explanatory innit bruv"
+                                },
+                                {
+                                    name: "`intelligence` `understandable` `shut`",
+                                    value: "Post the specified response"
+                                },
+                                {
+                                    name: "`family`",
+                                    value: "Post our family tree"
+                                },
+                                {
+                                    name: "`help`",
+                                    value: "Display this message, you idiot"
+                                },
+                                {
+                                    name: "`8ball`",
+                                    value: "For help with daily decisions"
+                                },
+                                {
+                                    name: "`dice`",
+                                    value: "Roll a die"
+                                },
+                                {
+                                    name: "`joke`",
+                                    value: "Tell a joke - what did you think honestly"
+                                },
+                                {
+                                    name: "`remind`",
+                                    value: "Remind you to do something in the\nspecified amount of seconds"
+                                }
+                            ],
+                            timestamp: new Date(),
+                            footer: {
+                                text: "Made with ❤️ by Soni"
                             }
-                        ],
-                        timestamp: new Date(),
-                        footer: {
-                            text: "Made with ❤️ by Soni"
                         }
-                    }
+                    ]
                 }
             ).then(() => console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`));
             break;
