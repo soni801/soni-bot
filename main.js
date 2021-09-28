@@ -1,4 +1,4 @@
-const { Client, Intents } = require("discord.js");
+const { Client, Intents, MessageActionRow, MessageSelectMenu } = require("discord.js");
 const { token } = require("./config.json");
 const helpMenuContent = require("./help-menu.json");
 
@@ -6,6 +6,23 @@ const helpMenuContent = require("./help-menu.json");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const version = "v3.3";
 const prefix = "+";
+
+const helpMenuHeader = [
+    {
+        name: "Version",
+        value: version,
+        inline: true
+    },
+    {
+        name: "Prefix",
+        value: prefix,
+        inline: true
+    },
+    {
+        name: "\u200b",
+        value: "\u200b"
+    }
+]
 
 let message;
 
@@ -117,27 +134,44 @@ client.on("messageCreate", function(m)
                                 icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
                             },
                             fields: [
-                                {
-                                    name: "Version",
-                                    value: version,
-                                    inline: true
-                                },
-                                {
-                                    name: "Prefix",
-                                    value: prefix,
-                                    inline: true
-                                },
-                                {
-                                    name: "\u200b",
-                                    value: "\u200b"
-                                },
-                                helpMenuContent
+                                helpMenuHeader,
+                                helpMenuContent.soniBot
                             ],
                             timestamp: new Date(),
                             footer: {
                                 text: "Made with ❤️ by Soni"
                             }
                         }
+                    ],
+                    components: [
+                        new MessageActionRow()
+                            .addComponents(
+                                new MessageSelectMenu()
+                                    .setCustomId("helpSelect")
+                                    .setPlaceholder("Select a help category")
+                                    .addOptions([
+                                        {
+                                            label: "Soni Bot",
+                                            description: "Commands for information about the bot",
+                                            value: "soniBot"
+                                        },
+                                        {
+                                            label: "Useful",
+                                            description: "Useful commands",
+                                            value: "useful"
+                                        },
+                                        {
+                                            label: "Moderation",
+                                            description: "Commands for server moderation",
+                                            value: "moderation"
+                                        },
+                                        {
+                                            label: "Fun",
+                                            description: "Fun, not so useful commands",
+                                            value: "fun"
+                                        }
+                                    ])
+                            )
                     ]
                 }
             ).then(() => console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`));
