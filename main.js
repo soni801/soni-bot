@@ -1,5 +1,6 @@
 const { Client, Intents } = require("discord.js");
 const { token } = require("./config.json");
+const helpMenuContent = require("./help-menu.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
@@ -130,54 +131,7 @@ client.on("messageCreate", function(m)
                                     name: "\u200b",
                                     value: "\u200b"
                                 },
-                                {
-                                    name: "`changelog`",
-                                    value: "Display changes in the latest version"
-                                },
-                                {
-                                    name: "`sven` `fatal` `soni` `riki` `abenz` `shadow`",
-                                    value: "Tell facts about the specified user"
-                                },
-                                {
-                                    name: "`svensdum`",
-                                    value: "Kinda self explanatory innit bruv"
-                                },
-                                {
-                                    name: "`intelligence` `understandable` `shut`",
-                                    value: "Post the specified response"
-                                },
-                                {
-                                    name: "`family`",
-                                    value: "Post our family tree"
-                                },
-                                {
-                                    name: "`uptime`",
-                                    value: "Send the uptime of Soni Bot"
-                                },
-                                {
-                                    name: "`ping`",
-                                    value: "Send Soni Bot ping and Discord API ping"
-                                },
-                                {
-                                    name: "`help`",
-                                    value: "Display this message, you idiot"
-                                },
-                                {
-                                    name: "`8ball`",
-                                    value: "For help with daily decisions"
-                                },
-                                {
-                                    name: "`dice`",
-                                    value: "Roll a die"
-                                },
-                                {
-                                    name: "`joke`",
-                                    value: "Tell a joke - what did you think honestly"
-                                },
-                                {
-                                    name: "`remind`",
-                                    value: "Remind you to do something in the\nspecified amount of seconds"
-                                }
+                                helpMenuContent
                             ],
                             timestamp: new Date(),
                             footer: {
