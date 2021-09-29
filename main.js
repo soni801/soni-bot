@@ -4,31 +4,46 @@ const helpMenuContent = require("./help-menu.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v3.3";
+const version = "v3.4";
 const prefix = "+";
-
-const helpMenuHeader = [
-    {
-        name: "Version",
-        value: version,
-        inline: true
-    },
-    {
-        name: "Prefix",
-        value: prefix,
-        inline: true
-    },
-    {
-        name: "\u200b",
-        value: "\u200b"
-    }
-]
 
 let message;
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function doubleDigit(number) { return number.toString().length < 2 ? `0${number}` : number; }
 function time() { const date = new Date(); return `[${doubleDigit(date.getHours())}:${doubleDigit(date.getMinutes())}]`; }
+
+function helpMessage(category = helpMenuContent.default)
+{
+    return {
+        color: 0x3ba3a1,
+        author: {
+            name: "Soni Bot Help",
+            icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
+        },
+        fields: [
+            {
+                name: "Version",
+                value: version,
+                inline: true
+            },
+            {
+                name: "Prefix",
+                value: prefix,
+                inline: true
+            },
+            {
+                name: "\u200b",
+                value: "\u200b"
+            },
+            category
+        ],
+        timestamp: new Date(),
+        footer: {
+            text: "Made with ❤️ by Soni"
+        }
+    };
+}
 
 function react(emoteName, emoteID, serverID)
 {
@@ -103,7 +118,7 @@ client.on("messageCreate", function(m)
 
     switch (command)
     {
-        case "changelog": respond(`${version} changelog:`, "\u2022 Significant backend improvements\n\u2022 Added ability to use singular form time units in `remind` command\n\u2022 Added `ping` command\n\u2022 Added `uptime` command"); break;
+        case "changelog": respond(`${version} changelog:`, "\u2022 Reworked help menu"); break;
         case "sven": respond("Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond("Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond("Soni", "Is daddy uwu"); break;
@@ -127,28 +142,14 @@ client.on("messageCreate", function(m)
             message.channel.send(
                 {
                     embeds: [
-                        {
-                            color: 0x3ba3a1,
-                            author: {
-                                name: "Soni Bot Help",
-                                icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
-                            },
-                            fields: [
-                                helpMenuHeader,
-                                helpMenuContent.soniBot
-                            ],
-                            timestamp: new Date(),
-                            footer: {
-                                text: "Made with ❤️ by Soni"
-                            }
-                        }
+                        helpMessage()
                     ],
                     components: [
                         new MessageActionRow()
                             .addComponents(
                                 new MessageSelectMenu()
                                     .setCustomId("helpSelect")
-                                    .setPlaceholder("Select a help category")
+                                    .setPlaceholder("Select a category")
                                     .addOptions([
                                         {
                                             label: "Soni Bot",
@@ -267,6 +268,25 @@ client.on("messageCreate", function(m)
             }
             else respond("Wrong syntax", "Not enough arguments\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`");
             break;
+    }
+});
+
+client.on("interactionCreate", interaction =>
+{
+    if (interaction.isSelectMenu())
+    {
+        switch (interaction.customId)
+        {
+            case "helpSelect":
+                switch (interaction.values[0])
+                {
+                    case "soniBot": interaction.update({ embeds: [helpMessage(helpMenuContent.soniBot)] }); break;
+                    case "useful": interaction.update({ embeds: [helpMessage(helpMenuContent.useful)] }); break;
+                    case "moderation": interaction.update({ embeds: [helpMessage(helpMenuContent.moderation)] }); break;
+                    case "fun": interaction.update({ embeds: [helpMessage(helpMenuContent.fun)] }); break;
+                }
+                break;
+        }
     }
 });
 
