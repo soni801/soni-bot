@@ -95,7 +95,12 @@ function respond(title, description, content, log = true)
     ).then(() => { if (log) console.log(`${time()} Executed command '${message.content}' in #${message.channel.name}, ${message.guild.name}`); });
 }
 
-client.once("ready", () => console.log(`${time()} Ready!`));
+client.once("ready", () =>
+{
+    client.user.setActivity("+help", { type: "LISTENING" });
+    console.log(`${time()} Ready!`);
+});
+
 client.on("messageCreate", function(m)
 {
     // Ignore message if author is a bot
