@@ -1,0 +1,82 @@
+[
+    {
+        "name": "about",
+        "description": "Command"
+    },
+    {
+        "name": "changelog",
+        "description": "Command"
+    },
+    {
+        "name": "sven",
+        "description": "Command"
+    },
+    {
+        "name": "fatal",
+        "description": "Command"
+    },
+    {
+        "name": "soni",
+        "description": "Command"
+    },
+    {
+        "name": "riki",
+        "description": "Command"
+    },
+    {
+        "name": "abenz",
+        "description": "Command"
+    },
+    {
+        "name": "shadow",
+        "description": "Command"
+    },
+    {
+        "name": "svensdum",
+        "description": "Command"
+    },
+    {
+        "name": "intelligence",
+        "description": "Command"
+    },
+    {
+        "name": "understandable",
+        "description": "Command"
+    },
+    {
+        "name": "shut",
+        "description": "Command"
+    },
+    {
+        "name": "family",
+        "description": "Command"
+    },
+    {
+        "name": "uptime",
+        "description": "Command"
+    },
+    {
+        "name": "ping",
+        "description": "Command"
+    },
+    {
+        "name": "help",
+        "description": "Command"
+    },
+    {
+        "name": "8ball",
+        "description": "Command"
+    },
+    {
+        "name": "dice",
+        "description": "Command"
+    },
+    {
+        "name": "joke",
+        "description": "Command"
+    },
+    {
+        "name": "remind",
+        "description": "Command"
+    }
+]
