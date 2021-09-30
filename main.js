@@ -285,6 +285,7 @@ client.on("interactionCreate", interaction =>
                     case "moderation": interaction.update({ embeds: [helpMessage(helpMenuContent.moderation)] }); break;
                     case "fun": interaction.update({ embeds: [helpMessage(helpMenuContent.fun)] }); break;
                 }
+                console.log(`${time()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
                 break;
         }
     }
