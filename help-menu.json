@@ -15,6 +15,10 @@
             "value": "\u200b"
         },
         {
+            "name": "`about`",
+            "value": "Say info about Soni Bot"
+        },
+        {
             "name": "`changelog`",
             "value": "Display changes in the latest version"
         },
@@ -42,7 +46,7 @@
         },
         {
             "name": "`remind`",
-            "value": "Remind you to do something in the\nspecified amount of seconds"
+            "value": "Remind you to do something in the specified amount of seconds"
         }
     ],
     "moderation": [

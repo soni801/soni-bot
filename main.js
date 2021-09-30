@@ -4,7 +4,7 @@ const helpMenuContent = require("./help-menu.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v3.4";
+const version = "v3.5";
 const prefix = "+";
 
 let message;
@@ -123,7 +123,8 @@ client.on("messageCreate", function(m)
 
     switch (command)
     {
-        case "changelog": respond(`${version} changelog:`, "\u2022 Reworked help menu"); break;
+        case "about": respond("About me", `I am a lightweight toolkit bot developed by ${client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`); break;
+        case "changelog": respond(`${version} changelog:`, "\u2022 Added `about` command"); break;
         case "sven": respond("Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond("Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond("Soni", "Is daddy uwu"); break;
