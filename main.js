@@ -245,10 +245,11 @@ client.on("messageCreate", function(m)
             }
             break;
         case "remind":
+            const syntax = "\nUse `remind [delay] <second(s)|minute(s)|hour(s)> [reminder]`";
             if (args.length > 2)
             {
                 const timeout = Number(args[0]);
-                if (isNaN(timeout)) respond("Wrong syntax", "The specified time is not a number\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`");
+                if (isNaN(timeout)) respond("Wrong syntax", "The specified time is not a number" + syntax);
                 else
                 {
                     let timeoutUnit = args[1];
@@ -258,7 +259,7 @@ client.on("messageCreate", function(m)
                         case "second": case "seconds": timeoutMilliseconds = timeout * 1000; break;
                         case "minute": case "minutes": timeoutMilliseconds = timeout * 1000 * 60; break;
                         case "hour": case "hours": timeoutMilliseconds = timeout * 1000 * 60 * 60; break;
-                        default: respond("Wrong syntax", "Unrecognised time unit\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`"); return;
+                        default: respond("Wrong syntax", "Unrecognised time unit" + syntax); return;
                     }
 
                     let reminder = args[2];
@@ -272,7 +273,7 @@ client.on("messageCreate", function(m)
                     respond("Reminder", `Ok, I will remind you of ${reminder} after ${timeout} ${timeoutUnit}`);
                 }
             }
-            else respond("Wrong syntax", "Not enough arguments\nUse `remind [delay (s)] <second(s)|minute(s)|hour(s)> [reminder]`");
+            else respond("Wrong syntax", "Not enough arguments" + syntax);
             break;
     }
 });

@@ -6,5 +6,4 @@ const commands = require("./commands.json");
 
 const rest = new REST({ version: "9" }).setToken(token);
 
-rest.put(Routes.applicationCommands(clientId), { body: commands })
-    .then(() => console.log("Successfully deployed commands."));
+rest.put(Routes.applicationCommands(clientId), { body: commands }).then(() => console.log("Successfully deployed commands."));
