@@ -1,82 +1,82 @@
 [
     {
         "name": "about",
-        "description": "Command"
+        "description": "Say info about Soni Bot"
     },
     {
         "name": "changelog",
-        "description": "Command"
+        "description": "Display changes in the latest version"
     },
     {
         "name": "sven",
-        "description": "Command"
+        "description": "Tell facts about sven"
     },
     {
         "name": "fatal",
-        "description": "Command"
+        "description": "Tell facts about fatal"
     },
     {
         "name": "soni",
-        "description": "Command"
+        "description": "Tell facts about soni"
     },
     {
         "name": "riki",
-        "description": "Command"
+        "description": "Tell facts about riki"
     },
     {
         "name": "abenz",
-        "description": "Command"
+        "description": "Tell facts about abenz"
     },
     {
         "name": "shadow",
-        "description": "Command"
+        "description": "Tell facts about shadow"
     },
     {
         "name": "svensdum",
-        "description": "Command"
+        "description": "Kinda self explanatory innit bruv"
     },
     {
         "name": "intelligence",
-        "description": "Command"
+        "description": "Post the intelligence response"
     },
     {
         "name": "understandable",
-        "description": "Command"
+        "description": "Post the understandable response"
     },
     {
         "name": "shut",
-        "description": "Command"
+        "description": "Post the shut response"
     },
     {
         "name": "family",
-        "description": "Command"
+        "description": "Post our family tree"
     },
     {
         "name": "uptime",
-        "description": "Command"
+        "description": "Send the uptime of Soni Bot"
     },
     {
         "name": "ping",
-        "description": "Command"
+        "description": "Send Soni Bot & Discord API ping"
     },
     {
         "name": "help",
-        "description": "Command"
+        "description": "Display help message"
     },
     {
         "name": "8ball",
-        "description": "Command"
+        "description": "For help with daily decisions"
     },
     {
         "name": "dice",
-        "description": "Command"
+        "description": "Roll a die"
     },
     {
         "name": "joke",
-        "description": "Command"
+        "description": "Tell a joke - what did you think honestly"
     },
     {
         "name": "remind",
-        "description": "Command"
+        "description": "Remind you of something after the specified time"
     }
 ]
