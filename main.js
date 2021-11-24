@@ -97,7 +97,7 @@ function respond(title, description, content, log = true)
 
 client.once("ready", () =>
 {
-    client.user.setActivity("+help", { type: "LISTENING" });
+    client.user.setActivity(prefix + "help", { type: "LISTENING" });
     console.log(`${time()} Ready!`);
 });
 
