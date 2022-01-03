@@ -4,7 +4,7 @@ const helpMenuContent = require("./help-menu.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v3.5";
+const version = "v3.5.1";
 const prefix = "+";
 
 let message;
@@ -124,7 +124,7 @@ client.on("messageCreate", function(m)
     switch (command)
     {
         case "about": respond("About me", `I am a lightweight toolkit bot developed by ${client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`); break;
-        case "changelog": respond(`${version} changelog:`, "\u2022 Added `about` command"); break;
+        case "changelog": respond(`${version} changelog:`, "\u2022 Updated family tree"); break;
         case "sven": respond("Facts about Sven", "\u2022 He is Fatal's idiot sandwich\n\u2022 Is everyone's favourite feeder\n\u2022 Special boi\n\u2022 Thief"); break;
         case "fatal": respond("Fatal", "Nobody knows who or what Fatal really is."); break;
         case "soni": respond("Soni", "Is daddy uwu"); break;
@@ -135,7 +135,7 @@ client.on("messageCreate", function(m)
         case "intelligence": send("https://media.discordapp.net/attachments/655767387756298250/773322072448958495/image0.png?width=763&height=619"); break;
         case "understandable": send("https://en.meming.world/images/en/thumb/a/af/Understandable%2C_Have_a_Great_Day.jpg/300px-Understandable%2C_Have_a_Great_Day.jpg"); break;
         case "shut": send("https://i.redd.it/6hfg80l3zw631.png"); break;
-        case "family": send("https://media.discordapp.net/attachments/824926463908249640/881986397261692938/family_tree_6.png"); break;
+        case "family": send("https://cdn.discordapp.com/attachments/773992993634910230/927521003209367622/family_tree.drawio3.png"); break;
         case "uptime": respond("Uptime", `${Math.round(client.uptime / 1000 / 60)} minutes`); break;
         case "ping":
             message.channel.send("Loading data").then(async (msg) =>
