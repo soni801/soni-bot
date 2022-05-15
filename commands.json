@@ -8,44 +8,12 @@
         "description": "Display changes in the latest version"
     },
     {
-        "name": "sven",
-        "description": "Tell facts about sven"
-    },
-    {
-        "name": "fatal",
-        "description": "Tell facts about fatal"
-    },
-    {
-        "name": "soni",
-        "description": "Tell facts about soni"
-    },
-    {
-        "name": "riki",
-        "description": "Tell facts about riki"
-    },
-    {
-        "name": "abenz",
-        "description": "Tell facts about abenz"
-    },
-    {
-        "name": "shadow",
-        "description": "Tell facts about shadow"
-    },
-    {
         "name": "svensdum",
         "description": "Kinda self explanatory innit bruv"
     },
     {
-        "name": "intelligence",
-        "description": "Post the intelligence response"
-    },
-    {
-        "name": "understandable",
-        "description": "Post the understandable response"
-    },
-    {
-        "name": "shut",
-        "description": "Post the shut response"
+        "name": "responses",
+        "description": "Post information about meme responses"
     },
     {
         "name": "family",
@@ -65,7 +33,15 @@
     },
     {
         "name": "8ball",
-        "description": "For help with daily decisions"
+        "description": "For help with daily decisions",
+        "options": [
+            {
+                "name": "question",
+                "description": "The question to evaluate",
+                "type": 3,
+                "required": true
+            }
+        ]
     },
     {
         "name": "dice",
