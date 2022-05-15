@@ -5,7 +5,7 @@ const helpMenuContent = require("./help-menu.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v4.0";
+const version = "v4.1";
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
@@ -138,6 +138,10 @@ client.on("interactionCreate", interaction =>
                     {
                         name: "What am I?",
                         value: `I am a lightweight toolkit bot developed by ${client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`
+                    },
+                    {
+                        name: "How do I function?",
+                        value: "There is more details about each command in the /help command, and every command has autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/)."
                     }
                 ]);
                 break;
@@ -145,10 +149,9 @@ client.on("interactionCreate", interaction =>
                 respond(interaction, [
                     {
                         name: `Changelog for ${version}:`,
-                        value: `\u2022 The entire bot was rewritten again lol
-                        \u2022 Now uses slash commands instead of prefix
-                        \u2022 Improved code base and removed useless code
-                        \u2022 Removed specific commands and added new, broader commands`
+                        value: `\u2022 Added automatic updates for the family tree
+                        \u2022 Improved 8ball output formatting
+                        \u2022 Other minor changes`
                     }
                 ]);
                 break;
@@ -164,7 +167,7 @@ client.on("interactionCreate", interaction =>
                 ]);
                 break;
             case "family":
-                interaction.reply("https://media.discordapp.net/attachments/810638405032476672/975444915569971330/family_tree.drawio.png");
+                interaction.reply("https://cdn.yessness.com/family.png");
                 break;
             case "uptime":
                 respond(interaction, [
@@ -229,7 +232,11 @@ client.on("interactionCreate", interaction =>
             case "8ball":
                 respond(interaction, [
                     {
-                        name: "8 Ball",
+                        name: "Question",
+                        value: interaction.options.getString("question")
+                    },
+                    {
+                        name: "Answer",
                         value: (() =>
                         {
                             switch (randomNumber(0, 11))
