@@ -164,7 +164,7 @@ client.on("interactionCreate", interaction =>
                 ]);
                 break;
             case "family":
-                interaction.reply("https://cdn.discordapp.com/attachments/773992993634910230/927521003209367622/family_tree.drawio3.png");
+                interaction.reply("https://media.discordapp.net/attachments/810638405032476672/975444915569971330/family_tree.drawio.png");
                 break;
             case "uptime":
                 respond(interaction, [
