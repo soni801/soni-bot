@@ -69,16 +69,12 @@
             "value": "\u200b"
         },
         {
-            "name": "`sven` `fatal` `soni` `riki` `abenz` `shadow`",
-            "value": "Tell facts about the specified user"
-        },
-        {
             "name": "`svensdum`",
-            "value": "Kinda self explanatory innit bruv"
+            "value": "Sven is dumb?"
         },
         {
-            "name": "`intelligence` `understandable` `shut`",
-            "value": "Post the specified response"
+            "name": "`responses`",
+            "value": "Post information about meme responses"
         },
         {
             "name": "`family`",
