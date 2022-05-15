@@ -53,6 +53,44 @@
     },
     {
         "name": "remind",
-        "description": "Remind you of something after the specified time"
+        "description": "Remind you of something after the specified time",
+        "options": [
+            {
+                "name": "reminder",
+                "description": "What to be reminded of",
+                "type": 3,
+                "required": true
+            },
+            {
+                "name": "time",
+                "description": "The amount of time to wait before sending the reminder",
+                "type": 4,
+                "required": true
+            },
+            {
+                "name": "unit",
+                "description": "Which time unit to use",
+                "type": 3,
+                "required": true,
+                "choices": [
+                    {
+                        "name": "days",
+                        "value": "days"
+                    },
+                    {
+                        "name": "hours",
+                        "value": "hours"
+                    },
+                    {
+                        "name": "minutes",
+                        "value": "minutes"
+                    },
+                    {
+                        "name": "seconds",
+                        "value": "seconds"
+                    }
+                ]
+            }
+        ]
     }
 ]

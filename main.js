@@ -8,7 +8,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 const version = "v4.0";
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function time() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
+function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
 
 function helpMessage(category = helpMenuContent.default)
 {
@@ -52,11 +52,11 @@ function react(message, emoteName, emoteID, serverID)
         {
             try
             {
-                message.react(message.guild.emojis.cache.get(emoteID)).then(() => console.log(`${time()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
+                message.react(message.guild.emojis.cache.get(emoteID)).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
             }
             catch (err)
             {
-                console.log(`${time()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
+                console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
             }
         }
     }
@@ -96,13 +96,13 @@ function respond(interaction, fields = [], edit = false)
         });
     }
 
-    console.log(`${time()} Executed command '${interaction.commandName}' in #${interaction.channel.name}, ${interaction.guild.name}`);
+    console.log(`${timestamp()} Executed command '${interaction.commandName}' in #${interaction.channel.name}, ${interaction.guild.name}`);
 }
 
 client.once("ready", () =>
 {
     client.user.setActivity("/help", { type: "LISTENING" });
-    console.log(`${time()} Ready!`);
+    console.log(`${timestamp()} Ready!`);
 });
 
 client.on("messageCreate", message =>
@@ -126,7 +126,7 @@ client.on("interactionCreate", interaction =>
                     case "moderation": interaction.update({ embeds: [helpMessage(helpMenuContent.moderation)] }); break;
                     case "fun": interaction.update({ embeds: [helpMessage(helpMenuContent.fun)] }); break;
                 }
-                console.log(`${time()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
+                console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
         }
     }
     else if (interaction.isCommand())
@@ -294,48 +294,54 @@ client.on("interactionCreate", interaction =>
                 ]);
                 break;
             case "remind":
+                // Fetch data from command
+                const reminder = interaction.options.getString("reminder");
+                let time = interaction.options.getInteger("time"); // Modifiable to change unit
+                const unit = interaction.options.getString("unit");
+
+                // Send a confirmation to the user
+                // This is done before modifying the time
                 respond(interaction, [
                     {
-                        name: "Reminder",
-                        value: "no. (this feature is not yet functional)"
+                        name: "Reminder registered",
+                        value: reminder
+                    },
+                    {
+                        name: "\u200b",
+                        value: `I will remind you after ${time} ${unit}`
                     }
                 ]);
-                // TODO: Actually implement this
-                /*const timeout = Number(args[0]);
 
-                if (isNaN(timeout))
+                // Modify time based on unit
+                switch (unit)
                 {
-                    respond(interaction, [
-                        {
-                            name: "Wrong syntax",
-                            value: "The specified time is not a number"
-                        }
-                    ]);
+                    case "days": time *= 24;
+                    case "hours": time *= 60;
+                    case "minutes": time *= 60;
+                    case "seconds": time *= 1000;
                 }
-                else
-                {
-                    let timeoutUnit = args[1];
-                    let timeoutMilliseconds;
-                    switch (timeoutUnit)
-                    {
-                        case "second": case "seconds": timeoutMilliseconds = timeout * 1000; break;
-                        case "minute": case "minutes": timeoutMilliseconds = timeout * 1000 * 60; break;
-                        case "hour": case "hours": timeoutMilliseconds = timeout * 1000 * 60 * 60; break;
-                        default: respond("Wrong syntax", "Unrecognised time unit" + syntax); return;
-                    }
 
-                    let reminder = args[2];
-                    if (args.length > 3) for (let l = 3; l < args.length; l++) reminder += " " + args[l];
-
-                    setTimeout(function ()
-                    {
-                        respond("Reminder", `Remember ${reminder}`, message.author.toString(), false);
-                        console.log(`${time()} Reminded ${message.author.username} of '${reminder}' after ${timeout} ${timeoutUnit}`);
-                    }, timeoutMilliseconds);
-                    respond("Reminder", `Ok, I will remind you of ${reminder} after ${timeout} ${timeoutUnit}`);
-                }*/
+                // Set a timeout for responding to the user
+                setTimeout(() => interaction.channel.send({
+                    content: `Here is your reminder, ${interaction.user}`,
+                    embeds: [
+                        {
+                            color: 0x3ba3a1,
+                            author: {
+                                name: "remind",
+                                icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
+                            },
+                            fields: [
+                                {
+                                    name: "Reminder",
+                                    value: reminder
+                                }
+                            ]
+                        }
+                    ]
+                }).then(() => console.log(`${timestamp()} Reminded ${interaction.user.username}#${interaction.user.discriminator} of '${reminder}' after ${time}ms`)), time);
         }
     }
 });
 
-client.login(token).then(() => console.log(`${time()} Successfully logged in`));
+client.login(token).then(() => console.log(`${timestamp()} Successfully logged in`));
