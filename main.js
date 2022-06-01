@@ -1,11 +1,15 @@
 const { Client, Intents, MessageActionRow, MessageSelectMenu } = require("discord.js");
-const { token } = require("./config.json");
+const dotenv = require('dotenv');
 // TODO: Get help menu from commands
 const helpMenuContent = require("./help-menu.json");
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const version = "v4.1";
+
+// Start the bot
+dotenv.config();
+client.login(process.env.TOKEN).then(() => console.log(`${timestamp()} Successfully logged in`));
 
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
@@ -350,5 +354,3 @@ client.on("interactionCreate", interaction =>
         }
     }
 });
-
-client.login(token).then(() => console.log(`${timestamp()} Successfully logged in`));

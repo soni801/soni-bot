@@ -6,6 +6,9 @@ but the functionality has since expanded to include things like moderation and u
 Soni Bot can be added to servers upon request, given that I have at least some prior knowledge of the server. If you
 want the functionality without inviting the bot itself, feel free to clone the repository and self-host it.
 
+Soni Bot is built in JavaScript using Node.js. Discord functionality is provided by
+[discord.js](https://discord.js.org/).
+
 # Installation
 
 The installation guide will presume you are running a Unix-like operating system.
@@ -13,43 +16,32 @@ The installation guide will presume you are running a Unix-like operating system
 It is recommended to run Soni Bot inside a Docker container, preferably with Docker Compose. However, if you can not or
 do not wish to run it through docker, you can run it manually.
 
-### Pre-install steps
+### Docker Compose
 
 1. Clone the repository
+
    ```shell
    $ git clone https://github.com/soni801/soni-bot.git
    $ cd soni-bot
    ```
 
-2. Create the config file
+2. Edit `docker-compose.yml` to include credentials
+
    ```shell
-   $ vim config.json # use any text editor (e.g. nano)
+   $ vim docker-compose.yml # use any text editor (e.g. nano)
    ```
 
-   The config file must contain the following:
-
-   ```json
-   {
-       "clientId": "<bot_client_id>",
-       "token": "<bot_token>"
-   }
-   ```
-
-   Make sure to replace `<bot_client_id>` and `<bot_token>` with their respective values, acquired from the Discord
+   Replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
    developer dashboard.
 
----
+3. Start the Docker container with Docker Compose
 
-The rest will vary depending on your installation method.
-
-### Docker Compose
-
-1. Start the Docker container with Docker Compose
    ```shell
    $ docker-compose up -d # use -d to launch detached (optional)
    ```
 
-2. If launched detached, optionally check the logs to make sure that it works
+4. If launched detached, optionally check the logs to make sure that it works
+
    ```shell
    $ docker-compose logs -f
    ```
@@ -57,24 +49,53 @@ The rest will vary depending on your installation method.
 ### Without Docker
 
 1. Make sure you have nodejs and npm installed.
+
    ```shell
    $ node -v # should be >=v18.0
    $ npm -v # should be >=v8.0
    ```
 
-   Install/update if needed, with your method of choice. Node 18 is not required, but recommended.
+   Install/update if needed, using your method of choice. Node 18 is not required, but recommended.
 
-2. Install the required packages
+2. Clone the repository
+
+   ```shell
+   $ git clone https://github.com/soni801/soni-bot.git
+   $ cd soni-bot
+   ```
+
+3. Install the required packages
+
    ```shell
    $ npm install
    ```
 
-3. Deploy the bot commands
+4. Create the config file
+
+   Soni Bot uses environment variables for its configuration. The easiest way to define these are using a `.env` file:
+
+   ```shell
+   $ vim .env # use any text editor (e.g. nano)
+   ```
+
+   The config file must contain the following:
+
+   ```
+   TOKEN=<bot_token>
+   CLIENT_ID=<bot_client_id>
+   ```
+
+   Make sure to replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
+   developer dashboard.
+
+5. Deploy the bot commands
+
    ```shell
    $ node deploy
    ```
 
-4. Run the bot
+6. Run the bot
+
    ```shell
    $ node .
    ```

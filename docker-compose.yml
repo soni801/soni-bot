@@ -4,3 +4,6 @@ services:
     container_name: soni-bot
     build: .
     restart: always
+    environment:
+      TOKEN: <bot_token>
+      CLIENT_ID: <bot_client_id>
