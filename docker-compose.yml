@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  soni-bot:
+    container_name: soni-bot
+    build: .
+    restart: always
