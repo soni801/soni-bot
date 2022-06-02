@@ -1,96 +1,110 @@
-[
-    {
-        "name": "about",
-        "description": "Say info about Soni Bot"
-    },
-    {
-        "name": "changelog",
-        "description": "Display changes in the latest version"
-    },
-    {
-        "name": "svensdum",
-        "description": "Kinda self explanatory innit bruv"
-    },
-    {
-        "name": "responses",
-        "description": "Post information about meme responses"
-    },
-    {
-        "name": "family",
-        "description": "Post our family tree"
-    },
-    {
-        "name": "uptime",
-        "description": "Send the uptime of Soni Bot"
-    },
-    {
-        "name": "ping",
-        "description": "Send Soni Bot & Discord API ping"
-    },
-    {
-        "name": "help",
-        "description": "Display help message"
-    },
-    {
-        "name": "8ball",
-        "description": "For help with daily decisions",
-        "options": [
-            {
-                "name": "question",
-                "description": "The question to evaluate",
-                "type": 3,
-                "required": true
-            }
-        ]
-    },
-    {
-        "name": "dice",
-        "description": "Roll a die"
-    },
-    {
-        "name": "joke",
-        "description": "Tell a joke - what did you think honestly"
-    },
-    {
-        "name": "remind",
-        "description": "Remind you of something after the specified time",
-        "options": [
-            {
-                "name": "reminder",
-                "description": "What to be reminded of",
-                "type": 3,
-                "required": true
-            },
-            {
-                "name": "time",
-                "description": "The amount of time to wait before sending the reminder",
-                "type": 4,
-                "required": true
-            },
-            {
-                "name": "unit",
-                "description": "Which time unit to use",
-                "type": 3,
-                "required": true,
-                "choices": [
-                    {
-                        "name": "days",
-                        "value": "days"
-                    },
-                    {
-                        "name": "hours",
-                        "value": "hours"
-                    },
-                    {
-                        "name": "minutes",
-                        "value": "minutes"
-                    },
-                    {
-                        "name": "seconds",
-                        "value": "seconds"
-                    }
-                ]
-            }
-        ]
-    }
-]
+{
+    "commands": [
+        {
+            "name": "about",
+            "description": "Say info about Soni Bot",
+            "category": "bot"
+        },
+        {
+            "name": "changelog",
+            "description": "Display changes in the latest version",
+            "category": "bot"
+        },
+        {
+            "name": "svensdum",
+            "description": "Kinda self explanatory innit bruv",
+            "category": "fun"
+        },
+        {
+            "name": "responses",
+            "description": "Post information about meme responses",
+            "category": "fun"
+        },
+        {
+            "name": "family",
+            "description": "Post our family tree",
+            "category": "fun"
+        },
+        {
+            "name": "uptime",
+            "description": "Send the uptime of Soni Bot",
+            "category": "bot"
+        },
+        {
+            "name": "ping",
+            "description": "Send Soni Bot & Discord API ping",
+            "category": "bot"
+        },
+        {
+            "name": "help",
+            "description": "Display help message",
+            "category": "bot"
+        },
+        {
+            "name": "8ball",
+            "description": "For help with daily decisions",
+            "category": "fun",
+            "options": [
+                {
+                    "name": "question",
+                    "description": "The question to evaluate",
+                    "type": 3,
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "dice",
+            "description": "Roll a die",
+            "category": "useful"
+        },
+        {
+            "name": "joke",
+            "description": "Tell a joke - what did you think honestly",
+            "category": "fun"
+        },
+        {
+            "name": "remind",
+            "description": "Remind you of something after the specified time",
+            "category": "useful",
+            "options": [
+                {
+                    "name": "reminder",
+                    "description": "What to be reminded of",
+                    "type": 3,
+                    "required": true
+                },
+                {
+                    "name": "time",
+                    "description": "The amount of time to wait before sending the reminder",
+                    "type": 4,
+                    "required": true
+                },
+                {
+                    "name": "unit",
+                    "description": "Which time unit to use",
+                    "type": 3,
+                    "required": true,
+                    "choices": [
+                        {
+                            "name": "days",
+                            "value": "days"
+                        },
+                        {
+                            "name": "hours",
+                            "value": "hours"
+                        },
+                        {
+                            "name": "minutes",
+                            "value": "minutes"
+                        },
+                        {
+                            "name": "seconds",
+                            "value": "seconds"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

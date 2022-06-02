@@ -1,7 +1,11 @@
+// Imports
 const { Client, Intents } = require("discord.js");
 const dotenv = require('dotenv');
-// TODO: Get help menu from commands
-const helpMenuContent = require("./help-menu.json");
+const { commands } = require("./commands.json");
+
+// Format commands to comply with embed field syntax
+commands.forEach(command => command.name = `\`/${command.name}\``);
+commands.forEach(command => command.value = command.description);
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
@@ -27,9 +31,10 @@ function embed(name, fields)
     };
 }
 
-function helpMessage(category = helpMenuContent.default)
+function helpMessage(category)
 {
-    return [
+    // Declare the help message header that is always shown
+    const header = [
         {
             name: "Version",
             value: version,
@@ -44,7 +49,24 @@ function helpMessage(category = helpMenuContent.default)
             name: "\u200b",
             value: "\u200b"
         }
-    ].concat(category);
+    ];
+
+    // Show a category if supplied
+    if (category) return header.concat(commands.filter(command => command.category === category));
+    // TODO: Add titles to help categories
+    // TODO: Show a message if the category is empty
+
+    // If no category is supplied, return the default content
+    return header.concat([
+        {
+            name: "Welcome to Soni Bot!",
+            value: "Please select a help category."
+        },
+        {
+            name: "\u200b",
+            value: "\u200b"
+        }
+    ]);
 }
 
 function react(message, emoteName, emoteID, serverID)
@@ -122,7 +144,8 @@ client.on("interactionCreate", interaction =>
                     respond(interaction, [
                         {
                             name: `Changelog for ${version}:`,
-                            value: `\u2022 Major backend changes for better performance`
+                            value: `\u2022 Major backend changes for better performance
+                            \u2022 Improved help menu (featuring nice bugs)`
                         }
                     ]);
                     break;
@@ -177,7 +200,7 @@ client.on("interactionCreate", interaction =>
                                         {
                                             label: "Soni Bot",
                                             description: "Commands for information about the bot",
-                                            value: "soniBot"
+                                            value: "bot"
                                         },
                                         {
                                             label: "Useful",
@@ -325,14 +348,7 @@ client.on("interactionCreate", interaction =>
             switch (interaction.customId)
             {
                 case "helpSelect":
-                    switch (interaction.values[0])
-                    {
-                        case "soniBot": interaction.update({ embeds: [ embed(interaction.commandName, helpMessage(helpMenuContent.soniBot)) ] }); break;
-                        case "useful": interaction.update({ embeds: [ embed(interaction.commandName, helpMessage(helpMenuContent.useful)) ] }); break;
-                        case "moderation": interaction.update({ embeds: [ embed(interaction.commandName, helpMessage(helpMenuContent.moderation)) ] }); break;
-                        case "fun": interaction.update({ embeds: [ embed(interaction.commandName, helpMessage(helpMenuContent.fun)) ] });
-                    }
-
+                    interaction.update({ embeds: [ embed(interaction.commandName, helpMessage(interaction.values[0])) ] });
                     console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
             }
     }
