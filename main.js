@@ -2,10 +2,15 @@
 const { Client, Intents } = require("discord.js");
 const dotenv = require('dotenv');
 const { commands } = require("./commands.json");
+const { changelog } = require("./changelog.json");
 
 // Format commands to comply with embed field syntax
 commands.forEach(command => command.name = `\`/${command.name}\``);
 commands.forEach(command => command.value = command.description);
+
+// Format changelog to comply with select menu syntax
+changelog.forEach(version => version.label = version.version);
+changelog.forEach(version => version.value = version.version);
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
@@ -95,6 +100,21 @@ function helpMessage(category)
     ]);
 }
 
+function changelogMessage(v = version)
+{
+    const changes = changelog.find(ver => ver.version === v).changes;
+    let output = "";
+
+    changes.forEach(c => output += `\u2022 ${c}\n`);
+
+    return [
+        {
+            name: `Changelog for ${v}`,
+            value: output
+        }
+    ];
+}
+
 function react(message, emoteName, emoteID, serverID)
 {
     if (message.guild.id === serverID)
@@ -167,10 +187,20 @@ client.on("interactionCreate", interaction =>
                     ]);
                     break;
                 case "changelog":
-                    respond(interaction, [
+                    respond(interaction, [ changelogMessage() ], false, [
                         {
-                            name: `Changelog for ${version}:`,
-                            value: `:eyes:`
+                            type: "ACTION_ROW",
+                            components: [
+                                {
+                                    type: "SELECT_MENU",
+                                    customId: "changelogSelect",
+                                    placeholder: "Select a version",
+                                    minValues: null,
+                                    maxValues: null,
+                                    options: changelog,
+                                    disabled: false
+                                }
+                            ]
                         }
                     ]);
                     break;
@@ -372,9 +402,10 @@ client.on("interactionCreate", interaction =>
         case "MESSAGE_COMPONENT":
             switch (interaction.customId)
             {
-                case "helpSelect":
-                    interaction.update({ embeds: [ embed(interaction.commandName, helpMessage(interaction.values[0])) ] });
-                    console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
+                case "helpSelect": interaction.update({ embeds: [ embed("help", helpMessage(interaction.values[0])) ] }); break;
+                case "changelogSelect": interaction.update({ embeds: [ embed("changelog", changelogMessage(interaction.values[0])) ] });
             }
+
+            console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
     }
 });

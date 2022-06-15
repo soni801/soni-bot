@@ -1,26 +1,26 @@
 {
     "changelog": [
         {
-            "version": "4.2",
+            "version": "v4.2",
             "changes": [
-                "Improved changelog system"
+                "Added changelogs for older versions"
             ]
         },
         {
-            "version": "4.1.2",
+            "version": "v4.1.2",
             "changes": [
                 "Fixed help menu bugs"
             ]
         },
         {
-            "version": "4.1.1",
+            "version": "v4.1.1",
             "changes": [
                 "Major backend changes for better performance",
                 "Improved help menu (featuring nice bugs)"
             ]
         },
         {
-            "version": "4.1",
+            "version": "v4.1",
             "changes": [
                 "Added automatic updates for the family tree",
                 "Improved `/8ball` output formatting",
@@ -28,7 +28,7 @@
             ]
         },
         {
-            "version": "4.0",
+            "version": "v4.0",
             "changes": [
                 "The entire bot was rewritten again lol",
                 "Now uses slash commands instead of prefix",
@@ -37,25 +37,25 @@
             ]
         },
         {
-            "version": "3.5.1",
+            "version": "v3.5.1",
             "changes": [
                 "Updated family tree"
             ]
         },
         {
-            "version": "3.5",
+            "version": "v3.5",
             "changes": [
                 "Added `about` command"
             ]
         },
         {
-            "version": "3.4",
+            "version": "v3.4",
             "changes": [
                 "Reworked help menu"
             ]
         },
         {
-            "version": "3.3",
+            "version": "v3.3",
             "changes": [
                 "Significant backend improvements",
                 "Added ability to use singular form time units in `remind` command",
@@ -64,59 +64,59 @@
             ]
         },
         {
-            "version": "3.2",
+            "version": "v3.2",
             "changes": [
                 "Performance improvements",
                 "Added time unit option to `remind` command"
             ]
         },
         {
-            "version": "3.1",
+            "version": "v3.1",
             "changes": [
                 "Improved `remind` command"
             ]
         },
         {
-            "version": "3.0",
+            "version": "v3.0",
             "changes": [
                 "Use embeds for replies"
             ]
         },
         {
-            "version": "2.16.1",
+            "version": "v2.16.1",
             "changes": [
                 "Internal changes"
             ]
         },
         {
-            "version": "2.16",
+            "version": "v2.16",
             "changes": [
                 "Removed `version` command",
                 "Added `shadow` command"
             ]
         },
         {
-            "version": "2.15",
+            "version": "v2.15",
             "changes": [
                 "New & improved help menu"
             ]
         },
         {
-            "version": "2.14",
+            "version": "v2.14",
             "changes": [
                 "React with :neutral_face: on messages sent by boremac",
                 "Bug fixes"
             ]
         },
         {
-            "version": "2.13",
+            "version": "v2.13",
             "changes": [
                 "Removed `crush` command",
                 "Added `family` command"
             ]
         },
         {
-            "version": "2.12",
+            "version": "v2.12",
             "changes": [
                 "Removed `sara` command",
                 "Removed `jiggly` command",
@@ -125,7 +125,7 @@
             ]
         },
         {
-            "version": "2.11",
+            "version": "v2.11",
             "changes": [
                 "Improved `help` command",
                 "Removed `ara` command",
@@ -133,48 +133,41 @@
             ]
         },
         {
-            "version": "2.10",
+            "version": "v2.10",
             "changes": [
                 "Added `jiggly` command",
                 "Added `crush` command"
             ]
         },
         {
-            "version": "2.9",
+            "version": "v2.9",
             "changes": [
                 "Added `understandable` command"
             ]
         },
         {
-            "version": "2.8.1",
+            "version": "v2.8.1",
             "changes": [
                 "Fixed reactions"
             ]
         },
         {
-            "version": "2.8",
+            "version": "v2.8",
             "changes": [
                 "Added `remind` command",
                 "Added a secret feature"
             ]
         },
         {
-            "version": "2.7",
+            "version": "v2.7",
             "changes": [
                 "Added `intelligence` command"
             ]
         },
         {
-            "version": "2.6",
+            "version": "Older",
             "changes": [
-                "Added `svensdum` command"
-            ]
-        },
-        {
-            "version": "2.5",
-            "changes": [
-                "Added more info about sven",
-                "Increased joke selection by 425%"
+                "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
             ]
         }
     ]
