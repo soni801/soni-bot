@@ -9,7 +9,7 @@ commands.forEach(command => command.value = command.description);
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v4.1.1";
+const version = "v4.1.2";
 
 // Start the bot
 dotenv.config();
@@ -18,6 +18,7 @@ client.login(process.env.TOKEN).then(() => console.log(`${timestamp()} Successfu
 // Declare utility functions
 function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
+function capitalizeFirstLetter(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
 function embed(name, fields)
 {
@@ -52,9 +53,34 @@ function helpMessage(category)
     ];
 
     // Show a category if supplied
-    if (category) return header.concat(commands.filter(command => command.category === category));
-    // TODO: Add titles to help categories
-    // TODO: Show a message if the category is empty
+    if (category)
+    {
+        // Declare category header
+        let fields = [
+            {
+                name: `${capitalizeFirstLetter(category)} commands`,
+                value: "\u200b"
+            },
+        ];
+
+        // Fetch the relevant commands
+        const commandFields = commands.filter(command => command.category === category);
+
+        // Add commands if any, otherwise add message stating no commands
+        if (commandFields.length > 0) fields = fields.concat(commandFields);
+        else fields = fields.concat([
+            {
+                name: "No commands",
+                value: "There are no commands available in this category."
+            },
+            {
+                name: "\u200b",
+                value: "\u200b"
+            }
+        ]);
+
+        return header.concat(fields);
+    }
 
     // If no category is supplied, return the default content
     return header.concat([
@@ -144,8 +170,7 @@ client.on("interactionCreate", interaction =>
                     respond(interaction, [
                         {
                             name: `Changelog for ${version}:`,
-                            value: `\u2022 Major backend changes for better performance
-                            \u2022 Improved help menu (featuring nice bugs)`
+                            value: `\u2022 Fixed help menu bugs`
                         }
                     ]);
                     break;
