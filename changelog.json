@@ -1,6 +1,12 @@
 {
     "changelog": [
         {
+            "version": "v4.3",
+            "changes": [
+                "Globally react to messages"
+            ]
+        },
+        {
             "version": "v4.2",
             "changes": [
                 "Added changelogs for older versions"
@@ -156,12 +162,6 @@
             "changes": [
                 "Added `remind` command",
                 "Added a secret feature"
-            ]
-        },
-        {
-            "version": "v2.7",
-            "changes": [
-                "Added `intelligence` command"
             ]
         },
         {

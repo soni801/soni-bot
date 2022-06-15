@@ -14,7 +14,7 @@ changelog.forEach(version => version.value = version.version);
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v4.2";
+const version = "v4.3";
 
 // Start the bot
 dotenv.config();
@@ -115,22 +115,19 @@ function changelogMessage(v = version)
     ];
 }
 
-function react(message, emoteName, emoteID, serverID)
+function react(message, emoteName, emoteID)
 {
-    if (message.guild.id === serverID)
+    if (message.content.toLowerCase().startsWith(emoteName) ||
+        message.content.toLowerCase().includes(" " + emoteName) ||
+        message.content.toLowerCase().includes(":" + emoteName))
     {
-        if (message.content.toLowerCase().startsWith(emoteName) ||
-            message.content.toLowerCase().includes(" " + emoteName) ||
-            message.content.toLowerCase().includes(":" + emoteName))
+        try
         {
-            try
-            {
-                message.react(message.guild.emojis.cache.get(emoteID)).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
-            }
-            catch (err)
-            {
-                console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
-            }
+            message.react(emoteID).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
+        }
+        catch (err)
+        {
+            console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
         }
     }
 }
@@ -163,8 +160,8 @@ client.once("ready", () =>
 client.on("messageCreate", message =>
 {
     // Reactions
-    react(message, "ew", "808988372948615178", "599483748337319955");
-    react(message, "dbrug", "808989500058894376", "599483748337319955");
+    react(message, "ew", "808988372948615178");
+    react(message, "dbrug", "808989500058894376");
 });
 
 client.on("interactionCreate", interaction =>
