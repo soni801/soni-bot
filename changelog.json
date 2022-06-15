@@ -1,0 +1,108 @@
+{
+    "changelog": [
+        {
+            "version": "4.2",
+            "changes": "\u2022 Improved changelog system"
+        },
+        {
+            "version": "4.1.2",
+            "changes": "\u2022 Fixed help menu bugs"
+        },
+        {
+            "version": "4.1.1",
+            "changes": "\u2022 Major backend changes for better performance\n\u2022 Improved help menu (featuring nice bugs)"
+        },
+        {
+            "version": "4.1",
+            "changes": "\u2022 Added automatic updates for the family tree\n\u2022 Improved 8ball output formatting\n\u2022 Other minor changes"
+        },
+        {
+            "version": "4.0",
+            "changes": "\u2022 The entire bot was rewritten again lol\n\u2022 Now uses slash commands instead of prefix\n\u2022 Improved code base and removed useless code\n\u2022 Removed specific commands and added new, broader commands"
+        },
+        {
+            "version": "3.5.1",
+            "changes": "\u2022 Updated family tree"
+        },
+        {
+            "version": "3.5",
+            "changes": "\u2022 Added `about` command"
+        },
+        {
+            "version": "3.4",
+            "changes": "\u2022 Reworked help menu"
+        },
+        {
+            "version": "3.3",
+            "changes": "\u2022 Significant backend improvements\n\u2022 Added ability to use singular form time units in `remind` command\n\u2022 Added `ping` command\n\u2022 Added `uptime` command"
+        },
+        {
+            "version": "3.2",
+            "changes": "\u2022 Performance improvements\n\u2022 Added time unit option to `remind` command"
+        },
+        {
+            "version": "3.1",
+            "changes": "\u2022 Improved `remind` command"
+        },
+        {
+            "version": "3.0",
+            "changes": "\u2022 Use embeds for replies as opposed to raw messages"
+        },
+        {
+            "version": "2.16.1",
+            "changes": "\u2022 Internal changes"
+        },
+        {
+            "version": "2.16",
+            "changes": "\u2022 Removed `version` command\n\u2022 Added `shadow` command"
+        },
+        {
+            "version": "2.15",
+            "changes": "\u2022 New & improved help menu"
+        },
+        {
+            "version": "2.14",
+            "changes": "\u2022 react with :neutral_face: on messages sent by boremac\n\u2022 bug fixes"
+        },
+        {
+            "version": "2.13",
+            "changes": "\u2022 removed `crush` command\n\u2022 added `family` command"
+        },
+        {
+            "version": "2.12",
+            "changes": "\u2022 removed `sara` command\n\u2022 removed `jiggly` command\n\u2022 modified some replies\n\u2022 added `riki` command"
+        },
+        {
+            "version": "2.11",
+            "changes": "\u2022 improved `help` command\n\u2022 removed `ara` command\n\u2022 removed `shadow` command"
+        },
+        {
+            "version": "2.10",
+            "changes": "\u2022 added `jiggly` command\n\u2022 added `crush` command"
+        },
+        {
+            "version": "2.9",
+            "changes": "\u2022 added `understandable` command"
+        },
+        {
+            "version": "2.8.1",
+            "changes": "\u2022 fixed reactions"
+        },
+        {
+            "version": "2.8",
+            "changes": "\u2022 added `remind` command\n\u2022 added a secret feature"
+        },
+        {
+            "version": "2.7",
+            "changes": "\u2022 added `intelligence` command"
+        },
+        {
+            "version": "2.6",
+            "changes": "\u2022 added `svensdum` command"
+        },
+        {
+            "version": "2.5",
+            "changes": "\u2022 added more info about sven\n\u2022 increased joke selection by 425%"
+        }
+    ]
+}

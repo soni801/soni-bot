@@ -9,7 +9,7 @@ commands.forEach(command => command.value = command.description);
 
 // Create a Client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const version = "v4.1.2";
+const version = "v4.2";
 
 // Start the bot
 dotenv.config();
@@ -43,7 +43,7 @@ function helpMessage(category)
         },
         {
             name: "Changelog",
-            value: "See `changelog`",
+            value: "See `/changelog`",
             inline: true
         },
         {
@@ -170,7 +170,7 @@ client.on("interactionCreate", interaction =>
                     respond(interaction, [
                         {
                             name: `Changelog for ${version}:`,
-                            value: `\u2022 Fixed help menu bugs`
+                            value: `:eyes:`
                         }
                     ]);
                     break;
