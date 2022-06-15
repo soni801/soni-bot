@@ -25,13 +25,22 @@ do not wish to run it through docker, you can run it manually.
    $ cd soni-bot
    ```
 
-2. Edit `docker-compose.yml` to include credentials
+2. Create the config file
+
+   Soni Bot uses environment variables for its configuration. The easiest way to define these are using a `.env` file:
 
    ```shell
-   $ vim docker-compose.yml # use any text editor (e.g. nano)
+   $ vim .env # use any text editor (e.g. nano)
    ```
 
-   Replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
+   The file must contain the following:
+
+   ```
+   TOKEN=<bot_token>
+   CLIENT_ID=<bot_client_id>
+   ```
+
+   Make sure to replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
    developer dashboard.
 
 3. Start the Docker container with Docker Compose
@@ -78,7 +87,7 @@ do not wish to run it through docker, you can run it manually.
    $ vim .env # use any text editor (e.g. nano)
    ```
 
-   The config file must contain the following:
+   The file must contain the following:
 
    ```
    TOKEN=<bot_token>

@@ -4,4 +4,6 @@ WORKDIR /data
 COPY package*.json ./
 RUN npm install
 COPY *.js *.json ./
-CMD ["npm", "run", "start"]
+COPY .env .
+RUN node deploy
+CMD ["node", "."]
