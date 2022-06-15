@@ -1,7 +1,7 @@
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
-const dotenv = require('dotenv');
-const { commands } = require("./commands.json");
+import { REST } from "@discordjs/rest";
+import { Routes } from "discord-api-types/v9";
+import dotenv from 'dotenv';
+import { commands } from "./commands.json";
 
 dotenv.config();
 

@@ -3,7 +3,8 @@ FROM node:18
 WORKDIR /data
 COPY package*.json ./
 RUN npm install
-COPY *.js *.json ./
+COPY src ./
 COPY .env .
-RUN node deploy
-CMD ["node", "."]
+RUN npm run deploy
+RUN npm run build
+CMD ["npm", "run", "start"]
