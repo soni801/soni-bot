@@ -6,6 +6,12 @@ import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
 import { Changelog, Command } from "./types";
 import { DataSource } from "typeorm";
+import Reminder from "./entity/Reminder";
+
+// Utility functions
+function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
+function capitalizeFirstLetter(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
 class Main
 {
@@ -33,7 +39,7 @@ class Main
         this.client.once("ready", () =>
         {
             this.client.user.setActivity("/help", { type: "LISTENING" });
-            console.log(`${this.timestamp()} Ready!`);
+            console.log(`${timestamp()} Ready!`);
         });
 
         this.client.on("messageCreate", message =>
@@ -47,13 +53,8 @@ class Main
     async start()
     {
         this.dataSource = await AppDataSource.initialize();
-        this.client.login(process.env.TOKEN).then(() => console.log(`${this.timestamp()} Successfully logged in`));
+        await this.client.login(process.env.TOKEN);
     }
-
-    // Declare utility functions
-    randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-    timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
-    capitalizeFirstLetter(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
     embed(name, fields)
     {
@@ -70,7 +71,7 @@ class Main
     helpMessage(category?)
     {
         // Declare the help message header that is always shown
-        const header = [
+        const header: ({ name: string; value?: string; inline?: boolean })[] = [
             {
                 name: "Version",
                 value: this.version,
@@ -91,9 +92,9 @@ class Main
         if (category)
         {
             // Declare category header
-            let fields = [
+            let fields: { name: string; value?: string }[] = [
                 {
-                    name: `${this.capitalizeFirstLetter(category)} commands`,
+                    name: `${capitalizeFirstLetter(category)} commands`,
                     value: "\u200b"
                 },
             ];
@@ -102,7 +103,6 @@ class Main
             const commandFields = this.commands.filter(command => command.category === category);
 
             // Add commands if any, otherwise add message stating no commands
-            // @ts-ignore
             if (commandFields.length > 0) fields = fields.concat(commandFields);
             else fields = fields.concat([
                 {
@@ -154,16 +154,16 @@ class Main
         {
             try
             {
-                message.react(emoteID).then(() => console.log(`${this.timestamp()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
+                message.react(emoteID).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
             }
             catch (err)
             {
-                console.log(`${this.timestamp()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
+                console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
             }
         }
     }
 
-    respond(interaction, fields = [], edit = false, components?)
+    respond(interaction, fields = [], components?)
     {
         // Declare the message for sending
         const message = {
@@ -174,18 +174,17 @@ class Main
             components: components
         };
 
-        // Edit or send reply based on parameters
-        if (edit) interaction.editReply(message);
-        else interaction.reply(message);
-
-        // Log the action
-        console.log(`${this.timestamp()} Executed command '${interaction.commandName}' in #${interaction.channel.name}, ${interaction.guild.name}`);
+        // Reply and log
+        interaction.editReply(message);
+        console.log(`${timestamp()} Executed command '${interaction.commandName}' in #${interaction.channel.name}, ${interaction.guild.name}`);
     }
 
-    handleInteraction(interaction)
+    async handleInteraction(interaction)
     {
         if (interaction.isApplicationCommand() && interaction.isCommand())
         {
+            await interaction.deferReply();
+
             switch (interaction.commandName)
             {
                 case "about":
@@ -201,7 +200,7 @@ class Main
                     ]);
                     break;
                 case "changelog":
-                    this.respond(interaction, [ this.changelogMessage() ], false, [
+                    this.respond(interaction, [ this.changelogMessage() ], [
                         {
                             type: "ACTION_ROW",
                             components: [
@@ -241,7 +240,7 @@ class Main
                     ]);
                     break;
                 case "ping":
-                    interaction.reply(":ping_pong: Testing ping");
+                    interaction.editReply(":ping_pong: Testing ping");
 
                     // This is cursed, but maybe it works, so it can stay
                     (interaction.fetchReply() as Promise<Message<true>>).then(message =>
@@ -252,11 +251,11 @@ class Main
                                 value: `Soni Bot latency: ${message.createdTimestamp - interaction.createdTimestamp}ms
                                 API latency: ${Math.round(this.client.ws.ping)}ms`
                             }
-                        ], true);
+                        ]);
                     });
                     break;
                 case "help":
-                    this.respond(interaction, [ this.helpMessage() ], false, [
+                    this.respond(interaction, [ this.helpMessage() ], [
                         {
                             type: "ACTION_ROW",
                             components: [
@@ -304,7 +303,7 @@ class Main
                             name: "Answer",
                             value: (() =>
                             {
-                                switch (this.randomNumber(0, 11))
+                                switch (randomNumber(0, 11))
                                 {
                                     case 0: return "why do you ask me";
                                     case 1: return "find out yourself";
@@ -327,7 +326,7 @@ class Main
                     this.respond(interaction, [
                         {
                             name: "Die result",
-                            value: this.randomNumber(1, 6).toString()
+                            value: randomNumber(1, 6).toString()
                         }
                     ]);
                     break;
@@ -337,7 +336,7 @@ class Main
                             name: "Joke",
                             value: (() =>
                             {
-                                switch (this.randomNumber(0, 20))
+                                switch (randomNumber(0, 20))
                                 {
                                     case 0: return "two guys stole a calendar. they got six months each.";
                                     case 1: return "Autocorrect can go straight to he'll.";
@@ -367,24 +366,11 @@ class Main
                     break;
                 case "remind":
                     // Fetch data from command
-                    const reminder = interaction.options.getString("reminder");
+                    const content = interaction.options.getString("reminder");
                     let time = interaction.options.getInteger("time"); // Modifiable to change unit
                     const unit = interaction.options.getString("unit");
 
-                    // Send a confirmation to the user
-                    // This is done before modifying the time
-                    this.respond(interaction, [
-                        {
-                            name: "Reminder registered",
-                            value: reminder
-                        },
-                        {
-                            name: "\u200b",
-                            value: `I will remind you after ${time} ${unit}`
-                        }
-                    ]);
-
-                    // Modify time based on unit
+                    // Calculate time offset in ms
                     // noinspection FallThroughInSwitchStatementJS
                     switch (unit)
                     {
@@ -393,6 +379,28 @@ class Main
                         case "minutes": time *= 60;
                         case "seconds": time *= 1000;
                     }
+
+                    // Store values
+                    const user = interaction.user.id;
+                    const channel = interaction.channelId;
+                    const due = new Date(interaction.createdTimestamp + time);
+
+                    // Create and save the reminder
+                    const reminder = new Reminder({ user, channel, content, due });
+                    await reminder.save();
+
+                    // Send a confirmation to the user
+                    // This is done before modifying the time
+                    this.respond(interaction, [
+                        {
+                            name: "Reminder registered",
+                            value: content
+                        },
+                        {
+                            name: "\u200b",
+                            value: `I will remind you <t:${(due.getTime() / 1000).toFixed(0)}:R>`
+                        }
+                    ]);
 
                     // Set a timeout for responding to the user
                     setTimeout(() => interaction.channel.send({
@@ -407,12 +415,12 @@ class Main
                                 fields: [
                                     {
                                         name: "Reminder",
-                                        value: reminder
+                                        value: content
                                     }
                                 ]
                             }
                         ]
-                    }).then(() => console.log(`${this.timestamp()} Reminded ${interaction.user.username}#${interaction.user.discriminator} of '${reminder}' after ${time}ms`)), time);
+                    }).then(() => console.log(`${timestamp()} Reminded ${interaction.user.username}#${interaction.user.discriminator} of '${content}' after ${time}ms`)), time);
             }
         }
         else if (interaction.isMessageComponent() && interaction.isSelectMenu())
@@ -423,11 +431,11 @@ class Main
                 case "changelogSelect": interaction.update({ embeds: [ this.embed("changelog", this.changelogMessage(interaction.values[0])) ] });
             }
 
-            console.log(`${this.timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
+            console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
         }
     }
 }
 
 dotenv.config();
 const bot = new Main();
-bot.start()
+bot.start().then(() => console.log(`${timestamp()} Successfully logged in`));

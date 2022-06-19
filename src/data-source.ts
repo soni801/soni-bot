@@ -1,17 +1,20 @@
-import "reflect-metadata"
-import { DataSource } from "typeorm"
+import "reflect-metadata";
+import { DataSource } from "typeorm";
 import Reminder from "./entity/Reminder";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: "10.100.0.125",
+    host: process.env.DB_HOST,
     port: 5432,
-    username: "postgres",
-    password: "postgres",
-    database: "postgres",
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DB,
     synchronize: true,
     logging: false,
     entities: [ Reminder ],
     migrations: [],
     subscribers: [],
-})
+});

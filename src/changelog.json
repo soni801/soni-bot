@@ -1,6 +1,14 @@
 {
     "changelog": [
         {
+            "version": "v5.0",
+            "changes": [
+                "Backend changes to reminder format",
+                "Now stores data between sessions",
+                "General performance improvements and code changes"
+            ]
+        },
+        {
             "version": "v4.3",
             "changes": [
                 "Globally react to messages"
@@ -155,13 +163,6 @@
             "version": "v2.8.1",
             "changes": [
                 "Fixed reactions"
-            ]
-        },
-        {
-            "version": "v2.8",
-            "changes": [
-                "Added `remind` command",
-                "Added a secret feature"
             ]
         },
         {
