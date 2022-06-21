@@ -1,34 +1,34 @@
 {
-   "name": "soni-bot",
-   "version": "5.0",
-   "description": "A lightweight toolkit bot for small Discord communities.",
-   "author": "Soni",
-   "type": "commonjs",
-   "license": "GPL-3.0-or-later",
-   "main": "dist/main.js",
-   "devDependencies": {
-      "ts-node": "10.7.0",
-      "@types/node": "^16.11.10",
-      "typescript": "4.5.2"
-   },
-   "dependencies": {
-      "typeorm": "0.3.6",
-      "reflect-metadata": "^0.1.13",
-      "pg": "^8.4.0",
-      "@discordjs/rest": "^0.1.0-canary.0",
-      "discord-api-types": "^0.23.1",
-      "discord.js": "^13.1.0",
-      "dotenv": "^16.0.1"
-   },
-   "scripts": {
-      "dev": "ts-node src/main.ts",
-      "deploy": "ts-node src/deploy.ts",
-      "typeorm": "typeorm-ts-node-commonjs",
-      "build": "tsc",
-      "start": "node build/main.js"
-   },
-   "keywords": [
-      "discord",
-      "bot"
-   ]
+    "name": "soni-bot",
+    "version": "5.0",
+    "description": "A lightweight toolkit bot for small Discord communities.",
+    "author": "Soni",
+    "type": "commonjs",
+    "license": "GPL-3.0-or-later",
+    "main": "dist/main.js",
+    "devDependencies": {
+        "ts-node": "10.7.0",
+        "@types/node": "^16.11.10",
+        "typescript": "4.5.2"
+    },
+    "dependencies": {
+        "typeorm": "0.3.6",
+        "reflect-metadata": "^0.1.13",
+        "pg": "^8.4.0",
+        "@discordjs/rest": "^0.1.0-canary.0",
+        "discord-api-types": "^0.23.1",
+        "discord.js": "^13.1.0",
+        "dotenv": "^16.0.1"
+    },
+    "scripts": {
+        "dev": "ts-node src/main.ts",
+        "deploy": "ts-node src/deploy.ts",
+        "typeorm": "typeorm-ts-node-commonjs",
+        "build": "tsc",
+        "start": "node build/main.js"
+    },
+    "keywords": [
+        "discord",
+        "bot"
+    ]
 }

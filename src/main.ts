@@ -1,6 +1,6 @@
 // Imports
 import { AppDataSource } from "./data-source";
-import { Client, Intents, Message } from "discord.js";
+import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message } from "discord.js";
 import dotenv from 'dotenv';
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
@@ -9,15 +9,15 @@ import { DataSource } from "typeorm";
 import Reminder from "./entity/Reminder";
 
 // Utility functions
-function randomNumber(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randomNumber(min: number, max: number) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
-function capitalizeFirstLetter(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
+function capitalizeFirstLetter(string: string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
 class Main
 {
     // Create a Client instance
-    client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-    version = `v${process.env.NPM_PACKAGE_VERSION}`;
+    client = new Client<true>({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+    version = "v5.0"; // TODO: Fetch this from package.json
 
     commands = commandFile as Command[];
     changelog = changelogFile as Changelog[];
@@ -34,14 +34,17 @@ class Main
         this.changelog.forEach(version => version.label = version.version);
         this.changelog.forEach(version => version.value = version.version);
 
+        // Register interaction callback
         this.client.on("interactionCreate", interaction => this.handleInteraction(interaction));
 
+        // Register ready callback
         this.client.once("ready", () =>
         {
             this.client.user.setActivity("/help", { type: "LISTENING" });
             console.log(`${timestamp()} Ready!`);
         });
 
+        // Register message callback
         this.client.on("messageCreate", message =>
         {
             // Reactions
@@ -52,11 +55,24 @@ class Main
 
     async start()
     {
+        // Load the data source
         this.dataSource = await AppDataSource.initialize();
+
+        // Set an interval for checking stored reminders
+        setInterval(() => this.checkReminders(this), 1000);
+
+        // Log in to the client
         await this.client.login(process.env.TOKEN);
     }
 
-    embed(name, fields)
+    async checkReminders(self: Main)
+    {
+        // Fetch all reminders in the past that are not reminded
+        const reminders = (await Reminder.find({ where: { reminded: false } })).filter(r => r.due.getTime() <= new Date().getTime() );
+        reminders.forEach(r => self.remind(r));
+    }
+
+    embed(name: string, fields: any)
     {
         return {
             color: 0x3ba3a1,
@@ -64,11 +80,12 @@ class Main
                 name: name,
                 icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
             },
-            fields: fields
+            fields: fields,
+            timestamp: new Date()
         };
     }
 
-    helpMessage(category?)
+    helpMessage(category?: string)
     {
         // Declare the help message header that is always shown
         const header: ({ name: string; value?: string; inline?: boolean })[] = [
@@ -133,7 +150,7 @@ class Main
 
     changelogMessage(v = this.version)
     {
-        const changes = this.changelog.find(ver => ver.version === v).changes;
+        const changes = this.changelog.find(ver => ver.version === v)!.changes;
         let output = "";
 
         changes.forEach(c => output += `\u2022 ${c}\n`);
@@ -146,25 +163,39 @@ class Main
         ];
     }
 
-    react(message, emoteName, emoteID)
+    react(message: Message, emoteName: string, emoteID: string)
     {
+        // Make sure the interaction happened in a guild
+        if (!message.inGuild()) return;
+
+        // FIXME: This is cursed
+        const channel = this.client.channels.cache.get(message.channelId)!;
+        if (!(channel instanceof TextChannel)) return;
+
+        // FIXME: This is also cursed
+        const guild = this.client.guilds.cache.get(message.guildId)!;
+
         if (message.content.toLowerCase().startsWith(emoteName) ||
             message.content.toLowerCase().includes(" " + emoteName) ||
             message.content.toLowerCase().includes(":" + emoteName))
         {
             try
             {
-                message.react(emoteID).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${message.channel.name}, ${message.guild.name}`));
+                message.react(emoteID).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${channel.name}, ${guild.name}`));
             }
             catch (err)
             {
-                console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${message.channel.name}, ${message.guild.name} with error ${err}`);
+                console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${channel.name}, ${guild.name} with error ${err}`);
             }
         }
     }
 
-    respond(interaction, fields = [], components?)
+    respond(interaction: CommandInteraction<"cached">, fields = [] as any[], components?: any) // FIXME: Make this not of type any
     {
+        // FIXME: This is cursed
+        const channel = this.client.channels.cache.get(interaction.channelId)!;
+        if (!(channel instanceof TextChannel)) return;
+
         // Declare the message for sending
         const message = {
             content: null,
@@ -175,12 +206,41 @@ class Main
         };
 
         // Reply and log
-        interaction.editReply(message);
-        console.log(`${timestamp()} Executed command '${interaction.commandName}' in #${interaction.channel.name}, ${interaction.guild.name}`);
+        interaction.editReply(message).then(() => console.log(`${timestamp()} Executed command '${interaction.commandName}' from ${interaction.user.username}#${interaction.user.discriminator} in #${channel.name}, ${interaction.guild.name}`));
     }
 
-    async handleInteraction(interaction)
+    async remind(reminder: Reminder)
     {
+        // Fetch the channel from the client cache
+        const channel = await this.client.channels.fetch(reminder.channel);
+        const user = await this.client.users.fetch(reminder.user);
+
+        // Send the reminder
+        if (channel instanceof TextChannel) await channel.send({
+            content: `> ${user}`,
+            embeds: [
+                this.embed("remind", [
+                    {
+                        name: "Reminder",
+                        value: reminder.content
+                    }
+                ])
+            ]
+        });
+
+        // Log the reminder
+        console.log(`${timestamp()} Reminded ${user.username}#${user.discriminator} of '${reminder.content}' after ${reminder.due.getTime() - reminder.createdAt.getTime()}ms`);
+
+        // Change the reminded state of the reminder
+        reminder.reminded = true;
+        await reminder.save();
+    }
+
+    async handleInteraction(interaction: Interaction)
+    {
+        // Check that the interaction happens in a cached guild
+        if (!interaction.inCachedGuild()) return;
+
         if (interaction.isApplicationCommand() && interaction.isCommand())
         {
             await interaction.deferReply();
@@ -188,7 +248,7 @@ class Main
             switch (interaction.commandName)
             {
                 case "about":
-                    this.respond(interaction, [
+                    await this.respond(interaction, [
                         {
                             name: "What am I?",
                             value: `I am a lightweight toolkit bot developed by ${this.client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`
@@ -218,7 +278,7 @@ class Main
                     ]);
                     break;
                 case "svensdum":
-                    interaction.reply("https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png");
+                    await interaction.reply("https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png");
                     break;
                 case "responses":
                     this.respond(interaction, [
@@ -229,7 +289,7 @@ class Main
                     ]);
                     break;
                 case "family":
-                    interaction.reply("https://cdn.yessness.com/family.png");
+                    await interaction.reply("https://cdn.yessness.com/family.png");
                     break;
                 case "uptime":
                     this.respond(interaction, [
@@ -240,19 +300,19 @@ class Main
                     ]);
                     break;
                 case "ping":
-                    interaction.editReply(":ping_pong: Testing ping");
+                    // Send a message
+                    await interaction.editReply(":ping_pong: Testing ping");
 
-                    // This is cursed, but maybe it works, so it can stay
-                    (interaction.fetchReply() as Promise<Message<true>>).then(message =>
-                    {
-                        this.respond(interaction, [
-                            {
-                                name: ":ping_pong: Pong!",
-                                value: `Soni Bot latency: ${message.createdTimestamp - interaction.createdTimestamp}ms
-                                API latency: ${Math.round(this.client.ws.ping)}ms`
-                            }
-                        ]);
-                    });
+                    // Fetch the message, and check the latency
+                    const message = await interaction.fetchReply();
+
+                    this.respond(interaction, [
+                        {
+                            name: ":ping_pong: Pong!",
+                            value: `Soni Bot latency: ${message.createdTimestamp - interaction.createdTimestamp}ms
+                            API latency: ${Math.round(this.client.ws.ping)}ms`
+                        }
+                    ]);
                     break;
                 case "help":
                     this.respond(interaction, [ this.helpMessage() ], [
@@ -366,9 +426,9 @@ class Main
                     break;
                 case "remind":
                     // Fetch data from command
-                    const content = interaction.options.getString("reminder");
-                    let time = interaction.options.getInteger("time"); // Modifiable to change unit
-                    const unit = interaction.options.getString("unit");
+                    const content = interaction.options.getString("reminder", true);
+                    let time = interaction.options.getInteger("time", true); // Modifiable to change unit
+                    const unit = interaction.options.getString("unit", true);
 
                     // Calculate time offset in ms
                     // noinspection FallThroughInSwitchStatementJS
@@ -401,37 +461,21 @@ class Main
                             value: `I will remind you <t:${(due.getTime() / 1000).toFixed(0)}:R>`
                         }
                     ]);
-
-                    // Set a timeout for responding to the user
-                    setTimeout(() => interaction.channel.send({
-                        content: `Here is your reminder, ${interaction.user}`,
-                        embeds: [
-                            {
-                                color: 0x3ba3a1,
-                                author: {
-                                    name: "remind",
-                                    icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
-                                },
-                                fields: [
-                                    {
-                                        name: "Reminder",
-                                        value: content
-                                    }
-                                ]
-                            }
-                        ]
-                    }).then(() => console.log(`${timestamp()} Reminded ${interaction.user.username}#${interaction.user.discriminator} of '${content}' after ${time}ms`)), time);
             }
         }
         else if (interaction.isMessageComponent() && interaction.isSelectMenu())
         {
+            // FIXME: This is cursed
+            const channel = this.client.channels.cache.get(interaction.channelId)!;
+            if (!(channel instanceof TextChannel)) return;
+
             switch (interaction.customId)
             {
-                case "helpSelect": interaction.update({ embeds: [ this.embed("help", this.helpMessage(interaction.values[0])) ] }); break;
-                case "changelogSelect": interaction.update({ embeds: [ this.embed("changelog", this.changelogMessage(interaction.values[0])) ] });
+                case "helpSelect": await interaction.update({embeds: [this.embed("help", this.helpMessage(interaction.values[0]))]}); break;
+                case "changelogSelect": await interaction.update({embeds: [this.embed("changelog", this.changelogMessage(interaction.values[0]))]});
             }
 
-            console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username} in #${interaction.channel.name}, ${interaction.guild}`);
+            console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username}#${interaction.user.discriminator} in #${channel.name}, ${interaction.guild}`);
         }
     }
 }

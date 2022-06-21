@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, BaseEntity, Index } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index } from "typeorm";
 
 @Entity()
 @Index([ "reminded" ])

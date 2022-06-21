@@ -3,6 +3,7 @@
         {
             "version": "v5.0",
             "changes": [
+                "Oops I accidentally rewrote the entire bot again",
                 "Backend changes to reminder format",
                 "Now stores data between sessions",
                 "General performance improvements and code changes"
