@@ -38,10 +38,16 @@ do not wish to run it through docker, you can run it manually.
    ```
    TOKEN=<bot_token>
    CLIENT_ID=<bot_client_id>
+   
+   DB_HOST=<database-host>
+   DB_USER=<database-user>
+   DB_PASS=<database-passphrase>
+   DB_DB=<database-database>
    ```
 
    Make sure to replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
-   developer dashboard.
+   developer dashboard. Replace `<database-host>`, `<database-user>`, `<database-passphrase>` and `<database-database>`
+   with their respective values needed to connect to the storage database.
 
 3. Start the Docker container with Docker Compose
 
@@ -92,10 +98,16 @@ do not wish to run it through docker, you can run it manually.
    ```
    TOKEN=<bot_token>
    CLIENT_ID=<bot_client_id>
+   
+   DB_HOST=<database-host>
+   DB_USER=<database-user>
+   DB_PASS=<database-passphrase>
+   DB_DB=<database-database>
    ```
 
    Make sure to replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
-   developer dashboard.
+   developer dashboard. Replace `<database-host>`, `<database-user>`, `<database-passphrase>` and `<database-database>`
+   with their respective values needed to connect to the storage database.
 
 5. Deploy the bot commands
 
