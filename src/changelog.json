@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "v5.1",
+            "changes": [
+                "Renamed `/remind` to `/reminder create`",
+                "Added `/reminder list`"
+            ]
+        },
+        {
             "version": "v5.0",
             "changes": [
                 "Oops I accidentally rewrote the entire bot again",
@@ -159,12 +166,6 @@
             "version": "v2.9",
             "changes": [
                 "Added `understandable` command"
-            ]
-        },
-        {
-            "version": "v2.8.1",
-            "changes": [
-                "Fixed reactions"
             ]
         },
         {

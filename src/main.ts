@@ -17,7 +17,7 @@ class Main
 {
     // Create a Client instance
     client = new Client<true>({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ] });
-    version = "v5.0"; // TODO: Fetch this from package.json
+    version = "v5.1"; // TODO: Fetch this from package.json
 
     commands = commandFile as Command[];
     changelog = changelogFile as Changelog[];
