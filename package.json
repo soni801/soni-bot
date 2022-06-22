@@ -24,7 +24,7 @@
         "dev": "ts-node src/main.ts",
         "deploy": "node build/deploy.js",
         "typeorm": "typeorm-ts-node-commonjs",
-        "build": "tsc",
+        "build": "tsc --build --clean && tsc",
         "start": "node build/main.js"
     },
     "keywords": [

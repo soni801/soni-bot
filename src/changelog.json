@@ -1,14 +1,15 @@
 {
     "changelog": [
         {
-            "version": "v5.1",
+            "version": "5.1",
             "changes": [
                 "Renamed `/remind` to `/reminder create`",
-                "Added `/reminder list`"
+                "Added `/reminder list`",
+                "Various minor code changes"
             ]
         },
         {
-            "version": "v5.0",
+            "version": "5.0",
             "changes": [
                 "Oops I accidentally rewrote the entire bot again",
                 "Backend changes to reminder format",
@@ -18,32 +19,32 @@
             ]
         },
         {
-            "version": "v4.3",
+            "version": "4.3",
             "changes": [
                 "Globally react to messages"
             ]
         },
         {
-            "version": "v4.2",
+            "version": "4.2",
             "changes": [
                 "Added changelogs for older versions"
             ]
         },
         {
-            "version": "v4.1.2",
+            "version": "4.1.2",
             "changes": [
                 "Fixed help menu bugs"
             ]
         },
         {
-            "version": "v4.1.1",
+            "version": "4.1.1",
             "changes": [
                 "Major backend changes for better performance",
                 "Improved help menu (featuring nice bugs)"
             ]
         },
         {
-            "version": "v4.1",
+            "version": "4.1",
             "changes": [
                 "Added automatic updates for the family tree",
                 "Improved `/8ball` output formatting",
@@ -51,7 +52,7 @@
             ]
         },
         {
-            "version": "v4.0",
+            "version": "4.0",
             "changes": [
                 "The entire bot was rewritten again lol",
                 "Now uses slash commands instead of prefix",
@@ -60,25 +61,25 @@
             ]
         },
         {
-            "version": "v3.5.1",
+            "version": "3.5.1",
             "changes": [
                 "Updated family tree"
             ]
         },
         {
-            "version": "v3.5",
+            "version": "3.5",
             "changes": [
                 "Added `about` command"
             ]
         },
         {
-            "version": "v3.4",
+            "version": "3.4",
             "changes": [
                 "Reworked help menu"
             ]
         },
         {
-            "version": "v3.3",
+            "version": "3.3",
             "changes": [
                 "Significant backend improvements",
                 "Added ability to use singular form time units in `remind` command",
@@ -87,59 +88,59 @@
             ]
         },
         {
-            "version": "v3.2",
+            "version": "3.2",
             "changes": [
                 "Performance improvements",
                 "Added time unit option to `remind` command"
             ]
         },
         {
-            "version": "v3.1",
+            "version": "3.1",
             "changes": [
                 "Improved `remind` command"
             ]
         },
         {
-            "version": "v3.0",
+            "version": "3.0",
             "changes": [
                 "Use embeds for replies"
             ]
         },
         {
-            "version": "v2.16.1",
+            "version": "2.16.1",
             "changes": [
                 "Internal changes"
             ]
         },
         {
-            "version": "v2.16",
+            "version": "2.16",
             "changes": [
                 "Removed `version` command",
                 "Added `shadow` command"
             ]
         },
         {
-            "version": "v2.15",
+            "version": "2.15",
             "changes": [
                 "New & improved help menu"
             ]
         },
         {
-            "version": "v2.14",
+            "version": "2.14",
             "changes": [
                 "React with :neutral_face: on messages sent by boremac",
                 "Bug fixes"
             ]
         },
         {
-            "version": "v2.13",
+            "version": "2.13",
             "changes": [
                 "Removed `crush` command",
                 "Added `family` command"
             ]
         },
         {
-            "version": "v2.12",
+            "version": "2.12",
             "changes": [
                 "Removed `sara` command",
                 "Removed `jiggly` command",
@@ -148,7 +149,7 @@
             ]
         },
         {
-            "version": "v2.11",
+            "version": "2.11",
             "changes": [
                 "Improved `help` command",
                 "Removed `ara` command",
@@ -156,14 +157,14 @@
             ]
         },
         {
-            "version": "v2.10",
+            "version": "2.10",
             "changes": [
                 "Added `jiggly` command",
                 "Added `crush` command"
             ]
         },
         {
-            "version": "v2.9",
+            "version": "2.9",
             "changes": [
                 "Added `understandable` command"
             ]

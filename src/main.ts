@@ -1,6 +1,6 @@
 // Imports
 import { AppDataSource } from "./data-source";
-import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message, Guild } from "discord.js";
+import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message } from "discord.js";
 import dotenv from 'dotenv';
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
@@ -17,12 +17,12 @@ class Main
 {
     // Create a Client instance
     client = new Client<true>({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ] });
-    version = "v5.1"; // TODO: Fetch this from package.json
+    version = process.env.npm_package_version;
+    dataSource?: DataSource;
 
+    // Load commands and changelog
     commands = commandFile as Command[];
     changelog = changelogFile as Changelog[];
-
-    dataSource?: DataSource;
 
     constructor()
     {
@@ -31,7 +31,7 @@ class Main
         this.commands.forEach(command => command.value = command.description);
 
         // Format changelog to comply with select menu syntax
-        this.changelog.forEach(version => version.label = version.version);
+        this.changelog.forEach(version => version.label = `v${version.version}`);
         this.changelog.forEach(version => version.value = version.version);
 
         // Register interaction callback
@@ -102,7 +102,7 @@ class Main
         const header: ({ name: string; value?: string; inline?: boolean })[] = [
             {
                 name: "Version",
-                value: this.version,
+                value: `v${this.version}`,
                 inline: true
             },
             {
@@ -168,13 +168,13 @@ class Main
 
         return [
             {
-                name: `Changelog for ${v}`,
+                name: `Changelog for v${v}`,
                 value: output
             }
         ];
     }
 
-    react(message: Message, emoteName: string, emoteID: string)
+    react(message: Message, phrase: string, emoteID: string)
     {
         // Make sure the message happened in a guild
         if (!message.inGuild()) return;
@@ -185,21 +185,16 @@ class Main
 
         // Fetch the guild
         const guild = this.client.guilds.cache.get(message.guildId);
-        if (!(guild instanceof Guild)) return;
+        if (guild === undefined) return;
 
-        if (message.content.toLowerCase().startsWith(emoteName) ||
-            message.content.toLowerCase().includes(" " + emoteName) ||
-            message.content.toLowerCase().includes(":" + emoteName))
-        {
-            try
-            {
-                message.react(emoteID).then(() => console.log(`${timestamp()} Reacted with emote ${emoteName} in #${channel.name}, ${guild.name}`));
-            }
-            catch (err)
-            {
-                console.log(`${timestamp()} Failed to react with emote ${emoteName} in #${channel.name}, ${guild.name} with error ${err}`);
-            }
-        }
+        // Fetch the emote
+        const emote = this.client.emojis.cache.get(emoteID);
+        if (emote === undefined) return;
+
+        if (message.content.toLowerCase().startsWith(phrase) ||
+            message.content.toLowerCase().includes(" " + phrase) ||
+            message.content.toLowerCase().includes(":" + phrase))
+            message.react(emote).then(() => console.log(`${timestamp()} Reacted with emote ${emote} to phrase '${phrase}' in #${channel.name}, ${guild.name}`));
     }
 
     // components? has to be of type 'any[]', otherwise it breaks
