@@ -1,6 +1,12 @@
 {
     "changelog": [
         {
+            "version": "5.2",
+            "changes": [
+                "Added reaction roles"
+            ]
+        },
+        {
             "version": "5.1",
             "changes": [
                 "Renamed `/remind` to `/reminder create`",
@@ -161,12 +167,6 @@
             "changes": [
                 "Added `jiggly` command",
                 "Added `crush` command"
-            ]
-        },
-        {
-            "version": "2.9",
-            "changes": [
-                "Added `understandable` command"
             ]
         },
         {
