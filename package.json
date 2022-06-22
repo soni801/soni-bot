@@ -22,7 +22,7 @@
     },
     "scripts": {
         "dev": "ts-node src/main.ts",
-        "deploy": "ts-node src/deploy.ts",
+        "deploy": "node build/deploy.js",
         "typeorm": "typeorm-ts-node-commonjs",
         "build": "tsc",
         "start": "node build/main.js"
