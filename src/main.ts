@@ -1,12 +1,13 @@
 // Imports
 import { AppDataSource } from "./data-source";
-import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message } from "discord.js";
+import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message, User, MessageReaction, PartialMessageReaction, PartialUser } from "discord.js";
 import dotenv from 'dotenv';
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
 import { Changelog, Command } from "./types";
 import { DataSource } from "typeorm";
 import Reminder from "./entity/Reminder";
+import ReactionRole from "./entity/ReactionRole";
 
 // Utility functions
 function randomNumber(min: number, max: number) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -16,7 +17,19 @@ function capitalizeFirstLetter(string: string) { return string.charAt(0).toUpper
 class Main
 {
     // Create a Client instance
-    client = new Client<true>({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ] });
+    client = new Client<true>({
+        intents: [
+            Intents.FLAGS.GUILDS,
+            Intents.FLAGS.GUILD_MESSAGES,
+            Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+        ],
+        partials: [
+            "MESSAGE",
+            "REACTION"
+        ]
+    });
+
+    // Define metadata
     version = process.env.npm_package_version;
     dataSource?: DataSource;
 
@@ -34,9 +47,6 @@ class Main
         this.changelog.forEach(version => version.label = `v${version.version}`);
         this.changelog.forEach(version => version.value = version.version);
 
-        // Register interaction callback
-        this.client.on("interactionCreate", interaction => this.handleInteraction(interaction));
-
         // Register ready callback
         this.client.once("ready", () =>
         {
@@ -51,6 +61,15 @@ class Main
             this.react(message, "ew", "808988372948615178");
             this.react(message, "dbrug", "808989500058894376");
         });
+
+        // Register interaction callback
+        this.client.on("interactionCreate", interaction => this.handleInteraction(interaction));
+
+        // Register reaction creation callback
+        this.client.on("messageReactionAdd", (reaction, user) => this.handleReaction(reaction, user, true));
+
+        // Register reaction removal callback
+        this.client.on("messageReactionRemove", (reaction, user) => this.handleReaction(reaction, user, false));
     }
 
     async start()
@@ -71,7 +90,7 @@ class Main
 
     async fetchReminders(due: boolean, user?: string): Promise<Reminder[]>
     {
-        // Fetch all reminders in the past that are not reminded
+        // Fetch all reminders that are not reminded
         let reminders = await Reminder.find({ where: { reminded: false } });
 
         // Filter to only include due reminders if desired
@@ -219,7 +238,7 @@ class Main
 
     async remind(reminder: Reminder)
     {
-        // Fetch the channel from the client cache
+        // Fetch the channel and user from the client cache
         const channel = await this.client.channels.fetch(reminder.channel);
         const user = await this.client.users.fetch(reminder.user);
 
@@ -504,6 +523,39 @@ class Main
             }
 
             console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username}#${interaction.user.discriminator} in #${channel.name}, ${interaction.guild}`);
+        }
+    }
+
+    async handleReaction(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, reactionExists: boolean)
+    {
+        // Get all registered reaction roles
+        const reactionRoles = await ReactionRole.find();
+
+        // Assign role if reaction role is registered
+        if (reactionRoles.filter(rr => rr.message === reaction.message.id && rr.reaction === reaction.emoji.id).length > 0)
+        {
+            // Get the role ID from the database
+            const roleID = reactionRoles[0].role;
+
+            // Make sure the user is not partial
+            if (user.partial) user = await user.fetch();
+
+            // Fetch the guild
+            const guild = reaction.message.guild;
+            if (!guild) return;
+
+            // Fetch the GuildMember of the user
+            const member = guild.members.cache.get(user.id);
+            if (!member) return;
+
+            // Fetch the role
+            const role = guild.roles.cache.get(roleID);
+            if (!role) return;
+
+            // Set the role
+            if (reactionExists) await member.roles.add(role);
+            else await member.roles.remove(role);
+            console.log(`${timestamp()} Set role '${role.name}' to ${reactionExists} on user ${user.tag} in ${guild.name}`);
         }
     }
 }

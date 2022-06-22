@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import Reminder from "./entity/Reminder";
 import dotenv from "dotenv";
+import ReactionRole from "./entity/ReactionRole";
 
 dotenv.config();
 
@@ -14,7 +15,10 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_DB,
     synchronize: true,
     logging: false,
-    entities: [ Reminder ],
+    entities: [
+        Reminder,
+        ReactionRole
+    ],
     migrations: [],
     subscribers: [],
 });
