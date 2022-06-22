@@ -1,6 +1,6 @@
 // Imports
 import { AppDataSource } from "./data-source";
-import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message } from "discord.js";
+import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message, Guild } from "discord.js";
 import dotenv from 'dotenv';
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
@@ -165,15 +165,16 @@ class Main
 
     react(message: Message, emoteName: string, emoteID: string)
     {
-        // Make sure the interaction happened in a guild
+        // Make sure the message happened in a guild
         if (!message.inGuild()) return;
 
-        // FIXME: This is cursed
-        const channel = this.client.channels.cache.get(message.channelId)!;
+        // Fetch the channel
+        const channel = this.client.channels.cache.get(message.channelId);
         if (!(channel instanceof TextChannel)) return;
 
-        // FIXME: This is also cursed
-        const guild = this.client.guilds.cache.get(message.guildId)!;
+        // Fetch the guild
+        const guild = this.client.guilds.cache.get(message.guildId);
+        if (!(guild instanceof Guild)) return;
 
         if (message.content.toLowerCase().startsWith(emoteName) ||
             message.content.toLowerCase().includes(" " + emoteName) ||

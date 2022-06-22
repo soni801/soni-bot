@@ -6,6 +6,7 @@
                 "Oops I accidentally rewrote the entire bot again",
                 "Backend changes to reminder format",
                 "Now stores data between sessions",
+                "Reminder message now shows relative time",
                 "General performance improvements and code changes"
             ]
         },
