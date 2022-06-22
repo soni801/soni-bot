@@ -16,7 +16,7 @@ function capitalizeFirstLetter(string: string) { return string.charAt(0).toUpper
 class Main
 {
     // Create a Client instance
-    client = new Client<true>({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+    client = new Client<true>({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ] });
     version = "v5.0"; // TODO: Fetch this from package.json
 
     commands = commandFile as Command[];
@@ -59,17 +59,28 @@ class Main
         this.dataSource = await AppDataSource.initialize();
 
         // Set an interval for checking stored reminders
-        setInterval(() => this.checkReminders(this), 1000);
+        setInterval(async () =>
+        {
+            const reminders = await this.fetchReminders(true);
+            reminders.forEach(r => this.remind(r));
+        }, 1000);
 
         // Log in to the client
         await this.client.login(process.env.TOKEN);
     }
 
-    async checkReminders(self: Main)
+    async fetchReminders(due: boolean, user?: string): Promise<Reminder[]>
     {
         // Fetch all reminders in the past that are not reminded
-        const reminders = (await Reminder.find({ where: { reminded: false } })).filter(r => r.due.getTime() <= new Date().getTime() );
-        reminders.forEach(r => self.remind(r));
+        let reminders = await Reminder.find({ where: { reminded: false } });
+
+        // Filter to only include due reminders if desired
+        if (due) reminders = reminders.filter(r => r.due.getTime() <= new Date().getTime());
+
+        // Filter to only include reminders for a specific user if desired
+        if (user) reminders = reminders.filter(r => r.user === user);
+
+        return reminders;
     }
 
     embed(name: string, fields: any)
@@ -191,10 +202,11 @@ class Main
         }
     }
 
-    respond(interaction: CommandInteraction<"cached">, fields = [] as any[], components?: any) // FIXME: Make this not of type any
+    // components? has to be of type 'any[]', otherwise it breaks
+    respond(interaction: CommandInteraction<"cached">, fields = [] as any[], components?: any[])
     {
-        // FIXME: This is cursed
-        const channel = this.client.channels.cache.get(interaction.channelId)!;
+        // Fetch the channel
+        const channel = this.client.channels.cache.get(interaction.channelId);
         if (!(channel instanceof TextChannel)) return;
 
         // Declare the message for sending
@@ -230,7 +242,7 @@ class Main
         });
 
         // Log the reminder
-        console.log(`${timestamp()} Reminded ${user.username}#${user.discriminator} of '${reminder.content}' after ${reminder.due.getTime() - reminder.createdAt.getTime()}ms`);
+        console.log(`${timestamp()} Reminded ${user.username}#${user.discriminator} of '${reminder.content}'`);
 
         // Change the reminded state of the reminder
         reminder.reminded = true;
@@ -425,49 +437,69 @@ class Main
                         }
                     ]);
                     break;
-                case "remind":
-                    // Fetch data from command
-                    const content = interaction.options.getString("reminder", true);
-                    let time = interaction.options.getInteger("time", true); // Modifiable to change unit
-                    const unit = interaction.options.getString("unit", true);
-
-                    // Calculate time offset in ms
-                    // noinspection FallThroughInSwitchStatementJS
-                    switch (unit)
+                case "reminder":
+                    switch (interaction.options.getSubcommand())
                     {
-                        case "days": time *= 24;
-                        case "hours": time *= 60;
-                        case "minutes": time *= 60;
-                        case "seconds": time *= 1000;
+                        case "create":
+                            // Fetch data from command
+                            const content = interaction.options.getString("reminder", true);
+                            let time = interaction.options.getInteger("time", true); // Modifiable to change unit
+                            const unit = interaction.options.getString("unit", true);
+
+                            // Calculate time offset in ms
+                            // noinspection FallThroughInSwitchStatementJS
+                            switch (unit)
+                            {
+                                case "days": time *= 24;
+                                case "hours": time *= 60;
+                                case "minutes": time *= 60;
+                                case "seconds": time *= 1000;
+                            }
+
+                            // Store values
+                            const user = interaction.user.id;
+                            const channel = interaction.channelId;
+                            const due = new Date(interaction.createdTimestamp + time);
+
+                            // Create and save the reminder
+                            const reminder = new Reminder({ user, channel, content, due });
+                            await reminder.save();
+
+                            // Send a confirmation to the user
+                            // This is done before modifying the time
+                            this.respond(interaction, [
+                                {
+                                    name: "Reminder registered",
+                                    value: content
+                                },
+                                {
+                                    name: "\u200b",
+                                    value: `I will remind you <t:${(due.getTime() / 1000).toFixed(0)}:R>`
+                                }
+                            ]);
+                            break;
+                        case "list":
+                            // Fetch reminders for the user that called the command
+                            const reminders = await this.fetchReminders(false, interaction.user.id);
+
+                            // Determine the output (relevant reminders, stringified)
+                            let output = "";
+                            reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
+                            if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
+
+                            this.respond(interaction, [
+                                {
+                                    name: "Your active reminders",
+                                    value: output
+                                }
+                            ]);
                     }
-
-                    // Store values
-                    const user = interaction.user.id;
-                    const channel = interaction.channelId;
-                    const due = new Date(interaction.createdTimestamp + time);
-
-                    // Create and save the reminder
-                    const reminder = new Reminder({ user, channel, content, due });
-                    await reminder.save();
-
-                    // Send a confirmation to the user
-                    // This is done before modifying the time
-                    this.respond(interaction, [
-                        {
-                            name: "Reminder registered",
-                            value: content
-                        },
-                        {
-                            name: "\u200b",
-                            value: `I will remind you <t:${(due.getTime() / 1000).toFixed(0)}:R>`
-                        }
-                    ]);
             }
         }
         else if (interaction.isMessageComponent() && interaction.isSelectMenu())
         {
-            // FIXME: This is cursed
-            const channel = this.client.channels.cache.get(interaction.channelId)!;
+            // Fetch the channel
+            const channel = this.client.channels.cache.get(interaction.channelId);
             if (!(channel instanceof TextChannel)) return;
 
             switch (interaction.customId)
