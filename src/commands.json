@@ -117,6 +117,51 @@
                     "type": 1
                 }
             ]
+        },
+        {
+            "name": "reactionrole",
+            "description": "Manage reaction roles in a server",
+            "category": "moderation",
+            "options": [
+                {
+                    "name": "create",
+                    "description": "Create a reaction role",
+                    "type": 1,
+                    "options": [
+                        {
+                            "name": "message",
+                            "description": "The message to register the reaction role for (right click, copy ID)",
+                            "type": 3,
+                            "required": true
+                        },
+                        {
+                            "name": "emote",
+                            "description": "The emote used for the reaction role (type one emote)",
+                            "type": 3,
+                            "required": true
+                        },
+                        {
+                            "name": "role",
+                            "description": "The role to assign",
+                            "type": 8,
+                            "required": true
+                        }
+                    ]
+                },
+                {
+                    "name": "remove",
+                    "description": "Remove a reaction role tied to a message",
+                    "type": 1,
+                    "options": [
+                        {
+                            "name": "message",
+                            "description": "The message to remove the reaction role from (right click, copy ID)",
+                            "type": 3,
+                            "required": true
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

@@ -1,11 +1,26 @@
-// Imports
+// discord.js imports
+import
+{
+    Client,
+    CommandInteraction,
+    Intents,
+    Interaction,
+    TextChannel,
+    Message,
+    User,
+    MessageReaction,
+    PartialMessageReaction,
+    PartialUser
+}
+from "discord.js";
+
+// Other imports
 import { AppDataSource } from "./data-source";
-import { Client, CommandInteraction, Intents, Interaction, TextChannel, Message, User, MessageReaction, PartialMessageReaction, PartialUser } from "discord.js";
-import dotenv from 'dotenv';
+import { DataSource } from "typeorm";
+import { Changelog, Command } from "./types";
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
-import { Changelog, Command } from "./types";
-import { DataSource } from "typeorm";
+import dotenv from 'dotenv';
 import Reminder from "./entity/Reminder";
 import ReactionRole from "./entity/ReactionRole";
 
@@ -480,7 +495,6 @@ class Main
                             await reminder.save();
 
                             // Send a confirmation to the user
-                            // This is done before modifying the time
                             this.respond(interaction, [
                                 {
                                     name: "Reminder registered",
@@ -508,6 +522,60 @@ class Main
                                 }
                             ]);
                     }
+                    break;
+                case "reactionrole":
+                    switch (interaction.options.getSubcommand())
+                    {
+                        case "create":
+                            // Fetch data from command
+                            const message = interaction.options.getString("message", true);
+                            const emote = interaction.options.getString("emote", true);
+                            const role = interaction.options.getRole("role", true);
+
+                            try
+                            {
+                                // Fetch the channel and message object
+                                const channel = this.client.channels.cache.get(interaction.channelId) as TextChannel;
+                                const messageObject = await channel.messages.fetch(message);
+
+                                // Define the reaction and react using it
+                                const reaction = emote.trim();
+                                await messageObject.react(reaction);
+
+                                // Create and save the reaction role
+                                const reactionRole = new ReactionRole({ message, reaction: reaction, role: role.id });
+                                await reactionRole.save();
+
+                                // Send a confirmation to the user
+                                this.respond(interaction, [
+                                    {
+                                        name: "Reaction role registered",
+                                        value: "This reaction role is now active"
+                                    }
+                                ]);
+                            }
+                            catch
+                            {
+                                // Show an error to the user
+                                this.respond(interaction, [
+                                    {
+                                        name: "Something went wrong",
+                                        value: `An error occurred while creating the reaction role. Common problems include:
+                                        \u2022 The reaction message is not in the same channel as this command
+                                        \u2022 The emote is not available to the bot
+                                        If the problems persist, contact ${this.client.users.cache.get("443058373022318593")}.`
+                                    }
+                                ]);
+                            }
+                            break;
+                        case "remove":
+                            this.respond(interaction, [
+                                {
+                                    name: "Not available",
+                                    value: `This feature has not yet been implemented. Contact ${this.client.users.cache.get("443058373022318593")} if you want a reaction role to be removed.`
+                                }
+                            ]);
+                    }
             }
         }
         else if (interaction.isMessageComponent() && interaction.isSelectMenu())
@@ -526,22 +594,29 @@ class Main
         }
     }
 
+    /**
+     * Handles a reaction
+     *
+     * @param reaction The reaction to handle
+     * @param user The user that reacted
+     * @param reactionExists Whether the reaction was added or removed; `true` = added, `false` = removed
+     */
     async handleReaction(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, reactionExists: boolean)
     {
-        // Get all registered reaction roles
-        const reactionRoles = await ReactionRole.find();
+        // Get all matching reaction roles
+        const matchingReactionRoles = await ReactionRole.find({ where: { message: reaction.message.id, reaction: reaction.emoji.toString() } });
 
-        // Assign role if reaction role is registered
-        if (reactionRoles.filter(rr => rr.message === reaction.message.id && rr.reaction === reaction.emoji.id).length > 0)
+        if (matchingReactionRoles.length > 0)
         {
             // Get the role ID from the database
-            const roleID = reactionRoles[0].role;
+            const roleID = matchingReactionRoles[0].role;
 
-            // Make sure the user is not partial
-            if (user.partial) user = await user.fetch();
+            // Make sure nothing is partial
+            user = await user.fetch();
+            const message = await reaction.message.fetch();
 
             // Fetch the guild
-            const guild = reaction.message.guild;
+            const guild = message.guild;
             if (!guild) return;
 
             // Fetch the GuildMember of the user
