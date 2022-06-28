@@ -11,7 +11,8 @@ import
     MessageReaction,
     PartialMessageReaction,
     PartialUser,
-    SelectMenuInteraction
+    SelectMenuInteraction,
+    Permissions
 }
 from "discord.js";
 
@@ -545,6 +546,14 @@ class Main
                     }
                     break;
                 case "reactionrole":
+                    // Make sure that the user has permission to use the command
+                    if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) return this.respond({ interaction, fields: [
+                        {
+                            name: "Insufficient permissions",
+                            value: "You need the 'Manage Roles' permission to be able to use this command."
+                        }
+                    ]});
+
                     switch (interaction.options.getSubcommand())
                     {
                         case "create":
@@ -583,7 +592,9 @@ class Main
                                         name: "Something went wrong",
                                         value: `An error occurred while creating the reaction role. Common problems include:
                                         \u2022 The reaction message is not in the same channel as this command
-                                        \u2022 The emote is not available to the bot
+                                        \u2022 The emote is not available to the bot (has to be from this server or global)
+                                        \u2022 The role has higher permissions than this bot (the bot role has to be above the reaction role)
+                                        
                                         If the problems persist, contact ${this.client.users.cache.get("443058373022318593")}.`
                                     }
                                 ] });
