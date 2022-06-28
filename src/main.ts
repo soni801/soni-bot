@@ -324,7 +324,7 @@ class Main
                             components: [
                                 {
                                     type: "SELECT_MENU",
-                                    customId: "changelogSelect",
+                                    customId: "changelog",
                                     placeholder: "Select a version",
                                     minValues: null,
                                     maxValues: null,
@@ -384,7 +384,7 @@ class Main
                             components: [
                                 {
                                     type: "SELECT_MENU",
-                                    customId: "helpSelect",
+                                    customId: "help",
                                     placeholder: "Select a category",
                                     minValues: null,
                                     maxValues: null,
@@ -608,8 +608,8 @@ class Main
             // Respond with the change
             switch (interaction.customId)
             {
-                case "helpSelect": this.respond({ interaction, fields: this.helpMessage(interaction.values[0]) }); break;
-                case "changelogSelect": this.respond({ interaction, fields: this.changelogMessage(interaction.values[0]) });
+                case "help": this.respond({ interaction, fields: this.helpMessage(interaction.values[0]) }); break;
+                case "changelog": this.respond({ interaction, fields: this.changelogMessage(interaction.values[0]) });
             }
         }
     }
