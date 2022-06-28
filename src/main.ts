@@ -10,7 +10,8 @@ import
     User,
     MessageReaction,
     PartialMessageReaction,
-    PartialUser
+    PartialUser,
+    SelectMenuInteraction
 }
 from "discord.js";
 
@@ -20,7 +21,7 @@ import { DataSource } from "typeorm";
 import { Changelog, Command } from "./types";
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import Reminder from "./entity/Reminder";
 import ReactionRole from "./entity/ReactionRole";
 
@@ -117,17 +118,25 @@ class Main
         return reminders;
     }
 
-    embed(name: string, fields: any)
+    embed(name: string, fields?: any[], image?: string, footer?: { text: string, icon_url: string | null })
     {
-        return {
+        // This has to be of type 'any' to avoid TS2740
+        const embed: any = {
             color: 0x3ba3a1,
             author: {
                 name: name,
                 icon_url: "https://cdn.discordapp.com/avatars/755787461040537672/8d9976baa914802cab2e4c9ecd5a9b29.webp"
             },
             fields: fields,
-            timestamp: new Date()
+            timestamp: new Date().getTime(),
+            footer: footer
         };
+
+        if (image) embed.image = {
+            url: image
+        };
+
+        return embed;
     }
 
     helpMessage(category?: string)
@@ -231,24 +240,29 @@ class Main
             message.react(emote).then(() => console.log(`${timestamp()} Reacted with emote ${emote} to phrase '${phrase}' in #${channel.name}, ${guild.name}`));
     }
 
-    // components? has to be of type 'any[]', otherwise it breaks
-    respond(interaction: CommandInteraction<"cached">, fields = [] as any[], components?: any[])
+    // Several arguments have to be of type 'any[]', otherwise they break
+    respond(data: { interaction: CommandInteraction<"cached"> | SelectMenuInteraction<"cached">, fields?: any[], components?: any[], image?: string })
     {
+        let title: string;
+        if (data.interaction instanceof CommandInteraction) title = data.interaction.commandName;
+        else title = data.interaction.customId;
+
         // Fetch the channel
-        const channel = this.client.channels.cache.get(interaction.channelId);
+        const channel = this.client.channels.cache.get(data.interaction.channelId);
         if (!(channel instanceof TextChannel)) return;
 
         // Declare the message for sending
         const message = {
             content: null,
             embeds: [
-                this.embed(interaction.commandName, fields)
+                this.embed(title, data.fields, data.image, { text: `Called by ${data.interaction.user.username}`, icon_url: data.interaction.user.avatarURL() })
             ],
-            components: components
+            components: data.components
         };
 
-        // Reply and log
-        interaction.editReply(message).then(() => console.log(`${timestamp()} Executed command '${interaction.commandName}' from ${interaction.user.username}#${interaction.user.discriminator} in #${channel.name}, ${interaction.guild.name}`));
+        // Reply or update original message based on interaction type
+        if (data.interaction instanceof CommandInteraction) data.interaction.editReply(message).then(() => console.log(`${timestamp()} Executed command '${title}' from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild.name}`));
+        else data.interaction.update(message).then(() => console.log(`${timestamp()} Responded to ${title} change from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild}`));
     }
 
     async remind(reminder: Reminder)
@@ -290,19 +304,21 @@ class Main
             switch (interaction.commandName)
             {
                 case "about":
-                    await this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: "What am I?",
-                            value: `I am a lightweight toolkit bot developed by ${this.client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`
+                            value: `I am a lightweight toolkit bot developed by ${this.client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`,
+                            inline: true
                         },
                         {
                             name: "How do I function?",
-                            value: "There is more details about each command in the /help command, and every command has autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/)."
+                            value: "There is more details about each command in the /help command, and every command has autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/).",
+                            inline: true
                         }
-                    ]);
+                    ] });
                     break;
                 case "changelog":
-                    this.respond(interaction, [ this.changelogMessage() ], [
+                    this.respond({ interaction, fields: [ this.changelogMessage() ], components: [
                         {
                             type: "ACTION_ROW",
                             components: [
@@ -317,29 +333,34 @@ class Main
                                 }
                             ]
                         }
-                    ]);
+                    ] });
                     break;
                 case "svensdum":
-                    await interaction.reply("https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png");
+                    this.respond({ interaction, image: "https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png" });
                     break;
                 case "responses":
-                    this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: "Want the best selection of responses to send to your friends?",
                             value: "Check out [our response site](https://responses.yessness.com)"
                         }
-                    ]);
+                    ] });
                     break;
                 case "family":
-                    await interaction.reply("https://cdn.yessness.com/family.png");
+                    this.respond({ interaction, fields: [
+                        {
+                            name: "\u200b",
+                            value: `Wanna join the family? Just tell ${this.client.users.cache.get("443058373022318593")}, and we'll figure it out.`
+                        }
+                    ], image: "https://cdn.yessness.com/family.png" });
                     break;
                 case "uptime":
-                    this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: "Soni Bot uptime",
                             value: `${Math.round(this.client.uptime / 1000 / 60)} minutes`
                         }
-                    ]);
+                    ] });
                     break;
                 case "ping":
                     // Send a message
@@ -348,16 +369,16 @@ class Main
                     // Fetch the message, and check the latency
                     const message = await interaction.fetchReply();
 
-                    this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: ":ping_pong: Pong!",
                             value: `Soni Bot latency: ${message.createdTimestamp - interaction.createdTimestamp}ms
                             API latency: ${Math.round(this.client.ws.ping)}ms`
                         }
-                    ]);
+                    ] });
                     break;
                 case "help":
-                    this.respond(interaction, [ this.helpMessage() ], [
+                    this.respond({ interaction, fields: [ this.helpMessage() ], components: [
                         {
                             type: "ACTION_ROW",
                             components: [
@@ -393,10 +414,10 @@ class Main
                                 }
                             ]
                         }
-                    ]);
+                    ] });
                     break;
                 case "8ball":
-                    this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: "Question",
                             value: interaction.options.getString("question")
@@ -422,18 +443,18 @@ class Main
                                 }
                             })()
                         }
-                    ]);
+                    ] });
                     break;
                 case "dice":
-                    this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: "Die result",
                             value: randomNumber(1, 6).toString()
                         }
-                    ]);
+                    ] });
                     break;
                 case "joke":
-                    this.respond(interaction, [
+                    this.respond({ interaction, fields: [
                         {
                             name: "Joke",
                             value: (() =>
@@ -464,7 +485,7 @@ class Main
                                 }
                             })()
                         }
-                    ]);
+                    ] });
                     break;
                 case "reminder":
                     switch (interaction.options.getSubcommand())
@@ -495,7 +516,7 @@ class Main
                             await reminder.save();
 
                             // Send a confirmation to the user
-                            this.respond(interaction, [
+                            this.respond({ interaction, fields: [
                                 {
                                     name: "Reminder registered",
                                     value: content
@@ -504,7 +525,7 @@ class Main
                                     name: "\u200b",
                                     value: `I will remind you <t:${(due.getTime() / 1000).toFixed(0)}:R>`
                                 }
-                            ]);
+                            ] });
                             break;
                         case "list":
                             // Fetch reminders for the user that called the command
@@ -515,12 +536,12 @@ class Main
                             reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
                             if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
 
-                            this.respond(interaction, [
+                            this.respond({ interaction, fields: [
                                 {
                                     name: "Your active reminders",
                                     value: output
                                 }
-                            ]);
+                            ] });
                     }
                     break;
                 case "reactionrole":
@@ -547,17 +568,17 @@ class Main
                                 await reactionRole.save();
 
                                 // Send a confirmation to the user
-                                this.respond(interaction, [
+                                this.respond({ interaction, fields: [
                                     {
                                         name: "Reaction role registered",
                                         value: "This reaction role is now active"
                                     }
-                                ]);
+                                ] });
                             }
                             catch
                             {
                                 // Show an error to the user
-                                this.respond(interaction, [
+                                this.respond({ interaction, fields: [
                                     {
                                         name: "Something went wrong",
                                         value: `An error occurred while creating the reaction role. Common problems include:
@@ -565,16 +586,16 @@ class Main
                                         \u2022 The emote is not available to the bot
                                         If the problems persist, contact ${this.client.users.cache.get("443058373022318593")}.`
                                     }
-                                ]);
+                                ] });
                             }
                             break;
                         case "remove":
-                            this.respond(interaction, [
+                            this.respond({ interaction, fields: [
                                 {
                                     name: "Not available",
                                     value: `This feature has not yet been implemented. Contact ${this.client.users.cache.get("443058373022318593")} if you want a reaction role to be removed.`
                                 }
-                            ]);
+                            ] });
                     }
             }
         }
@@ -584,13 +605,12 @@ class Main
             const channel = this.client.channels.cache.get(interaction.channelId);
             if (!(channel instanceof TextChannel)) return;
 
+            // Respond with the change
             switch (interaction.customId)
             {
-                case "helpSelect": await interaction.update({embeds: [this.embed("help", this.helpMessage(interaction.values[0]))]}); break;
-                case "changelogSelect": await interaction.update({embeds: [this.embed("changelog", this.changelogMessage(interaction.values[0]))]});
+                case "helpSelect": this.respond({ interaction, fields: this.helpMessage(interaction.values[0]) }); break;
+                case "changelogSelect": this.respond({ interaction, fields: this.changelogMessage(interaction.values[0]) });
             }
-
-            console.log(`${timestamp()} Responded to ${interaction.customId} change from ${interaction.user.username}#${interaction.user.discriminator} in #${channel.name}, ${interaction.guild}`);
         }
     }
 
