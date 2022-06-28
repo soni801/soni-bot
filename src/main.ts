@@ -546,13 +546,13 @@ class Main
                     }
                     break;
                 case "reactionrole":
-                    // Make sure that the user has permission to use the command
+                    // Make sure the user has permission to use the command
                     if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) return this.respond({ interaction, fields: [
                         {
                             name: "Insufficient permissions",
                             value: "You need the 'Manage Roles' permission to be able to use this command."
                         }
-                    ]});
+                    ] });
 
                     switch (interaction.options.getSubcommand())
                     {
@@ -562,43 +562,65 @@ class Main
                             const emote = interaction.options.getString("emote", true);
                             const role = interaction.options.getRole("role", true);
 
+                            // Fetch the bot user
+                            const me = interaction.guild.me;
+                            if (!me) return;
+
+                            // Make sure the role is available to assign
+                            if (role.comparePositionTo(me.roles.highest) > 0) return this.respond({ interaction, fields: [
+                                {
+                                    name: "Role has too high permissions",
+                                    value: "You can only assign roles that are lower in the hierarchy than the role(s) for this bot."
+                                }
+                            ] });
+
+                            // Fetch the channel and message object
+                            let channel, messageObject;
                             try
                             {
-                                // Fetch the channel and message object
-                                const channel = this.client.channels.cache.get(interaction.channelId) as TextChannel;
-                                const messageObject = await channel.messages.fetch(message);
-
-                                // Define the reaction and react using it
-                                const reaction = emote.trim();
-                                await messageObject.react(reaction);
-
-                                // Create and save the reaction role
-                                const reactionRole = new ReactionRole({ message, reaction: reaction, role: role.id });
-                                await reactionRole.save();
-
-                                // Send a confirmation to the user
-                                this.respond({ interaction, fields: [
-                                    {
-                                        name: "Reaction role registered",
-                                        value: "This reaction role is now active"
-                                    }
-                                ] });
+                                channel = this.client.channels.cache.get(interaction.channelId) as TextChannel;
+                                messageObject = await channel.messages.fetch(message);
                             }
                             catch
                             {
                                 // Show an error to the user
-                                this.respond({ interaction, fields: [
+                                return this.respond({ interaction, fields: [
                                     {
-                                        name: "Something went wrong",
-                                        value: `An error occurred while creating the reaction role. Common problems include:
-                                        \u2022 The reaction message is not in the same channel as this command
-                                        \u2022 The emote is not available to the bot (has to be from this server or global)
-                                        \u2022 The role has higher permissions than this bot (the bot role has to be above the reaction role)
-                                        
-                                        If the problems persist, contact ${this.client.users.cache.get("443058373022318593")}.`
+                                        name: "Incorrect channel",
+                                        value: "The reaction message must be in the same channel as this command interaction"
                                     }
                                 ] });
                             }
+
+                            // Define the reaction and react using it
+                            let reaction;
+                            try
+                            {
+                                reaction = emote.trim();
+                                await messageObject.react(reaction);
+                            }
+                            catch
+                            {
+                                // Show an error to the user
+                                return this.respond({ interaction, fields: [
+                                    {
+                                        name: "Invalid emote",
+                                        value: "The reaction emote has to either be from this server or be a global emoji"
+                                    }
+                                ] });
+                            }
+
+                            // Create and save the reaction role
+                            const reactionRole = new ReactionRole({ message, reaction: reaction, role: role.id });
+                            await reactionRole.save();
+
+                            // Send a confirmation to the user
+                            this.respond({ interaction, fields: [
+                                {
+                                    name: "Reaction role registered",
+                                    value: "This reaction role is now active"
+                                }
+                            ] });
                             break;
                         case "remove":
                             this.respond({ interaction, fields: [
