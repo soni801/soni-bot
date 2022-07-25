@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "5.4",
+            "changes": [
+                "Added 9 new jokes",
+                "Removed bad jokes",
+                "Changed backend joke system",
+                "Fixed a small display bug in the changelog"
+            ]
+        },
+        {
             "version": "5.3",
             "changes": [
                 "Improved error messages in the `/reactionrole create` command",
@@ -165,15 +174,7 @@
             ]
         },
         {
-            "version": "2.11",
-            "changes": [
-                "Improved `help` command",
-                "Removed `ara` command",
-                "Removed `shadow` command"
-            ]
-        },
-        {
-            "version": "Older",
+            "version": "<2.12",
             "changes": [
                 "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
             ]

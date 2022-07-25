@@ -22,12 +22,13 @@ import { DataSource } from "typeorm";
 import { Changelog, Command } from "./types";
 import { commands as commandFile } from "./commands.json";
 import { changelog as changelogFile } from "./changelog.json";
+import { jokes } from "./jokes.json";
 import dotenv from "dotenv";
 import Reminder from "./entity/Reminder";
 import ReactionRole from "./entity/ReactionRole";
 
 // Utility functions
-function randomNumber(min: number, max: number) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randomNumber(min: number, max: number) { return Math.floor(Math.random() * max) + min; }
 function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
 function capitalizeFirstLetter(string: string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
@@ -427,7 +428,7 @@ class Main
                             name: "Answer",
                             value: (() =>
                             {
-                                switch (randomNumber(0, 11))
+                                switch (randomNumber(0, 12))
                                 {
                                     case 0: return "why do you ask me";
                                     case 1: return "find out yourself";
@@ -450,41 +451,16 @@ class Main
                     this.respond({ interaction, fields: [
                         {
                             name: "Die result",
-                            value: randomNumber(1, 6).toString()
+                            value: randomNumber(1, 7).toString()
                         }
                     ] });
                     break;
                 case "joke":
+                    // Respond with a random joke from the list of jokes
                     this.respond({ interaction, fields: [
                         {
                             name: "Joke",
-                            value: (() =>
-                            {
-                                switch (randomNumber(0, 20))
-                                {
-                                    case 0: return "two guys stole a calendar. they got six months each.";
-                                    case 1: return "Autocorrect can go straight to he'll.";
-                                    case 2: return "two peanuts were walking down the street. one was a salted.";
-                                    case 3: return "i asked a friend to the gym, but they never showed up. i guess the two of us aren't gonna work out.";
-                                    case 4: return "today my son asked 'can i have a book mark?' and i burst into tears. 11 years old and he still doesn't know my name is brian.";
-                                    case 5: return "my wife is really mad at the fact that i have no sense of direction. so i packed up my stuff and right.";
-                                    case 6: return "how do you make holy water? you boil the hell out of it.";
-                                    case 7: return "im reading a book about anti-gravity. its impossible to put down!";
-                                    case 8: return "what do you call someone with no body and no nose? nobody knows.";
-                                    case 9: return "a slice of apple pie is $2.50 in Jamaica and $3.00 in the Bahamas. these are the pie rates of the caribbean.";
-                                    case 10: return "justice is a dish best served cold, if it were served warm it would be justwater.";
-                                    case 11: return "if you see a robbery at an Apple Store does that make you an iWitness?";
-                                    case 12: return "why did the invisible man turn down the job offer? he couldn't see himself doing it.";
-                                    case 13: return "what has two butts and kills people? an assassin";
-                                    case 14: return "why couldn't the bike stand up by itself? it was two tired.";
-                                    case 15: return "when a woman is giving birth, she is literally kidding.";
-                                    case 16: return "why was six sad? because seven eight nine.";
-                                    case 17: return "what did the buffalo say to his son when he dropped him off at school? bison.";
-                                    case 18: return "why did the crab never share? because he's shellfish.";
-                                    case 19: return "as a lumberjack, i know that i've cut exactly 2,417 trees. i know because every time i cut one, i keep a log.";
-                                    case 20: return "what do prisoners use to call each other? cell phones.";
-                                }
-                            })()
+                            value: jokes[randomNumber(0, jokes.length)]
                         }
                     ] });
                     break;
