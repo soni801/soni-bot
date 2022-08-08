@@ -32,6 +32,37 @@ function randomNumber(min: number, max: number) { return Math.floor(Math.random(
 function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
 function capitalizeFirstLetter(string: string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
+// Convert ms to human-readable format
+// https://stackoverflow.com/a/58826445/9088682
+function timeConversion(duration: number)
+{
+    const portions: string[] = [];
+
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0)
+    {
+        portions.push(hours + 'h');
+        duration = duration - hours * msInHour;
+    }
+
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0)
+    {
+        portions.push(minutes + 'm');
+        duration = duration - minutes * msInMinute;
+    }
+
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0)
+    {
+        portions.push(seconds + 's');
+    }
+
+    return portions.join(' ');
+}
+
 class Main
 {
     // Create a Client instance
@@ -360,13 +391,19 @@ class Main
                     this.respond({ interaction, fields: [
                         {
                             name: "Soni Bot uptime",
-                            value: `${Math.round(this.client.uptime / 1000 / 60)} minutes`
+                            value: timeConversion(this.client.uptime)
                         }
                     ] });
                     break;
                 case "ping":
+                    // FIXME: This logs 2 times
                     // Send a message
-                    await interaction.editReply(":ping_pong: Testing ping");
+                    await this.respond({ interaction, fields: [
+                        {
+                            name: ":ping_pong:",
+                            value: "Testing ping"
+                        }
+                    ] });
 
                     // Fetch the message, and check the latency
                     const message = await interaction.fetchReply();
@@ -374,7 +411,7 @@ class Main
                     this.respond({ interaction, fields: [
                         {
                             name: ":ping_pong: Pong!",
-                            value: `Soni Bot latency: ${message.createdTimestamp - interaction.createdTimestamp}ms
+                            value: `Soni Bot latency (RTT): ${message.createdTimestamp - interaction.createdTimestamp}ms
                             API latency: ${Math.round(this.client.ws.ping)}ms`
                         }
                     ] });
