@@ -1,6 +1,14 @@
 {
     "changelog": [
         {
+            "version": "5.5",
+            "changes": [
+                "Improved formatting of the uptime and ping commands",
+                "Changed the internal logging system",
+                "Fixed minor internal bugs"
+            ]
+        },
+        {
             "version": "5.4",
             "changes": [
                 "Added 9 new jokes",
@@ -165,16 +173,7 @@
             ]
         },
         {
-            "version": "2.12",
-            "changes": [
-                "Removed `sara` command",
-                "Removed `jiggly` command",
-                "Modified some replies",
-                "Added `riki` command"
-            ]
-        },
-        {
-            "version": "<2.12",
+            "version": "<2.13",
             "changes": [
                 "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
             ]

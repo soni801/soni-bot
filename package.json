@@ -1,6 +1,6 @@
 {
     "name": "soni-bot",
-    "version": "5.4",
+    "version": "5.5",
     "description": "A lightweight toolkit bot for small Discord communities.",
     "author": "Soni",
     "type": "commonjs",
