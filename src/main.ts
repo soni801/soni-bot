@@ -26,10 +26,10 @@ import { jokes } from "./jokes.json";
 import dotenv from "dotenv";
 import Reminder from "./entity/Reminder";
 import ReactionRole from "./entity/ReactionRole";
+import {createLogger, format, Logger, transports} from "winston";
 
 // Utility functions
 function randomNumber(min: number, max: number) { return Math.floor(Math.random() * max) + min; }
-function timestamp() { return `\x1b[2m[${new Date().toLocaleString()}]\x1b[0m`; }
 function capitalizeFirstLetter(string: string) { return string.charAt(0).toUpperCase() + string.slice(1); }
 
 // Convert ms to human-readable format
@@ -42,7 +42,7 @@ function timeConversion(duration: number)
     const hours = Math.trunc(duration / msInHour);
     if (hours > 0)
     {
-        portions.push(hours + 'h');
+        portions.push(hours + "h");
         duration = duration - hours * msInHour;
     }
 
@@ -50,17 +50,17 @@ function timeConversion(duration: number)
     const minutes = Math.trunc(duration / msInMinute);
     if (minutes > 0)
     {
-        portions.push(minutes + 'm');
+        portions.push(minutes + "m");
         duration = duration - minutes * msInMinute;
     }
 
     const seconds = Math.trunc(duration / 1000);
     if (seconds > 0)
     {
-        portions.push(seconds + 's');
+        portions.push(seconds + "s");
     }
 
-    return portions.join(' ');
+    return portions.join(" ");
 }
 
 class Main
@@ -81,6 +81,7 @@ class Main
     // Define metadata
     version = process.env.npm_package_version;
     dataSource?: DataSource;
+    logger: Logger;
 
     // Load commands and changelog
     commands = commandFile as Command[];
@@ -96,11 +97,31 @@ class Main
         this.changelog.forEach(version => version.label = `v${version.version}`);
         this.changelog.forEach(version => version.value = version.version);
 
+        // Initialise logger
+        this.logger = createLogger({
+            // This needs weird code to have uppercase level for some reason, even though the GitHub issue is closed
+            // https://github.com/winstonjs/winston/issues/1345
+            format: format.combine(
+                format(info => {
+                    info.level = info.level.toUpperCase()
+                    return info;
+                })(),
+                format.colorize(),
+                format.timestamp({ format: "DD/MM/YYYY HH:mm:ss" }),
+                format.printf(info => `[${info.timestamp}] [${info.level}] ${info.message}`)
+            ),
+            transports: [
+                new transports.Console(),
+                new transports.File({ filename: `logs/${new Date().toISOString()}.log`, options: { flags: "w" }, format: format.uncolorize() }),
+                new transports.File({ filename: "logs/latest.log", options: { flags: "w" }, format: format.uncolorize() })
+            ]
+        });
+
         // Register ready callback
         this.client.once("ready", () =>
         {
             this.client.user.setActivity("/help", { type: "LISTENING" });
-            console.log(`${timestamp()} Ready!`);
+            this.logger.info("Ready!");
         });
 
         // Register message callback
@@ -134,7 +155,7 @@ class Main
         }, 1000);
 
         // Log in to the client
-        await this.client.login(process.env.TOKEN);
+        this.client.login(process.env.TOKEN).then(() => this.logger.info("Successfully logged in"));
     }
 
     async fetchReminders(due: boolean, user?: string): Promise<Reminder[]>
@@ -270,7 +291,7 @@ class Main
         if (message.content.toLowerCase().startsWith(phrase) ||
             message.content.toLowerCase().includes(" " + phrase) ||
             message.content.toLowerCase().includes(":" + phrase))
-            message.react(emote).then(() => console.log(`${timestamp()} Reacted with emote ${emote} to phrase '${phrase}' in #${channel.name}, ${guild.name}`));
+            message.react(emote).then(() => this.logger.info(`Reacted with emote ${emote} to phrase '${phrase}' in #${channel.name}, ${guild.name}`));
     }
 
     // Several arguments have to be of type 'any[]', otherwise they break
@@ -294,8 +315,8 @@ class Main
         };
 
         // Reply or update original message based on interaction type
-        if (data.interaction instanceof CommandInteraction) data.interaction.editReply(message).then(() => console.log(`${timestamp()} Executed command '${title}' from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild.name}`));
-        else data.interaction.update(message).then(() => console.log(`${timestamp()} Responded to ${title} change from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild}`));
+        if (data.interaction instanceof CommandInteraction) data.interaction.editReply(message).then(() => this.logger.info(`Executed command '${title}' from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild.name}`));
+        else data.interaction.update(message).then(() => this.logger.info(`Responded to ${title} change from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild}`));
     }
 
     async remind(reminder: Reminder)
@@ -318,7 +339,7 @@ class Main
         });
 
         // Log the reminder
-        console.log(`${timestamp()} Reminded ${user.username}#${user.discriminator} of '${reminder.content}'`);
+        this.logger.info(`Reminded ${user.username}#${user.discriminator} of '${reminder.content}'`);
 
         // Change the reminded state of the reminder
         reminder.reminded = true;
@@ -696,11 +717,11 @@ class Main
             // Set the role
             if (reactionExists) await member.roles.add(role);
             else await member.roles.remove(role);
-            console.log(`${timestamp()} Set role '${role.name}' to ${reactionExists} on user ${user.tag} in ${guild.name}`);
+            this.logger.info(`Set role '${role.name}' to ${reactionExists} on user ${user.tag} in ${guild.name}`);
         }
     }
 }
 
 dotenv.config();
 const bot = new Main();
-bot.start().then(() => console.log(`${timestamp()} Successfully logged in`));
+bot.start().then(() => {}); // Ignore the promise returned from start()
