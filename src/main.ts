@@ -295,7 +295,7 @@ class Main
     }
 
     // Several arguments have to be of type 'any[]', otherwise they break
-    respond(data: { interaction: CommandInteraction<"cached"> | SelectMenuInteraction<"cached">, fields?: any[], components?: any[], image?: string })
+    respond(data: { interaction: CommandInteraction<"cached"> | SelectMenuInteraction<"cached">, fields?: any[], components?: any[], image?: string, suppressLogging?: boolean })
     {
         let title: string;
         if (data.interaction instanceof CommandInteraction) title = data.interaction.commandName;
@@ -315,8 +315,8 @@ class Main
         };
 
         // Reply or update original message based on interaction type
-        if (data.interaction instanceof CommandInteraction) data.interaction.editReply(message).then(() => this.logger.info(`Executed command '${title}' from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild.name}`));
-        else data.interaction.update(message).then(() => this.logger.info(`Responded to ${title} change from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild}`));
+        if (data.interaction instanceof CommandInteraction) data.interaction.editReply(message).then(() => { if (!data.suppressLogging) this.logger.info(`Executed command '${title}' from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild.name}`); });
+        else data.interaction.update(message).then(() => { if (!data.suppressLogging) this.logger.info(`Responded to ${title} change from ${data.interaction.user.username}#${data.interaction.user.discriminator} in #${channel.name}, ${data.interaction.guild}`); });
     }
 
     async remind(reminder: Reminder)
@@ -417,14 +417,13 @@ class Main
                     ] });
                     break;
                 case "ping":
-                    // FIXME: This logs 2 times
                     // Send a message
                     await this.respond({ interaction, fields: [
                         {
                             name: ":ping_pong:",
                             value: "Testing ping"
                         }
-                    ] });
+                    ], suppressLogging: true });
 
                     // Fetch the message, and check the latency
                     const message = await interaction.fetchReply();
