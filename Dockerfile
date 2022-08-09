@@ -3,7 +3,7 @@ FROM node:18
 WORKDIR /data
 COPY package.json .
 RUN yarn install
-COPY src ./
+COPY src ./src
 COPY .env .
 COPY tsconfig.json .
 RUN yarn run build
