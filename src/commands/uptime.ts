@@ -73,7 +73,7 @@ export default class Uptime implements Command
      * @param {number} duration The amount to convert, in milliseconds
      * @returns {string} The converted amount
      *
-     * @author theS1LV3R
+     * @author theS1LV3R, Soni
      * @since 6.0.0
      * @see {@link https://stackoverflow.com/a/58826445/9088682|This code on StackOverflow}
      */
@@ -81,13 +81,20 @@ export default class Uptime implements Command
     {
         const portions: string[] = [];
 
-        // TODO: Add day conversion
+        // This will fail at the time of DST, but that is rare enough for us to ignore it :)
+        const msInDay = 1000 * 60 * 60 * 24;
+        const days = Math.trunc(duration / msInDay);
+        if (days > 0)
+        {
+            portions.push(days + 'd');
+            duration = duration - days * msInDay;
+        }
 
         const msInHour = 1000 * 60 * 60;
         const hours = Math.trunc(duration / msInHour);
         if (hours > 0)
         {
-            portions.push(hours + "h");
+            portions.push(hours + 'h');
             duration = duration - hours * msInHour;
         }
 
@@ -95,16 +102,19 @@ export default class Uptime implements Command
         const minutes = Math.trunc(duration / msInMinute);
         if (minutes > 0)
         {
-            portions.push(minutes + "m");
+            portions.push(minutes + 'm');
             duration = duration - minutes * msInMinute;
         }
 
-        const seconds = Math.trunc(duration / 1000);
+        const msInSecond = 1000;
+        const seconds = Math.trunc(duration / msInSecond);
         if (seconds > 0)
         {
-            portions.push(seconds + "s");
+            portions.push(seconds + 's');
+            duration = duration - seconds * msInSecond;
         }
 
+        portions.push(duration + 'ms');
         return portions.join(" ");
     }
 }
