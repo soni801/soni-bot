@@ -1,5 +1,13 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ChatInputCommandInteraction,
+    MessageActionRowComponentBuilder,
+    SelectMenuBuilder,
+    SlashCommandBuilder,
+    WebhookEditMessageOptions
+} from 'discord.js';
 import { changelog as changelogFile } from '../changelog.json';
+import { Changelist } from '../types';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
 import { CONSTANTS } from '../util/config';
@@ -18,7 +26,7 @@ export default class Changelog implements Command
     description = 'Display changes made in a specific version';
     client: Client;
     logger = new Logger(Changelog.name);
-    private _changelog = changelogFile;
+    private _changelog = changelogFile as Changelist[];
 
     /**
      * Creates a new changelog command
@@ -32,6 +40,11 @@ export default class Changelog implements Command
     constructor(client: Client)
     {
         this.client = client;
+
+        // Format changelog to comply with select menu syntax
+        this._changelog.forEach(version => version.name = `v${version.version}`);
+        this._changelog.forEach(version => version.label = `v${version.version}`);
+        this._changelog.forEach(version => version.value = version.version);
     }
 
     /**
@@ -48,71 +61,77 @@ export default class Changelog implements Command
     {
         // Get the current version
         const version = i.options.getString('version') || process.env.npm_package_version;
+        let error = false;
 
-        // Show an error if the version is undefined
+        // Log an error if the version is undefined
         if (!version)
         {
             this.logger.error('Version is undefined');
-            return await i.editReply({ embeds: [
-                this.client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.warning)
-                    .setTitle('An error occurred')
-                    .addFields([
-                        {
-                            name: 'An internal error prevents sending the changelog',
-                            value: `Please contact ${this.client.users.cache.get("443058373022318593")} if this keeps happening.`
-                        }
-                    ])
-            ] });
+            error = true;
         }
 
-        // Show an error if the provided version does not have a changelist
+        // Log an error if the provided version does not have a changelist
         if (!this._changelog.find(ver => ver.version === version))
         {
             this.logger.error('The provided version does not have a changelist');
-            return await i.editReply({ embeds: [
-                this.client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.warning)
-                    .setTitle('Invalid version')
-                    .addFields([
-                        {
-                            name: 'The provided version does not have a changelog',
-                            value: `Please provide a valid version number.
-                            If you did not manually provide a version number, please contact ${this.client.users.cache.get("443058373022318593")}.`
-                        }
-                    ])
-            ] });
+            error = true;
         }
 
-        return await i.editReply({ embeds: [
+        // Show an error to the user if any problems occurred
+        if (error) return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle('Changelog')
-                .addFields(this.changelogMessage(version))
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('An error occurred')
+                .addFields([
+                    {
+                        name: 'An internal error prevents sending the changelog',
+                        value: `Please contact ${this.client.users.cache.get("443058373022318593")} if this keeps happening.`
+                    }
+                ])
         ] });
+
+        return await i.editReply(this.changelistMessage(version!));
     }
 
     /**
-     * Returns a changelog field for the provided version
+     * Returns a changelist message for the provided version
      *
-     * @param {string} version The version to get the changelog from
-     * @returns {{name: string, value: string}[]} A embed field containing the changelist
+     * @param {string} version The version to get the changelist from
+     * @returns {WebhookEditMessageOptions} A message containing the changelist
      *
      * @author Soni
      * @since 6.0.0
      */
-    changelogMessage(version: string)
+    changelistMessage(version: string): WebhookEditMessageOptions
     {
+        // Get the changes for the provided version
         const changes = this._changelog.find(ver => ver.version === version)!.changes;
         let changelist = "";
 
+        // Format the changes and store them in changelist
         changes.forEach(c => changelist += `\u2022 ${c}\n`);
 
-        return [
-            {
-                name: `Changelog for version ${version}`,
-                value: changelist
-            }
-        ];
+        return {
+            embeds: [
+                this.client.defaultEmbed()
+                    .setTitle('Changelog')
+                    .addFields([
+                        {
+                            name: `Changelog for version ${version}`,
+                            value: changelist
+                        }
+                    ])
+            ],
+            components: [
+                new ActionRowBuilder<MessageActionRowComponentBuilder>()
+                    .addComponents(
+                        new SelectMenuBuilder()
+                            .setCustomId('changelog')
+                            .setPlaceholder('Select a version')
+                            .addOptions(...this._changelog)
+                    )
+            ]
+        };
     }
 
     /**
@@ -126,6 +145,7 @@ export default class Changelog implements Command
             .setName(this.name)
             .setDescription(this.description)
             .addStringOption(option => option.setName('version')
-                .setDescription('The version show the changes for')) as SlashCommandBuilder;
+                .setDescription('The version show the changes for')
+                .setChoices(...this._changelog)) as SlashCommandBuilder;
     }
 }

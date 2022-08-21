@@ -6,10 +6,11 @@ export interface Command
     value?: string;
 }
 
-export interface Changelog
+export interface Changelist
 {
     version: string;
     changes: string[];
-    label?: string;
-    value?: string;
+    name: string;
+    label: string;
+    value: string;
 }

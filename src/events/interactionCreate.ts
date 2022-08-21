@@ -1,4 +1,5 @@
 import { Interaction, TextChannel } from 'discord.js';
+import Changelog from '../commands/changelog';
 import { event } from '../types/events';
 import Client from '../util/Client';
 import { CONSTANTS } from '../util/config';
@@ -48,9 +49,8 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
         // Respond with the change
         switch (i.customId)
         {
-            // TODO: Implement this
             //case "help": this.respond({ interaction, fields: this.helpMessage(interaction.values[0]) }); break;
-            //case "changelog": this.respond({ interaction, fields: this.changelogMessage(interaction.values[0]) });
+            case "changelog": await i.update(new Changelog(client).changelistMessage(i.values[0])); break;
         }
     }
 
