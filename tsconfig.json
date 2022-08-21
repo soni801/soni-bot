@@ -1,20 +1,52 @@
 {
     "compilerOptions": {
-        "lib": [
-            "es5",
-            "es6"
-        ],
-        "target": "ES2021",
-        "module": "commonjs",
         "moduleResolution": "node",
-        "rootDir": "./src",
-        "outDir": "./build",
-        "emitDecoratorMetadata": true,
+
+        "target": "es2021",
+        "lib": [
+            "es2020",
+            "dom"
+        ],
+        "module": "commonjs",
+
+        "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "sourceMap": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
+        "removeComments": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "emitDecoratorMetadata": true,
+        "sourceMap": false,
+        "incremental": true,
+
+        "declaration": false,
+        "pretty": true,
         "strict": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+
+        "outDir": "dist",
+        "rootDir": ".",
+
+        "typeRoots": [
+            "node_modules/@types",
+            "src/types"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "_dev",
+        "dist",
+        "coverage"
+    ],
+    "include": [
+        "./src/**/*",
+        "./ormconfig.ts"
+    ],
+    "ts-node": {
+        "files": true
     }
 }

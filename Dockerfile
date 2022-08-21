@@ -1,11 +1,9 @@
 # syntax=docker/dockerfile:1
 FROM node:18
 WORKDIR /data
-COPY package.json .
-RUN yarn install
-COPY src ./src
-COPY .env .
-COPY tsconfig.json .
-RUN yarn run build
-RUN yarn run deploy
-CMD ["yarn", "run", "start"]
+COPY . .
+RUN npm install -g pnpm
+RUN pnpm install
+RUN rm .env.*.local
+RUN pnpm run build
+CMD ["pnpm", "run", "start"]
