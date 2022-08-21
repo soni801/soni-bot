@@ -16,6 +16,7 @@ export default class About implements Command
     description = 'Show info about Soni Bot';
     client: Client;
     logger = new Logger(About.name);
+    category: 'bot' = 'bot';
 
     /**
      * Creates a new about command

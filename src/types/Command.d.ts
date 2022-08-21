@@ -38,6 +38,20 @@ export abstract class Command
     name: string;
 
     /**
+     * The description of the command interaction
+     *
+     * @type {string}
+     */
+    description: string;
+
+    /**
+     * The category the command belongs to
+     *
+     * @type {"bot" | "useful" | "moderation" | "fun"}
+     */
+    category: 'bot' | 'useful' | 'moderation' | 'fun';
+
+    /**
      * Creates a new Command
      *
      * @param {Client} client The Client the command is attached to

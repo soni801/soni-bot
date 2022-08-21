@@ -17,6 +17,7 @@ export default class Dice implements Command
     description = 'Roll a die';
     client: Client;
     logger = new Logger(Dice.name);
+    category: 'useful' = 'useful';
 
     /**
      * Creates a new dice command

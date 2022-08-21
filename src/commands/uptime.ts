@@ -16,6 +16,7 @@ export default class Uptime implements Command
     description = 'Show info uptime Soni Bot';
     client: Client<true>;
     logger = new Logger(Uptime.name);
+    category: 'bot' = 'bot';
 
     /**
      * Creates a new uptime command

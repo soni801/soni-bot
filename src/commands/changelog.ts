@@ -26,6 +26,7 @@ export default class Changelog implements Command
     description = 'Display changes made in a specific version';
     client: Client;
     logger = new Logger(Changelog.name);
+    category: 'bot' = 'bot';
     private _changelog = changelogFile as Changelist[];
 
     /**
@@ -60,37 +61,26 @@ export default class Changelog implements Command
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
         // Get the current version
-        const version = i.options.getString('version') || process.env.npm_package_version;
-        let error = false;
+        const version = i.options.getString('version') || this.client.version;
 
-        // Log an error if the version is undefined
-        if (!version)
-        {
-            this.logger.error('Version is undefined');
-            error = true;
-        }
-
-        // Log an error if the provided version does not have a changelist
+        // Show an error if the provided version does not have a changelist
         if (!this._changelog.find(ver => ver.version === version))
         {
             this.logger.error('The provided version does not have a changelist');
-            error = true;
+            return await i.editReply({ embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle('An error occurred')
+                    .addFields([
+                        {
+                            name: 'An internal error prevents sending the changelog',
+                            value: `Please contact ${this.client.users.cache.get("443058373022318593")} if this keeps happening.`
+                        }
+                    ])
+            ] });
         }
 
-        // Show an error to the user if any problems occurred
-        if (error) return await i.editReply({ embeds: [
-            this.client.defaultEmbed()
-                .setColor(CONSTANTS.COLORS.warning)
-                .setTitle('An error occurred')
-                .addFields([
-                    {
-                        name: 'An internal error prevents sending the changelog',
-                        value: `Please contact ${this.client.users.cache.get("443058373022318593")} if this keeps happening.`
-                    }
-                ])
-        ] });
-
-        return await i.editReply(this.changelistMessage(version!));
+        return await i.editReply(this.changelistMessage(version));
     }
 
     /**

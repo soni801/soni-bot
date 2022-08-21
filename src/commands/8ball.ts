@@ -17,6 +17,7 @@ export default class EightBall implements Command
     description = 'For help with daily decisions';
     client: Client;
     logger = new Logger(EightBall.name);
+    category: 'fun' = 'fun';
 
     /**
      * Creates a new 8ball command

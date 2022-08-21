@@ -16,6 +16,7 @@ export default class Family implements Command
     description = 'Post our family tree';
     client: Client;
     logger = new Logger(Family.name);
+    category: 'fun' = 'fun';
 
     /**
      * Creates a new family command

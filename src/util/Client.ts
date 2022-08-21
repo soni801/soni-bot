@@ -23,6 +23,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     db = new DataSource(ormconfig);
     logger = new Logger(Client.name);
     rest = new REST({ version: '10' });
+    version = process.env.npm_package_version || 'Unknown';
 
     /**
      * Creates a Client with the provided ClientOptions

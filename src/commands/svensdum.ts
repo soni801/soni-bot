@@ -16,6 +16,7 @@ export default class Svensdum implements Command
     description = 'Kinda self explanatory innit';
     client: Client;
     logger = new Logger(Svensdum.name);
+    category: 'fun' = 'fun';
 
     /**
      * Creates a new svensdum command

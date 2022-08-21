@@ -16,6 +16,7 @@ export default class Ping implements Command
     description = 'Check the Soni Bot & Discord API ping';
     client: Client;
     logger = new Logger(Ping.name);
+    category: 'bot' = 'bot';
 
     /**
      * Creates a new ping command

@@ -18,6 +18,7 @@ export default class Joke implements Command
     description = 'Tell a joke - what did you think honestly';
     client: Client;
     logger = new Logger(Joke.name);
+    category: 'fun' = 'fun';
 
     /**
      * Creates a new joke command
