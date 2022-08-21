@@ -4,21 +4,21 @@ import type Client from '../util/Client';
 import Logger from '../util/Logger';
 
 /**
- * The ping command
+ * The family command
  *
  * @author Soni
  * @since 6.0.0
  * @see {@link Command}
  */
-export default class Ping implements Command
+export default class Family implements Command
 {
-    name = 'ping';
-    description = 'Check the Soni Bot & Discord API ping';
+    name = 'family';
+    description = 'Post our family tree';
     client: Client;
-    logger = new Logger(Ping.name);
+    logger = new Logger(Family.name);
 
     /**
-     * Creates a new ping command
+     * Creates a new family command
      *
      * @param {Client} client The Client the command is attached to
      *
@@ -43,28 +43,16 @@ export default class Ping implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
-        // Send a message
-        await i.editReply({ embeds: [
-            this.client.defaultEmbed()
-                .setTitle(':ping_pong: Testing ping')
-                .setDescription('Waiting for result...')
-        ] });
-
-        // Fetch the message and check the latency
-        const message = await i.fetchReply();
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle(':ping_pong: Pong!')
+                .setTitle('The family tree:tm:')
                 .addFields([
                     {
-                        name: 'Soni Bot latency (RTT)',
-                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
-                    },
-                    {
-                        name: 'API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`
+                        name: "\u200b",
+                        value: `Wanna join the family? Just tell ${this.client.users.cache.get("443058373022318593")}, and we'll figure it out.`
                     }
                 ])
+                .setImage('https://cdn.yessness.com/family.png')
         ] });
     }
 

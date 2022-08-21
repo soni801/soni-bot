@@ -8,7 +8,7 @@ import Client from '../util/Client';
  * @returns {Promise<Client<true>>} The provided Client
  *
  * @author Soni
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link ClientEvents.ready}
  */
 const ready: event<'ready'> = async (client: Client<true>) =>

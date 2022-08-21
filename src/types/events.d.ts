@@ -9,7 +9,7 @@ import Client from '../util/Client';
  * @returns Awaitable<any> The event that is being decorated
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link ClientEvents}
  */
 export type event<K extends keyof ClientEvents> = (client: Client, ...arg: ClientEvents[K]) => Awaitable<any>;

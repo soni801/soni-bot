@@ -11,7 +11,7 @@ import { CONSTANTS } from '../util/config';
  * @returns {Promise<Message | ChatInputCommandInteraction<"cached">>} The provided Interaction
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link ClientEvents.interactionCreate}
  */
 const interactionCreate: event<'interactionCreate'> = async (client: Client<true>, i: Interaction) =>

@@ -9,7 +9,7 @@ const logger = new Logger('main');
  * Starts the bot by creating a new Client and logging in with the provided token and options.
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  */
 function start()
 {
@@ -40,7 +40,7 @@ start();
  * @param {string} arg The signal received
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link https://en.wikipedia.org/wiki/Signal_(IPC)|IPC signals}
  */
 function exit(...arg: string[])
@@ -57,7 +57,7 @@ function exit(...arg: string[])
  * Kills the bot
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link exit}
  */
 const die = exit;

@@ -11,7 +11,7 @@ import Logger from '../util/Logger';
  * A slash command
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link ChatInputCommandInteraction}
  */
 export abstract class Command
@@ -25,7 +25,7 @@ export abstract class Command
 
     /**
      * The logger for this command interaction
-     * 
+     *
      * @type {Logger}
      */
     logger: Logger;
@@ -43,7 +43,7 @@ export abstract class Command
      * @param {Client} client The Client the command is attached to
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link Client}
      */
     constructor(client: Client);
@@ -54,7 +54,7 @@ export abstract class Command
      * @returns {Promise<SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandSubcommandGroupBuilder>} The slash command builder for this command interaction.
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link SlashCommandBuilder}
      * @see {@link SlashCommandSubcommandsOnlyBuilder}
      * @see {@link SlashCommandSubcommandGroupBuilder}
@@ -72,7 +72,7 @@ export abstract class Command
      * @returns {Promise<any>} The entry point for this interaction
      * 
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
     abstract execute(i: ChatInputCommandInteraction<'cached'>): Promise<any>;

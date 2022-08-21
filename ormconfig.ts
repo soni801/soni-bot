@@ -12,7 +12,7 @@ const migrations = process.env.NODE_ENV !== 'development' ? ['dist/src/migration
  *
  * @type {DataSourceOptions}
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link DataSourceOptions}
  */
 let ormConfig: DataSourceOptions = {

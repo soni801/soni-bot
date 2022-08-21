@@ -1,24 +1,25 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
+import { CONSTANTS } from '../util/config';
 import Logger from '../util/Logger';
 
 /**
- * The ping command
+ * The dice command
  *
  * @author Soni
  * @since 6.0.0
  * @see {@link Command}
  */
-export default class Ping implements Command
+export default class Dice implements Command
 {
-    name = 'ping';
-    description = 'Check the Soni Bot & Discord API ping';
+    name = 'dice';
+    description = 'Roll a die';
     client: Client;
-    logger = new Logger(Ping.name);
+    logger = new Logger(Dice.name);
 
     /**
-     * Creates a new ping command
+     * Creates a new dice command
      *
      * @param {Client} client The Client the command is attached to
      *
@@ -43,26 +44,30 @@ export default class Ping implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
-        // Send a message
-        await i.editReply({ embeds: [
-            this.client.defaultEmbed()
-                .setTitle(':ping_pong: Testing ping')
-                .setDescription('Waiting for result...')
-        ] });
+        // Define the minimum and maximum values for the output
+        const min = i.options.getInteger('min') || 1;
+        const max = i.options.getInteger('max') || 6;
 
-        // Fetch the message and check the latency
-        const message = await i.fetchReply();
-        return await i.editReply({ embeds: [
+        // Show an error to the user if the provided range is invalid
+        if (min > max) return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle(':ping_pong: Pong!')
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('Failed to roll the die')
                 .addFields([
                     {
-                        name: 'Soni Bot latency (RTT)',
-                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
-                    },
+                        name: 'Invalid range',
+                        value: 'The minimum value cannot be larger than the maximum value'
+                    }
+                ])
+        ] });
+
+        return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setTitle('Rolled a die')
+                .addFields([
                     {
-                        name: 'API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`
+                        name: 'Die result',
+                        value: this.client.randomNumber(min, max + 1).toString()
                     }
                 ])
         ] });
@@ -77,6 +82,10 @@ export default class Ping implements Command
     {
         return new SlashCommandBuilder()
             .setName(this.name)
-            .setDescription(this.description);
+            .setDescription(this.description)
+            .addIntegerOption(option => option.setName('min')
+                .setDescription('Custom minimum value'))
+            .addIntegerOption(option => option.setName('max')
+                .setDescription('Custom maximum value')) as SlashCommandBuilder;
     }
 }

@@ -1,24 +1,26 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { jokes } from '../responses/joke.json';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
+import { CONSTANTS } from '../util/config';
 import Logger from '../util/Logger';
 
 /**
- * The ping command
+ * The joke command
  *
  * @author Soni
  * @since 6.0.0
  * @see {@link Command}
  */
-export default class Ping implements Command
+export default class Joke implements Command
 {
-    name = 'ping';
-    description = 'Check the Soni Bot & Discord API ping';
+    name = 'joke';
+    description = 'Tell a joke - what did you think honestly';
     client: Client;
-    logger = new Logger(Ping.name);
+    logger = new Logger(Joke.name);
 
     /**
-     * Creates a new ping command
+     * Creates a new joke command
      *
      * @param {Client} client The Client the command is attached to
      *
@@ -43,26 +45,29 @@ export default class Ping implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
-        // Send a message
-        await i.editReply({ embeds: [
-            this.client.defaultEmbed()
-                .setTitle(':ping_pong: Testing ping')
-                .setDescription('Waiting for result...')
-        ] });
+        // Get the joke ID or generate one if omitted
+        const joke = i.options.getInteger('joke') || this.client.randomNumber(1, jokes.length + 1);
 
-        // Fetch the message and check the latency
-        const message = await i.fetchReply();
-        return await i.editReply({ embeds: [
+        // Show an error to the user if the provided joke ID is invalid
+        if (joke < 1 || joke > jokes.length) return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle(':ping_pong: Pong!')
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('Invalid joke')
                 .addFields([
                     {
-                        name: 'Soni Bot latency (RTT)',
-                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
-                    },
+                        name: 'You provided an invalid joke ID',
+                        value: `Must be between 1 and ${jokes.length}`
+                    }
+                ])
+        ] });
+
+        return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setTitle('Joke')
+                .addFields([
                     {
-                        name: 'API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`
+                        name: `#${joke}`,
+                        value: jokes[joke - 1]
                     }
                 ])
         ] });
@@ -77,6 +82,8 @@ export default class Ping implements Command
     {
         return new SlashCommandBuilder()
             .setName(this.name)
-            .setDescription(this.description);
+            .setDescription(this.description)
+            .addIntegerOption(option => option.setName('joke')
+                .setDescription('Choose a specific joke')) as SlashCommandBuilder;
     }
 }

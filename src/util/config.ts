@@ -5,7 +5,7 @@ import './dotenv';
 /**
  * The token used by the Client to log in to the Discord API
  *
- * @since 1.0.0
+ * @since 6.0.0
  */
 export const token = process.env.TOKEN;
 
@@ -13,13 +13,13 @@ export const token = process.env.TOKEN;
  * The colors used by the bot for embeds
  *
  * @type {{default: string, success: string, warning: string, error: string}}
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link ColorResolvable}
  */
 const COLORS: { [ key: string ]: ColorResolvable } = {
-    default: 'Blurple',
+    default: 0x3ba3a1,
     success: 'Green',
-    warning: 'Orange',
+    warning: 0xe88e5a,
     error: 'Red'
 };
 
@@ -27,7 +27,7 @@ const COLORS: { [ key: string ]: ColorResolvable } = {
  * Constant values set at runtime
  *
  * @type {{COLORS: {[p: string]: ColorResolvable}, ERRORS: {DEPLOY_FAILED: string, DISABLED: string, BOT_MISSING_PERMS: string, GENERIC: string, NOT_IMPLEMENTED_NOT_EXIST: string, DB_NOT_CONNECTED: string, UNKNOWN_SUBCOMMAND: string, CLIENT_DESTROY: string, COMMAND_RUN_ERROR: string, USER_MISSING_PERMS: string, SHUTDOWN_USED: (user: User) => string}, logLevel: string}}
- * @since 1.0.0
+ * @since 6.0.0
  */
 export const CONSTANTS = {
     ERRORS: {
@@ -51,7 +51,7 @@ export const CONSTANTS = {
  * The ClientOptions used by the Client when logging in
  *
  * @type {{intents: (GatewayIntentBits.Guilds | GatewayIntentBits.GuildMessages)[], allowedMentions: {parse: (string)[]}}}
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link ClientOptions}
  */
 export const CLIENT_OPTIONS: ClientOptions = {

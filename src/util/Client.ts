@@ -14,7 +14,7 @@ import Logger from './Logger';
  * A custom wrapper of the Discord client, providing more utility methods
  *
  * @author theS1LV3R
- * @since 1.0.0
+ * @since 6.0.0
  * @see {@link DiscordClient}
  */
 export default class Client<T extends boolean = boolean> extends DiscordClient<T>
@@ -30,7 +30,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @param {ClientOptions} options The options for the Client
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      */
     constructor(options: ClientOptions)
     {
@@ -52,7 +52,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @returns {Promise<DataSource>} The database of the Client
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link DataSource.initialize}
      */
     async connectDb(): Promise<DataSource>
@@ -77,7 +77,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @returns {Promise<number>} The amount of events loaded
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link Client.on}
      */
     async loadEvents(dir: string): Promise<number>
@@ -122,7 +122,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @returns {Promise<Collection<string, Command>>} The Client's loaded slash commands
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link Command}
      */
     async loadCommands(dir: string): Promise<Collection<string, Command>>
@@ -158,7 +158,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @returns {Promise<void>} Nothing
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link https://discordjs.guide/creating-your-bot/creating-commands.html#command-deployment-script|DiscordJS command deployment documentation}
      */
     async deployCommands()
@@ -179,7 +179,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @returns {EmbedBuilder} The default embed with the applied EmbedData
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link EmbedData}
      */
     defaultEmbed(embed?: EmbedData): EmbedBuilder
@@ -190,5 +190,21 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
                 text: this.user?.tag ?? '',
                 iconURL: this.user?.avatarURL({ extension: 'png' }) ?? '',
             });
+    }
+
+    /**
+     * Get a random number in the provided range
+     *
+     * @param {number} min The minimum number (included)
+     * @param {number} max The maximum number (excluded)
+     * @returns {number} The randomly generated number
+     *
+     * @author Soni
+     * @since 6.0.0
+     * @see {@link Math.random}
+     */
+    randomNumber(min: number, max: number)
+    {
+        return Math.floor(Math.random() * (max - min) + min);
     }
 }

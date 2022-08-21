@@ -4,21 +4,21 @@ import type Client from '../util/Client';
 import Logger from '../util/Logger';
 
 /**
- * The ping command
+ * The svensdum command
  *
  * @author Soni
  * @since 6.0.0
  * @see {@link Command}
  */
-export default class Ping implements Command
+export default class Svensdum implements Command
 {
-    name = 'ping';
-    description = 'Check the Soni Bot & Discord API ping';
+    name = 'svensdum';
+    description = 'Kinda self explanatory innit';
     client: Client;
-    logger = new Logger(Ping.name);
+    logger = new Logger(Svensdum.name);
 
     /**
-     * Creates a new ping command
+     * Creates a new svensdum command
      *
      * @param {Client} client The Client the command is attached to
      *
@@ -43,28 +43,10 @@ export default class Ping implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
-        // Send a message
-        await i.editReply({ embeds: [
-            this.client.defaultEmbed()
-                .setTitle(':ping_pong: Testing ping')
-                .setDescription('Waiting for result...')
-        ] });
-
-        // Fetch the message and check the latency
-        const message = await i.fetchReply();
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle(':ping_pong: Pong!')
-                .addFields([
-                    {
-                        name: 'Soni Bot latency (RTT)',
-                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
-                    },
-                    {
-                        name: 'API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`
-                    }
-                ])
+                .setTitle('Sven\'s dum')
+                .setImage('https://media.discordapp.net/attachments/757754446787641427/763366193834360832/sven.png')
         ] });
     }
 

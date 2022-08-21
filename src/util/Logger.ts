@@ -6,7 +6,7 @@ import { CONSTANTS } from './config';
  * A utility class using a winston Logger to create logs with better formatting and versatility
  *
  * @author theS1LV3R, Soni
- * @since 1.0.0
+ * @since 6.0.0
  * @see winston.Logger
  */
 export default class Logger
@@ -14,7 +14,7 @@ export default class Logger
     /**
      * The name used by the Logger
      *
-     * @since 1.0.0
+     * @since 6.0.0
      */
     name: string;
 
@@ -26,7 +26,7 @@ export default class Logger
      *
      * @type {winston.Logform.Format}
      * @author Soni
-     * @since 1.0.0
+     * @since 6.0.0
      * @see {@link winston.Logform.Format}
      */
     format: winston.Logform.Format = format.combine(
@@ -46,7 +46,7 @@ export default class Logger
      * Where the Logger outputs to
      *
      * @type {winston.transport[]}
-     * @since 1.0.0
+     * @since 6.0.0
      */
     transports: winston.transport[] = [
         new transports.Console(),
@@ -74,7 +74,7 @@ export default class Logger
      * @param {winston.LoggerOptions} options LoggerOptions for the Logger
      *
      * @author theS1LV3R
-     * @since 1.0.0
+     * @since 6.0.0
      */
     constructor(name: string, options?: winston.LoggerOptions)
     {
@@ -87,6 +87,8 @@ export default class Logger
      *
      * @param {string} message The message to log
      * @param args The args for the log
+     *
+     * @since 6.0.0
      */
     debug(message: string, ...args: any[])
     {
@@ -98,6 +100,8 @@ export default class Logger
      *
      * @param {string} message The message to log
      * @param args The args for the log
+     *
+     * @since 6.0.0
      */
     verbose(message: string, ...args: any[])
     {
@@ -109,6 +113,8 @@ export default class Logger
      *
      * @param {string} message The message to log
      * @param args The args for the log
+     *
+     * @since 6.0.0
      */
     info(message: string, ...args: any[])
     {
@@ -120,6 +126,8 @@ export default class Logger
      *
      * @param {string} message The message to log
      * @param args The args for the log
+     *
+     * @since 6.0.0
      */
     warn(message: string, ...args: any[])
     {
@@ -131,6 +139,8 @@ export default class Logger
      *
      * @param {string} message The message to log
      * @param args The args for the log
+     *
+     * @since 6.0.0
      */
     error(message: string, ...args: any[])
     {

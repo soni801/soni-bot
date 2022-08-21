@@ -1,7 +1,17 @@
 {
     "changelog": [
         {
-            "version": "5.5",
+            "version": "6.0.0",
+            "changes": [
+                "Yikes, I accidentally rewrote the actual entire codebase again",
+                "Added option to specify joke in joke command",
+                "Added option to provide a custom number range for the dice command",
+                "Improved error formatting to the user",
+                "Internal changes to the 8ball output values"
+            ]
+        },
+        {
+            "version": "5.5.0",
             "changes": [
                 "Improved formatting of the uptime and ping commands",
                 "Changed the internal logging system",
@@ -9,7 +19,7 @@
             ]
         },
         {
-            "version": "5.4",
+            "version": "5.4.0",
             "changes": [
                 "Added 9 new jokes",
                 "Removed bad jokes",
@@ -18,7 +28,7 @@
             ]
         },
         {
-            "version": "5.3",
+            "version": "5.3.0",
             "changes": [
                 "Improved error messages in the `/reactionrole create` command",
                 "Included more details in response embed",
@@ -28,13 +38,13 @@
             ]
         },
         {
-            "version": "5.2",
+            "version": "5.2.0",
             "changes": [
                 "Added reaction roles"
             ]
         },
         {
-            "version": "5.1",
+            "version": "5.1.0",
             "changes": [
                 "Renamed `/remind` to `/reminder create`",
                 "Added `/reminder list`",
@@ -42,7 +52,7 @@
             ]
         },
         {
-            "version": "5.0",
+            "version": "5.0.0",
             "changes": [
                 "Oops I accidentally rewrote the entire bot again",
                 "Backend changes to reminder format",
@@ -52,13 +62,13 @@
             ]
         },
         {
-            "version": "4.3",
+            "version": "4.3.0",
             "changes": [
                 "Globally react to messages"
             ]
         },
         {
-            "version": "4.2",
+            "version": "4.2.0",
             "changes": [
                 "Added changelogs for older versions"
             ]
@@ -77,7 +87,7 @@
             ]
         },
         {
-            "version": "4.1",
+            "version": "4.1.0",
             "changes": [
                 "Added automatic updates for the family tree",
                 "Improved `/8ball` output formatting",
@@ -85,7 +95,7 @@
             ]
         },
         {
-            "version": "4.0",
+            "version": "4.0.0",
             "changes": [
                 "The entire bot was rewritten again lol",
                 "Now uses slash commands instead of prefix",
@@ -100,19 +110,19 @@
             ]
         },
         {
-            "version": "3.5",
+            "version": "3.5.0",
             "changes": [
                 "Added `about` command"
             ]
         },
         {
-            "version": "3.4",
+            "version": "3.4.0",
             "changes": [
                 "Reworked help menu"
             ]
         },
         {
-            "version": "3.3",
+            "version": "3.3.0",
             "changes": [
                 "Significant backend improvements",
                 "Added ability to use singular form time units in `remind` command",
@@ -121,20 +131,20 @@
             ]
         },
         {
-            "version": "3.2",
+            "version": "3.2.0",
             "changes": [
                 "Performance improvements",
                 "Added time unit option to `remind` command"
             ]
         },
         {
-            "version": "3.1",
+            "version": "3.1.0",
             "changes": [
                 "Improved `remind` command"
             ]
         },
         {
-            "version": "3.0",
+            "version": "3.0.0",
             "changes": [
                 "Use embeds for replies"
             ]
@@ -146,34 +156,27 @@
             ]
         },
         {
-            "version": "2.16",
+            "version": "2.16.0",
             "changes": [
                 "Removed `version` command",
                 "Added `shadow` command"
             ]
         },
         {
-            "version": "2.15",
+            "version": "2.15.0",
             "changes": [
                 "New & improved help menu"
             ]
         },
         {
-            "version": "2.14",
+            "version": "2.14.0",
             "changes": [
                 "React with :neutral_face: on messages sent by boremac",
                 "Bug fixes"
             ]
         },
         {
-            "version": "2.13",
-            "changes": [
-                "Removed `crush` command",
-                "Added `family` command"
-            ]
-        },
-        {
-            "version": "<2.13",
+            "version": "<2.14.0",
             "changes": [
                 "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
             ]

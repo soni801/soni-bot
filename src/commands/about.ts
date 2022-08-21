@@ -4,21 +4,21 @@ import type Client from '../util/Client';
 import Logger from '../util/Logger';
 
 /**
- * The ping command
+ * The about command
  *
  * @author Soni
  * @since 6.0.0
  * @see {@link Command}
  */
-export default class Ping implements Command
+export default class About implements Command
 {
-    name = 'ping';
-    description = 'Check the Soni Bot & Discord API ping';
+    name = 'about';
+    description = 'Show info about Soni Bot';
     client: Client;
-    logger = new Logger(Ping.name);
+    logger = new Logger(About.name);
 
     /**
-     * Creates a new ping command
+     * Creates a new about command
      *
      * @param {Client} client The Client the command is attached to
      *
@@ -43,26 +43,19 @@ export default class Ping implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
-        // Send a message
-        await i.editReply({ embeds: [
-            this.client.defaultEmbed()
-                .setTitle(':ping_pong: Testing ping')
-                .setDescription('Waiting for result...')
-        ] });
-
-        // Fetch the message and check the latency
-        const message = await i.fetchReply();
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle(':ping_pong: Pong!')
+                .setTitle('About Soni Bot')
                 .addFields([
                     {
-                        name: 'Soni Bot latency (RTT)',
-                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
+                        name: "What am I?",
+                        value: `I am a lightweight toolkit bot developed by ${this.client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`,
+                        inline: true
                     },
                     {
-                        name: 'API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`
+                        name: "How do I function?",
+                        value: "There is more details about each command in the /help command, and every command has autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/).",
+                        inline: true
                     }
                 ])
         ] });
