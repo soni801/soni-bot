@@ -1,4 +1,4 @@
-import { Interaction } from 'discord.js';
+import { Interaction, TextChannel } from 'discord.js';
 import { event } from '../types/events';
 import Client from '../util/Client';
 import { CONSTANTS } from '../util/config';
@@ -16,24 +16,43 @@ import { CONSTANTS } from '../util/config';
  */
 const interactionCreate: event<'interactionCreate'> = async (client: Client<true>, i: Interaction) =>
 {
-    // Drop the interaction if it is not a command
-    if (!i.isChatInputCommand() || !i.isCommand() || !i.inCachedGuild()) return;
+    // Check that the interaction happens in a cached guild
+    if (!i.inCachedGuild()) return;
 
-    // Get the command name
-    client.logger.info(`Slash command '${i.commandName}' called by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
-    const command = client.commands.get(i.commandName);
-
-    // Defer reply
-    await i.deferReply();
-    if (!command) return i.editReply(CONSTANTS.ERRORS.NOT_IMPLEMENTED_NOT_EXIST);
-
-    // Execute the command
-    command.execute(i).catch(e =>
+    // Check if the interaction is a command
+    if (i.isChatInputCommand() && i.isCommand())
     {
-        client.logger.error(`An error occurred while executing command '${i.commandName}': ${e.message}`);
-        console.error(e);
-        i.editReply(CONSTANTS.ERRORS.COMMAND_RUN_ERROR);
-    });
+        // Get the command name
+        client.logger.info(`Slash command '${i.commandName}' called by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
+        const command = client.commands.get(i.commandName);
+
+        // Defer reply
+        await i.deferReply();
+        if (!command) return i.editReply(CONSTANTS.ERRORS.NOT_IMPLEMENTED_NOT_EXIST);
+
+        // Execute the command
+        command.execute(i).catch(e =>
+        {
+            client.logger.error(`An error occurred while executing command '${i.commandName}': ${e.message}`);
+            console.error(e);
+            i.editReply(CONSTANTS.ERRORS.COMMAND_RUN_ERROR);
+        });
+    }
+    // Check if the interaction is a select menu change
+    else if (i.isMessageComponent() && i.isSelectMenu())
+    {
+        // Fetch the channel
+        const channel = client.channels.cache.get(i.channelId);
+        if (!(channel instanceof TextChannel)) return;
+
+        // Respond with the change
+        switch (i.customId)
+        {
+            // TODO: Implement this
+            //case "help": this.respond({ interaction, fields: this.helpMessage(interaction.values[0]) }); break;
+            //case "changelog": this.respond({ interaction, fields: this.changelogMessage(interaction.values[0]) });
+        }
+    }
 
     return i;
 };
