@@ -4,6 +4,8 @@
             "version": "6.0.0",
             "changes": [
                 "Yikes, I accidentally rewrote the actual entire codebase again",
+                "Replaced the `responses` command with the `response` command",
+                "Added the joke ID to the output of the joke command",
                 "Added an option to specify joke in joke command",
                 "Added an option to provide a custom number range for the dice command",
                 "Added an option to provide version number directly in the changelog command",

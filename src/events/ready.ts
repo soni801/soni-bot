@@ -18,6 +18,7 @@ const ready: event<'ready'> = async (client: Client<true>) =>
     await client.deployCommands().catch((e: Error) =>
     {
         client.logger.error(`An error occurred while deploying commands: ${e.message}`);
+        console.error(e);
         throw e;
     });
 

@@ -41,7 +41,8 @@ export const CONSTANTS = {
         USER_MISSING_PERMS: ':lock: You do not have permission to use this command.',
         DB_NOT_CONNECTED: ':x: Database not connected, try again later.',
         UNKNOWN_SUBCOMMAND: ':x: Unknown subcommand.',
-        NOT_IMPLEMENTED_NOT_EXIST: ':x: Not implemented or doesn\'t exist'
+        NOT_IMPLEMENTED_NOT_EXIST: ':x: Not implemented or doesn\'t exist',
+        AUTOCOMPLETE_NOT_EXIST: 'This autocomplete interaction does not exist'
     },
     COLORS,
     logLevel: process.env.LOG_LEVEL || 'debug'

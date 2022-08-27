@@ -1,4 +1,5 @@
 import {
+    AutocompleteInteraction,
     ChatInputCommandInteraction,
     SlashCommandBuilder,
     SlashCommandSubcommandGroupBuilder,
@@ -82,7 +83,7 @@ export abstract class Command
     /**
      * The entry point for this command interaction.
      *
-     * @param {ChatInputCommandInteraction<"cached">} i The interaction object.
+     * @param {ChatInputCommandInteraction<"cached">} i The interaction object
      * @returns {Promise<any>} The entry point for this interaction
      * 
      * @author theS1LV3R
@@ -90,4 +91,15 @@ export abstract class Command
      * @see {@link ChatInputCommandInteraction}
      */
     abstract execute(i: ChatInputCommandInteraction<'cached'>): Promise<any>;
+
+    /**
+     * Handles autocomplete for this command interaction.
+     *
+     * @param {AutocompleteInteraction<"cached">} i The interaction object
+     * @returns {Promise<any>} The autocomplete for this command interaction
+     *
+     * @author theS1LV3R
+     * @since 6.0.0
+     */
+    abstract handleAutocomplete?(i: AutocompleteInteraction<'cached'>): Promise<any>;
 }

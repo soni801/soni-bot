@@ -7,23 +7,23 @@ import { CONSTANTS } from '../util/config';
 import Logger from '../util/Logger';
 
 /**
- * The responses command
+ * The response command
  *
  * @author Soni
  * @since 6.0.0
  * @see {@link Command}
  */
-export default class Responses implements Command
+export default class Response implements Command
 {
-    name = 'responses';
+    name = 'response';
     description = 'Post a response from responses.yessness.com';
     client: Client;
-    logger = new Logger(Responses.name);
+    logger = new Logger(Response.name);
     category: 'fun' = 'fun';
     private _responses: ResponseObject[];
 
     /**
-     * Creates a new responses command
+     * Creates a new response command
      *
      * @param {Client} client The Client the command is attached to
      *
@@ -60,7 +60,7 @@ export default class Responses implements Command
                     .addFields([
                         {
                             name: 'Invalid response ID',
-                            value: 'The response ID you provided is not valid'
+                            value: 'The provided response ID is not valid'
                         }
                     ])
             ]
@@ -70,6 +70,12 @@ export default class Responses implements Command
             embeds: [
                 this.client.defaultEmbed()
                     .setTitle(response.name)
+                    .addFields([
+                        {
+                            name: 'This response was provided by the yessness response service',
+                            value: 'Check it out for yourself at https://responses.yessness.com/.'
+                        }
+                    ])
                     .setImage(response.src)
             ]
         });
@@ -91,7 +97,6 @@ export default class Responses implements Command
         this._responses = (await axios.get<ResponseObject[]>('https://responses.yessness.com/responses.json')).data.map((r: ResponseObject) =>
             ({
                 ...r,
-                // @ts-ignore
                 value: r.id
             }));
     }
@@ -112,18 +117,25 @@ export default class Responses implements Command
                 .setAutocomplete(true)) as SlashCommandBuilder;
     }
 
+    /**
+     * Handles autocomplete for this command interaction.
+     *
+     * @param {AutocompleteInteraction<"cached">} i The interaction object
+     * @returns {Promise<void>} Nothing
+     *
+     * @author theS1LV3R
+     * @since 6.0.0
+     */
     async handleAutocomplete(i: AutocompleteInteraction<'cached'>)
     {
+        // Get the focused value
         const focusedValue = i.options.getFocused();
 
+        // Filter the response list by entries matching the focused value
         const search = (s: string) => s.toLowerCase().replace(/['.!,?]/gi, '').includes(focusedValue);
+        const filteredResponseList = this._responses.filter(r => search(r.id) || search(r.value) || search(r.name) || search(r.src)).filter((r, i) => i < 25);
 
-        const filteredResponseList = this._responses.filter(r => search(r.id)
-            || search(r.value)
-            || search(r.name)
-            || search(r.src)
-            ).filter((r, i) => i < 25);
-
-        await i.respond(filteredResponseList)
+        // Return the filtered response list
+        await i.respond(filteredResponseList);
     }
 }

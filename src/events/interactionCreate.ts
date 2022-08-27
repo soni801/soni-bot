@@ -1,4 +1,4 @@
-import { Interaction, TextChannel } from 'discord.js';
+import { AutocompleteInteraction, Interaction, TextChannel } from 'discord.js';
 import Changelog from '../commands/changelog';
 import Help from '../commands/help';
 import { event } from '../types/events';
@@ -20,6 +20,9 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
 {
     // Check that the interaction happens in a cached guild
     if (!i.inCachedGuild()) return;
+
+    // Handle autocomplete interactions
+    if (i.isAutocomplete()) return handleAutocomplete(client, i);
 
     // Check if the interaction is a command
     if (i.isChatInputCommand() && i.isCommand())
@@ -57,5 +60,33 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
 
     return i;
 };
+
+/**
+ * Handles autocomplete interactions.
+ *
+ * @param {Client} client The Client to use for the event
+ * @param {AutocompleteInteraction<"cached">} i The Interaction that was created
+ * @returns {Promise<void>} Nothing
+ *
+ * @author theS1LV3R
+ * @since 6.0.0
+ */
+async function handleAutocomplete(client: Client, i: AutocompleteInteraction<'cached'>)
+{
+    // Get the command name
+    client.logger.debug(`Autocomplete called for command '${i.commandName}' by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
+    const command = client.commands.get(i.commandName);
+
+    // Print any errors to the log
+    if (!command) return client.logger.warn(CONSTANTS.ERRORS.NOT_IMPLEMENTED_NOT_EXIST);
+    if (!command.handleAutocomplete) return client.logger.warn(CONSTANTS.ERRORS.AUTOCOMPLETE_NOT_EXIST);
+
+    // Execute the autocomplete
+    command.handleAutocomplete(i).catch(e =>
+    {
+        client.logger.error(`An error occurred while executing command '${i.commandName}': ${e.message}`);
+        console.error(e);
+    })
+}
 
 export default interactionCreate;
