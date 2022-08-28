@@ -1,10 +1,22 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
-import { Client as DiscordClient, ClientOptions, Collection, EmbedBuilder, EmbedData, TextChannel } from 'discord.js';
+import {
+    Client as DiscordClient,
+    ClientOptions,
+    Collection,
+    EmbedBuilder,
+    EmbedData,
+    MessageReaction,
+    PartialMessageReaction,
+    PartialUser,
+    TextChannel,
+    User
+} from 'discord.js';
 import { readdir } from 'fs/promises';
 import { basename, resolve } from 'node:path';
 import { DataSource } from 'typeorm';
 import ormconfig from '../../ormconfig';
+import ReactionRoleEntity from '../entity/ReactionRole.entity';
 import ReminderEntity from '../entity/Reminder.entity';
 import { Command } from '../types/Command';
 import { event } from '../types/events';
@@ -279,5 +291,54 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Change the reminded state of the reminder
         reminder.reminded = true;
         return await reminder.save();
+    }
+
+    /**
+     * Handles a reaction
+     *
+     * @param {MessageReaction | PartialMessageReaction} reaction The reaction to handle
+     * @param {User | PartialUser} user The user that reacted
+     * @param {boolean} reactionExists Whether the reaction was added or removed; `true` = added, `false` = removed
+     * @returns {Promise<boolean>} Whether a user's roles were updated
+     *
+     * @author Soni
+     * @since 6.0.0
+     */
+    async handleReaction(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, reactionExists: boolean)
+    {
+        // Get all matching reaction roles
+        const matchingReactionRoles = await ReactionRoleEntity.find({ where: { message: reaction.message.id, reaction: reaction.emoji.toString() } });
+
+        // Only continue if any reaction roles matches
+        if (matchingReactionRoles.length > 0)
+        {
+            // Get the role ID from the database
+            const roleID = matchingReactionRoles[0].role;
+
+            // Make sure nothing is partial
+            user = await user.fetch();
+            const message = await reaction.message.fetch();
+
+            // Fetch the guild
+            const guild = message.guild;
+            if (!guild) return;
+
+            // Fetch the GuildMember of the user
+            const member = guild.members.cache.get(user.id);
+            if (!member) return;
+
+            // Fetch the role
+            const role = guild.roles.cache.get(roleID);
+            if (!role) return;
+
+            // Set the role
+            if (reactionExists) await member.roles.add(role);
+            else await member.roles.remove(role);
+            this.logger.info(`Set role '${role.name}' to ${reactionExists} on user ${user.tag} in ${guild.name}`);
+            return true;
+        }
+
+        // No reaction roles matched, return false
+        return false;
     }
 }

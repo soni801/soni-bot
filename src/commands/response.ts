@@ -16,7 +16,7 @@ import Logger from '../util/Logger';
 export default class Response implements Command
 {
     name = 'response';
-    description = 'Post a response from responses.yessness.com';
+    description = 'Post the specified response from responses.yessness.com';
     client: Client;
     logger = new Logger(Response.name);
     category: 'fun' = 'fun';

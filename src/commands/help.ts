@@ -94,7 +94,7 @@ export default class Help implements Command
             if (commandFields.size > 0) commandFields.forEach(command =>
             {
                 fields.push({
-                    name: command.name,
+                    name: `\`/${command.name}\``,
                     value: command.description
                 })
             });

@@ -13,7 +13,7 @@ import Logger from '../util/Logger';
 export default class Uptime implements Command
 {
     name = 'uptime';
-    description = 'Show info uptime Soni Bot';
+    description = 'Show the uptime of Soni Bot';
     client: Client<true>;
     logger = new Logger(Uptime.name);
     category: 'bot' = 'bot';

@@ -50,7 +50,7 @@ export default class Reminder implements Command
         switch (i.options.getSubcommand())
         {
             // Create a new reminder
-            case "create":
+            case 'create':
                 // Fetch data from command
                 const content = i.options.getString('reminder', true);
                 let time = i.options.getInteger('time', true); // Modifiable to change unit
@@ -91,7 +91,7 @@ export default class Reminder implements Command
                         ])
                 ] });
             // List all active reminders
-            case "list":
+            case 'list':
                 // Fetch reminders for the user that called the command
                 const reminders = await this.client.fetchReminders(false, i.user.id);
 
@@ -167,6 +167,6 @@ export default class Reminder implements Command
                         }
                     )))
             .addSubcommand(command => command.setName('list')
-                .setDescription('List all your reminders'))
+                .setDescription('List all your reminders'));
     }
 }

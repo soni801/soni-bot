@@ -1,5 +1,5 @@
 import { GatewayIntentBits } from 'discord-api-types/v10';
-import { ClientOptions, ColorResolvable, User } from 'discord.js';
+import { ClientOptions, ColorResolvable, Partials, User } from 'discord.js';
 import './dotenv';
 
 /**
@@ -58,9 +58,17 @@ export const CONSTANTS = {
 export const CLIENT_OPTIONS: ClientOptions = {
     intents: [
         GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions
+    ],
+    partials: [
+        Partials.Message,
+        Partials.Reaction
     ],
     allowedMentions: {
-        parse: [ 'users', 'roles' ]
+        parse: [
+            'users',
+            'roles'
+        ]
     }
 }
