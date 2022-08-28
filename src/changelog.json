@@ -10,6 +10,7 @@
                 "Added an option to provide a custom number range for the dice command",
                 "Added an option to provide version number directly in the changelog command",
                 "Improved error formatting to the user",
+                "Changed the footer format",
                 "Internal changes to the 8ball output values"
             ]
         },

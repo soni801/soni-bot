@@ -1,10 +1,11 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
-import { Client as DiscordClient, ClientOptions, Collection, EmbedBuilder, EmbedData } from 'discord.js';
+import { Client as DiscordClient, ClientOptions, Collection, EmbedBuilder, EmbedData, TextChannel } from 'discord.js';
 import { readdir } from 'fs/promises';
 import { basename, resolve } from 'node:path';
 import { DataSource } from 'typeorm';
 import ormconfig from '../../ormconfig';
+import ReminderEntity from '../entity/Reminder.entity';
 import { Command } from '../types/Command';
 import { event } from '../types/events';
 import { CONSTANTS } from './config';
@@ -45,6 +46,13 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             this.loadEvents('../events'),
             this.loadCommands('../commands')
         ]));
+
+        // Set an interval for checking stored reminders
+        setInterval(async () =>
+        {
+            const reminders = await this.fetchReminders(true);
+            reminders.forEach(r => this.remind(r));
+        }, 1000);
     }
 
     /**
@@ -207,5 +215,69 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     randomNumber(min: number, max: number)
     {
         return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    /**
+     * Fetches registered reminders.
+     *
+     * @param {boolean} due Whether to only include reminders that are due
+     * @param {string} user Optional user to filter reminders by
+     * @returns {Promise<ReminderEntity[]>} An array of reminders matching the input
+     *
+     * @author Soni
+     * @since 6.0.0
+     * @see {@link ReminderEntity}
+     */
+    async fetchReminders(due: boolean, user?: string): Promise<ReminderEntity[]>
+    {
+        // Fetch all reminders that are not reminded
+        let reminders = await ReminderEntity.find({ where: { reminded: false } });
+
+        // Filter to only include due reminders if desired
+        if (due) reminders = reminders.filter(r => r.due.getTime() <= new Date().getTime());
+
+        // Filter to only include reminders for a specific user if desired
+        if (user) reminders = reminders.filter(r => r.user === user);
+
+        return reminders;
+    }
+
+    /**
+     * Reminds a user of a given reminder
+     *
+     * @param {ReminderEntity} reminder The reminder to remind the user of
+     * @returns {Promise<ReminderEntity>} The reminded reminder
+     *
+     * @author Soni
+     * @since 6.0.0
+     * @see {@link ReminderEntity}
+     */
+    async remind(reminder: ReminderEntity)
+    {
+        // Fetch the channel and user from the client cache
+        const channel = await this.channels.fetch(reminder.channel);
+        const user = await this.users.fetch(reminder.user);
+
+        // Send the reminder
+        if (channel instanceof TextChannel) await channel.send({
+            content: `> ${user}`,
+            embeds: [
+                this.defaultEmbed()
+                    .setTitle('Reminder')
+                    .addFields([
+                        {
+                            name: 'Here is your reminder',
+                            value: reminder.content
+                        }
+                    ])
+            ]
+        });
+
+        // Log the reminder
+        this.logger.info(`Reminded ${user.username}#${user.discriminator} of '${reminder.content}'`);
+
+        // Change the reminded state of the reminder
+        reminder.reminded = true;
+        return await reminder.save();
     }
 }

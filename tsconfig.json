@@ -18,11 +18,9 @@
         "allowUnusedLabels": false,
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
         "emitDecoratorMetadata": true,
         "sourceMap": false,
         "incremental": true,
-
         "declaration": false,
         "pretty": true,
         "strict": true,
