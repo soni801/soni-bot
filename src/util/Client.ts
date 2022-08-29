@@ -60,7 +60,11 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             this.loadCommands('../commands')
         ])).then(() => setInterval(async () =>
         {
-            const reminders = await this.fetchReminders(true);
+            const reminders = await this.fetchReminders(true).catch(() =>
+            {
+                this.logger.error('An error occurred while fetching reminders');
+                return [];
+            });
             reminders.forEach(r => this.remind(r));
         }, 1000));
     }
@@ -240,6 +244,9 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      */
     async fetchReminders(due: boolean, user?: string): Promise<ReminderEntity[]>
     {
+        // Reject the promise if the database is not reachable
+        if (!this.db.isInitialized) await Promise.reject();
+
         // Fetch all reminders that are not reminded
         let reminders = await ReminderEntity.find({ where: { reminded: false } });
 
