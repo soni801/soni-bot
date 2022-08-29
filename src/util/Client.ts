@@ -53,18 +53,16 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Log any errors that might occur
         this.on('error', (e: Error) => this.logger.error(e.message));
 
-        // Connect to the database and load events and commands
+        // Connect to the database, load events and commands and set an interval for checking stored reminders
+        // This is dumb :)
         this.connectDb().then(() => Promise.all([
             this.loadEvents('../events'),
             this.loadCommands('../commands')
-        ]));
-
-        // Set an interval for checking stored reminders
-        setInterval(async () =>
+        ])).then(() => setInterval(async () =>
         {
             const reminders = await this.fetchReminders(true);
             reminders.forEach(r => this.remind(r));
-        }, 1000);
+        }, 1000));
     }
 
     /**
