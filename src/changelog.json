@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "6.0.1",
+            "changes": [
+                "Fixed a bug where Soni Bot would not react to messages",
+                "Fixed an internal bug that caused the bot to crash on startup"
+            ]
+        },
+        {
             "version": "6.0.0",
             "changes": [
                 "Yikes, I accidentally rewrote the actual entire codebase again",
@@ -173,14 +180,7 @@
             ]
         },
         {
-            "version": "2.14.0",
-            "changes": [
-                "React with :neutral_face: on messages sent by boremac",
-                "Bug fixes"
-            ]
-        },
-        {
-            "version": "<2.14.0",
+            "version": "<2.15.0",
             "changes": [
                 "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
             ]

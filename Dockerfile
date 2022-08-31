@@ -4,6 +4,5 @@ WORKDIR /data
 COPY . .
 RUN npm install -g pnpm
 RUN pnpm install
-RUN rm .env.*.local
 RUN pnpm run build
 CMD ["pnpm", "run", "start"]
