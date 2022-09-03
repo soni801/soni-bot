@@ -1,6 +1,7 @@
 import { ButtonStyle } from 'discord-api-types/v10';
 import {
     ActionRowBuilder,
+    AutocompleteInteraction,
     ButtonBuilder,
     ChatInputCommandInteraction,
     MessageActionRowComponentBuilder,
@@ -82,11 +83,11 @@ export default class Changelog implements Command
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
                     .setColor(CONSTANTS.COLORS.warning)
-                    .setTitle('An error occurred')
+                    .setTitle('Invalid version')
                     .addFields([
                         {
-                            name: 'An internal error prevents sending the changelog',
-                            value: `Please contact ${this.client.users.cache.get("443058373022318593")} if this keeps happening.`
+                            name: 'The provided version does not have a changelist',
+                            value: 'Please provide a valid version'
                         }
                     ])
             ] });
@@ -177,7 +178,28 @@ export default class Changelog implements Command
             .setName(this.name)
             .setDescription(this.description)
             .addStringOption(option => option.setName('version')
-                .setDescription('The version show the changes for')) as SlashCommandBuilder;
-                // TODO: .setChoices(...this._changelog)) as SlashCommandBuilder;
+                .setDescription('The version show the changes for')
+                .setAutocomplete(true)) as SlashCommandBuilder;
+    }
+
+    /**
+     * Handles autocomplete for this command interaction.
+     *
+     * @param {AutocompleteInteraction<"cached">} i The interaction object
+     * @returns {Promise<void>} Nothing
+     *
+     * @author Soni
+     * @since 6.1.0
+     */
+    async handleAutocomplete(i: AutocompleteInteraction<'cached'>)
+    {
+        // Get the focused value
+        const focusedValue = i.options.getFocused().toLowerCase();
+
+        // Filter the changelog list by entries matching the focused value
+        const filteredChangelogList = this._changelog.filter(version => version.version.toLowerCase().includes(focusedValue)).filter((r, i) => i < 25);
+
+        // Return the filtered response list
+        await i.respond(filteredChangelogList);
     }
 }
