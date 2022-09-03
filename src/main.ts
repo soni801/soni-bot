@@ -48,9 +48,8 @@ function exit(...arg: string[])
     // Log the signal
     client.logger.warn(`${arg} received, exiting...`);
 
-    // Safely destroy the client and its database connection
+    // Safely destroy the client
     client.destroy();
-    client.db.destroy().catch(() => {});
 }
 
 /**

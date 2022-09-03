@@ -56,6 +56,19 @@ export default class Reminder implements Command
                 let time = i.options.getInteger('time', true); // Modifiable to change unit
                 const unit = i.options.getString('unit', true);
 
+                // Make sure the reminder is in the future
+                if (time < 1) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('An error occurred')
+                        .addFields([
+                            {
+                                name: 'Invalid time',
+                                value: 'The provided time must be in the future'
+                            }
+                        ])
+                ] });
+
                 // Calculate time offset in ms
                 // noinspection FallThroughInSwitchStatementJS
                 switch (unit)

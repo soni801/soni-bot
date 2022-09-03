@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "6.0.2",
+            "changes": [
+                "Changed the output format of some error messages",
+                "Fixed a bug where you could input negative time values in the `/reminder create` command",
+                "Fixed a bug where Soni Bot would not exit properly",
+                "Even more internal changes :)"
+            ]
+        },
+        {
             "version": "6.0.1",
             "changes": [
                 "Fixed a bug where Soni Bot would not react to messages",
@@ -11,7 +20,7 @@
             "version": "6.0.0",
             "changes": [
                 "Yikes, I accidentally rewrote the actual entire codebase again",
-                "Replaced the `responses` command with the `response` command",
+                "Replaced the `/responses` command with the `/response` command",
                 "Added the joke ID to the output of the joke command",
                 "Added an option to specify joke in joke command",
                 "Added an option to provide a custom number range for the dice command",
@@ -174,13 +183,7 @@
             ]
         },
         {
-            "version": "2.15.0",
-            "changes": [
-                "New & improved help menu"
-            ]
-        },
-        {
-            "version": "<2.15.0",
+            "version": "<2.16.0",
             "changes": [
                 "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
             ]

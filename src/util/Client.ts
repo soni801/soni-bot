@@ -1,4 +1,3 @@
-import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 import {
     Client as DiscordClient,
@@ -12,8 +11,9 @@ import {
     TextChannel,
     User
 } from 'discord.js';
-import { readdir } from 'fs/promises';
+import { readdir } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
+import { clearInterval } from 'node:timers';
 import { DataSource } from 'typeorm';
 import ormconfig from '../../ormconfig';
 import ReactionRoleEntity from '../entity/ReactionRole.entity';
@@ -35,8 +35,8 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     commands: Collection<string, Command> = new Collection();
     db = new DataSource(ormconfig);
     logger = new Logger(Client.name);
-    rest = new REST({ version: '10' });
     version = process.env.npm_package_version || 'Unknown';
+    intervals: NodeJS.Timer[] = [];
 
     /**
      * Creates a Client with the provided ClientOptions
@@ -58,7 +58,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         this.connectDb().then(() => Promise.all([
             this.loadEvents('../events'),
             this.loadCommands('../commands')
-        ])).then(() => setInterval(async () =>
+        ])).then(() => this.intervals.push(setInterval(async () =>
         {
             const reminders = await this.fetchReminders(true).catch(() =>
             {
@@ -66,7 +66,24 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
                 return [];
             });
             reminders.forEach(r => this.remind(r));
-        }, 1000));
+        }, 1000)));
+    }
+
+    /**
+     * Logs out, terminates the connection to Discord, and destroys the client.
+     *
+     * @author Soni
+     * @since 6.0.2
+     */
+    destroy()
+    {
+        // Clear all registered intervals
+        this.intervals.forEach(i => clearInterval(i));
+
+        // Disconnect from the database
+        if (this.db.isInitialized) this.db.destroy().catch(e => this.logger.error(`An error occurred while disconnecting from the database: ${e}`));
+
+        super.destroy();
     }
 
     /**

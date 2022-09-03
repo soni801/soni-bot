@@ -14,7 +14,6 @@ import Client from '../util/Client';
 const ready: event<'ready'> = async (client: Client<true>) =>
 {
     // Deploy the application's slash commands
-    client.rest.setToken(client.token)
     await client.deployCommands().catch((e: Error) =>
     {
         client.logger.error(`An error occurred while deploying commands: ${e.message}`);

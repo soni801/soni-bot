@@ -40,7 +40,18 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
         {
             client.logger.error(`An error occurred while executing command '${i.commandName}': ${e.message}`);
             console.error(e);
-            i.editReply(CONSTANTS.ERRORS.COMMAND_RUN_ERROR);
+
+            return i.editReply({ embeds: [
+                client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle('An error occurred')
+                    .addFields([
+                        {
+                            name: 'The command failed to run',
+                            value: CONSTANTS.ERRORS.COMMAND_RUN_ERROR
+                        }
+                    ])
+            ] });
         });
     }
     // Check if the interaction is a select menu change

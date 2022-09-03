@@ -35,7 +35,7 @@ export const CONSTANTS = {
         DEPLOY_FAILED: 'Failed to deploy!',
         CLIENT_DESTROY: 'Client destroyed, exiting process...',
         SHUTDOWN_USED: (user: User) => `Shutdown command used by ${user.tag} on ${new Date()}`,
-        COMMAND_RUN_ERROR: 'An error occurred while running the command, please try again later or contact the bot owner if the problem persists.',
+        COMMAND_RUN_ERROR: 'An error occurred while running the command. Please try again later or contact Soni if the problem persists.',
         DISABLED: ':lock: This command has been disabled.',
         BOT_MISSING_PERMS: ':x: The command could not be preformed because one or more permissions are missing.',
         USER_MISSING_PERMS: ':lock: You do not have permission to use this command.',
