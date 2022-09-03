@@ -11,118 +11,36 @@ Soni Bot is built in JavaScript using Node.js. Discord functionality is provided
 
 # Installation
 
-The installation guide will presume you are running a Unix-like operating system.
+This installation guide will assume you are running a Unix-like operating system. It is recommended to run Soni Bot as a
+Docker container using the provided Docker file or docker-compose file. However, this will also briefly go over how to
+run it as a standalone program.
 
-It is recommended to run Soni Bot inside a Docker container, preferably with Docker Compose. However, if you can not or
-do not wish to run it through docker, you can run it manually.
+First, clone this repository.
 
-### Docker Compose
+```shell
+git clone https://github.com/soni801/soni-bot --depth 1
+# or
+git clone git@github.com:soni801/soni-bot --depth 1
+```
 
-1. Clone the repository
+Fill in the required configuration. For normal deployment, copy `.env.template` to `.env.production.local`, and fill all
+variables. Note that Soni Bot needs a postgres database to launch properly. This can optionally be changed to a
+different engine by editing `ormconfig.ts`. Make sure to populate `TOKEN` with a valid Discord API token, acquired from
+the Discord developer dashboard.
 
-   ```shell
-   $ git clone https://github.com/soni801/soni-bot.git
-   $ cd soni-bot
-   ```
+If you are using Docker, you can now start the container. It should build and connect successfully.
 
-2. Create the config file
+If running without Docker, you need to start by installing the required packages and building the source:
 
-   Soni Bot uses environment variables for its configuration. The easiest way to define these are using a `.env` file:
+```shell
+pnpm install
+pnpm run build
+```
 
-   ```shell
-   $ vim .env # use any text editor (e.g. nano)
-   ```
+You can now start the bot using `node .`. It should launch and connect successfully.
 
-   The file must contain the following:
-
-   ```
-   TOKEN=<bot_token>
-   CLIENT_ID=<bot_client_id>
-   
-   DB_HOST=<database-host>
-   DB_USER=<database-user>
-   DB_PASS=<database-passphrase>
-   DB_DB=<database-database>
-   ```
-
-   Make sure to replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
-   developer dashboard. Replace `<database-host>`, `<database-user>`, `<database-passphrase>` and `<database-database>`
-   with their respective values needed to connect to the storage database.
-
-3. Start the Docker container with Docker Compose
-
-   ```shell
-   $ docker-compose up -d # use -d to launch detached (optional)
-   ```
-
-4. If launched detached, optionally check the logs to make sure that it works
-
-   ```shell
-   $ docker-compose logs -f
-   ```
-
-### Without Docker
-
-1. Make sure you have nodejs and npm installed.
-
-   ```shell
-   $ node -v # should be >=v18.0
-   $ npm -v # should be >=v8.0
-   ```
-
-   Install/update if needed, using your method of choice. Node 18 is not required, but recommended.
-
-2. Clone the repository
-
-   ```shell
-   $ git clone https://github.com/soni801/soni-bot.git
-   $ cd soni-bot
-   ```
-
-3. Install the required packages
-
-   ```shell
-   $ npm install
-   ```
-
-4. Create the config file
-
-   Soni Bot uses environment variables for its configuration. The easiest way to define these are using a `.env` file:
-
-   ```shell
-   $ vim .env # use any text editor (e.g. nano)
-   ```
-
-   The file must contain the following:
-
-   ```
-   TOKEN=<bot_token>
-   CLIENT_ID=<bot_client_id>
-   
-   DB_HOST=<database-host>
-   DB_USER=<database-user>
-   DB_PASS=<database-passphrase>
-   DB_DB=<database-database>
-   ```
-
-   Make sure to replace `<bot_token>` and `<bot_client_id>` with their respective values, acquired from the Discord
-   developer dashboard. Replace `<database-host>`, `<database-user>`, `<database-passphrase>` and `<database-database>`
-   with their respective values needed to connect to the storage database.
-
-5. Deploy the bot commands
-
-   ```shell
-   $ node deploy
-   ```
-
-6. Run the bot
-
-   ```shell
-   $ node .
-   ```
-
-   _Note: This will not start the process detached. If you need the bot to run detached, check out some other guides on
-   how to do this in your shell. It will not be covered here._
+Soni Bot is made with `pnpm` in mind as the recommended node package manager, but you can use whatever suits your
+environment.
 
 # Troubleshooting
 
@@ -131,9 +49,9 @@ problems include:
 
 - Not providing a valid client ID or bot token
 - Giving the bot insufficient permissions
-  - The bot needs permissions to everything it does, as it does not have foolproof error catches for permission issues.
-  It is recommended to give the bot access to everything it can do, including future features. (permission scope
-  `1643026836566`)
+    - The bot needs permissions to everything it does, as it does not have foolproof error catches for permission
+      issues. It is recommended to give the bot access to everything it can do, including future features. (permission
+      scope `1374658358336`)
 
 The bot logs all the actions it does; it is recommended to check the logs semi-frequently. The logs will also show any
 potential issues, as most crashes are silent. If run through Docker, the container will by default restart on error.
