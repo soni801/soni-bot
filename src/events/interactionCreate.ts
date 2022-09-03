@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, Interaction, TextChannel } from 'discord.js';
+import { AutocompleteInteraction, Interaction } from 'discord.js';
 import Changelog from '../commands/changelog';
 import Help from '../commands/help';
 import { event } from '../types/events';
@@ -57,15 +57,30 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
     // Check if the interaction is a select menu change
     else if (i.isMessageComponent() && i.isSelectMenu())
     {
-        // Fetch the channel
-        const channel = client.channels.cache.get(i.channelId);
-        if (!(channel instanceof TextChannel)) return;
-
-        // Respond with the change
         switch (i.customId)
         {
-            case "help": await i.update((client.commands.get('help') as Help).helpMessage(i.values[0])); break;
-            case "changelog": await i.update((client.commands.get('changelog') as Changelog).changelistMessage(i.values[0]));
+            case 'help': await i.update((client.commands.get('help') as Help).helpMessage(i.values[0])); break;
+            case 'changelog': await i.update((client.commands.get('changelog') as Changelog).changelistMessage(i.values[0]));
+        }
+    }
+    // Check if the interaction is a button
+    else if (i.isMessageComponent() && i.isButton())
+    {
+        if (i.customId.includes('changelog-older'))
+        {
+            // Get current page from the interaction ID
+            const currentPage = parseInt(i.customId);
+
+            // Increment the page
+            await i.update({ components: (client.commands.get('changelog') as Changelog).versionSelectComponents(currentPage + 1) });
+        }
+        else if (i.customId.includes('changelog-newer'))
+        {
+            // Get current page from the interaction ID
+            const currentPage = parseInt(i.customId);
+
+            // Increment the page
+            await i.update({ components: (client.commands.get('changelog') as Changelog).versionSelectComponents(currentPage - 1) });
         }
     }
 

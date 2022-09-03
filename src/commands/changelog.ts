@@ -1,5 +1,7 @@
+import { ButtonStyle } from 'discord-api-types/v10';
 import {
     ActionRowBuilder,
+    ButtonBuilder,
     ChatInputCommandInteraction,
     MessageActionRowComponentBuilder,
     SelectMenuBuilder,
@@ -28,6 +30,7 @@ export default class Changelog implements Command
     logger = new Logger(Changelog.name);
     category: 'bot' = 'bot';
     private _changelog = changelogFile as Changelist[];
+    private _selectMenuArrays: Changelist[][] = [];
 
     /**
      * Creates a new changelog command
@@ -42,10 +45,19 @@ export default class Changelog implements Command
     {
         this.client = client;
 
-        // Format changelog to comply with select menu syntax
-        this._changelog.forEach(version => version.name = `v${version.version}`);
-        this._changelog.forEach(version => version.label = `v${version.version}`);
-        this._changelog.forEach(version => version.value = version.version);
+        // Format changelog to comply with command choice and select menu syntax
+        this._changelog.map(version =>
+        {
+            version.name = version.version;
+            version.label = version.version;
+            version.value = version.version;
+        });
+
+        // Split the changelog into select menu arrays (max. size 25)
+        for (let i = 0; i < this._changelog.length; i += 25)
+        {
+            this._selectMenuArrays.push(this._changelog.slice(i, i + 24));
+        }
     }
 
     /**
@@ -112,16 +124,46 @@ export default class Changelog implements Command
                         }
                     ])
             ],
-            components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId('changelog')
-                            .setPlaceholder('Select a version')
-                            .addOptions(...this._changelog)
-                    )
-            ]
+            components: this.versionSelectComponents(0)
         };
+    }
+
+    /**
+     * Gets the select menu and buttons for a specified changelog page.
+     *
+     * @param {number} changelogPage The changelog page to use for the select menu
+     * @returns {ActionRowBuilder<MessageActionRowComponentBuilder>[]} The message components for the specified changelog page
+     *
+     * @author Soni
+     * @since 6.1.0
+     */
+    versionSelectComponents(changelogPage: number): ActionRowBuilder<MessageActionRowComponentBuilder>[]
+    {
+        // Store the selected page
+        const selectMenuArray = this._selectMenuArrays[changelogPage];
+
+        return [
+            new ActionRowBuilder<SelectMenuBuilder>()
+                .addComponents(
+                    new SelectMenuBuilder()
+                        .setCustomId('changelog')
+                        .setPlaceholder(`Select a version (${selectMenuArray[selectMenuArray.length - 1].version} - ${selectMenuArray[0].version})`)
+                        .addOptions(...selectMenuArray)
+                ),
+            new ActionRowBuilder<ButtonBuilder>()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(`${changelogPage}-changelog-older`)
+                        .setLabel('\u2b05 Older')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setDisabled(changelogPage === this._selectMenuArrays.length - 1),
+                    new ButtonBuilder()
+                        .setCustomId(`${changelogPage}-changelog-newer`)
+                        .setLabel('Newer \u27a1')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setDisabled(changelogPage === 0)
+                )
+        ]
     }
 
     /**
@@ -135,7 +177,7 @@ export default class Changelog implements Command
             .setName(this.name)
             .setDescription(this.description)
             .addStringOption(option => option.setName('version')
-                .setDescription('The version show the changes for')
-                .setChoices(...this._changelog)) as SlashCommandBuilder;
+                .setDescription('The version show the changes for')) as SlashCommandBuilder;
+                // TODO: .setChoices(...this._changelog)) as SlashCommandBuilder;
     }
 }

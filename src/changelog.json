@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "6.1.0",
+            "changes": [
+                "Added the entire version history to the `/changelog` command",
+                "Internal changes to make updating faster"
+            ]
+        },
+        {
             "version": "6.0.2",
             "changes": [
                 "Changed the output format of some error messages",
@@ -84,7 +91,7 @@
         {
             "version": "4.3.0",
             "changes": [
-                "Globally react to messages"
+                "Now globally reacts to messages"
             ]
         },
         {
@@ -166,7 +173,7 @@
         {
             "version": "3.0.0",
             "changes": [
-                "Use embeds for replies"
+                "Changed reply formatting to use embeds"
             ]
         },
         {
@@ -183,9 +190,91 @@
             ]
         },
         {
-            "version": "<2.16.0",
+            "version": "2.15.0",
             "changes": [
-                "Discord does not let us display changes for more than 25 different versions, please check [the GitHub repo](https://github.com/soni801/soni-bot/) for older changes."
+                "Rewrote the help menu"
+            ]
+        },
+        {
+            "version": "2.14.0",
+            "changes": [
+                "Added a feature to react with :neutral_face: on messages sent by boremac",
+                "Fixed various bugs"
+            ]
+        },
+        {
+            "version": "2.13.0",
+            "changes": [
+                "Removed `crush` command",
+                "Added `family` command"
+            ]
+        },
+        {
+            "version": "2.12.0",
+            "changes": [
+                "Removed `sara` command",
+                "Removed `jiggly` command",
+                "Modified some replies",
+                "Added `riki` command"
+            ]
+        },
+        {
+            "version": "2.11.0",
+            "changes": [
+                "Improved `help` command",
+                "Removed `ara` command",
+                "Removed `shadow` command"
+            ]
+        },
+        {
+            "version": "2.10.0",
+            "changes": [
+                "Added `jiggly` command",
+                "Added `crush` command"
+            ]
+        },
+        {
+            "version": "2.9.0",
+            "changes": [
+                "Added `understandable` command"
+            ]
+        },
+        {
+            "version": "2.8.1",
+            "changes": [
+                "Fixed reactions"
+            ]
+        },
+        {
+            "version": "2.8.0",
+            "changes": [
+                "Added `remind` command",
+                "Added 'ew' reactions"
+            ]
+        },
+        {
+            "version": "2.7.0",
+            "changes": [
+                "Added `intelligence` command"
+            ]
+        },
+        {
+            "version": "2.6.0",
+            "changes": [
+                "Added `svensdum` command"
+            ]
+        },
+        {
+            "version": "2.5.0",
+            "changes": [
+                "Added more info about sven",
+                "Increased joke selection by 425%"
+            ]
+        },
+        {
+            "version": "Older",
+            "changes": [
+                "There is unfortunately no version log of earlier versions than this, as this was before version control was added to the project."
             ]
         }
     ]
