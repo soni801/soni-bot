@@ -4,6 +4,8 @@
             "version": "6.1.0",
             "changes": [
                 "Added the entire version history to the `/changelog` command",
+                "Removed a bad joke",
+                "Added 23 new jokes",
                 "Internal changes to make updating faster"
             ]
         },
