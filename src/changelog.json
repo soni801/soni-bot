@@ -1,6 +1,12 @@
 {
     "changelog": [
         {
+            "version": "6.2.1",
+            "changes": [
+                "Fixed a bug that caused reminders to be saved incorrectly"
+            ]
+        },
+        {
             "version": "6.2.0",
             "changes": [
                 "Added `/reminder edit time` and `/reminder edit content` commands",
