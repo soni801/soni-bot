@@ -46,8 +46,11 @@ export default class Dice implements Command
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
         // Define the minimum and maximum values for the output
-        const min = i.options.getInteger('min') || 1;
-        const max = i.options.getInteger('max') || 6;
+        // This has to be done like this to only check falsy values other than 0
+        const providedMin = i.options.getInteger('min');
+        const providedMax = i.options.getInteger('max');
+        const min = providedMin !== undefined && providedMin !== null ? providedMin : 1;
+        const max = providedMax !== undefined && providedMax !== null ? providedMax : 6;
 
         // Show an error to the user if the provided range is invalid
         if (min > max) return await i.editReply({ embeds: [
