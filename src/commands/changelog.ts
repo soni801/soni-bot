@@ -57,7 +57,7 @@ export default class Changelog implements Command
         // Split the changelog into select menu arrays (max. size 25)
         for (let i = 0; i < this._changelog.length; i += 25)
         {
-            this._selectMenuArrays.push(this._changelog.slice(i, i + 24));
+            this._selectMenuArrays.push(this._changelog.slice(i, i + 25));
         }
     }
 

@@ -308,7 +308,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         });
 
         // Log the reminder
-        this.logger.info(`Reminded ${user.username}#${user.discriminator} of '${reminder.content}'`);
+        this.logger.info(`Reminded ${user.username}#${user.discriminator} of reminder #${reminder.id}`);
 
         // Change the reminded state of the reminder
         reminder.reminded = true;

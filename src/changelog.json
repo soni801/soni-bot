@@ -3,8 +3,11 @@
         {
             "version": "6.2.0",
             "changes": [
+                "Added `/reminder edit time` and `/reminder edit content` commands",
+                "Added `/reminder remove` command",
                 "Added an option to specify help category directly in the command",
-                "Fixed a bug where the dice command would break on specific input",
+                "Fixed a bug where the dice command would break when min and max are both 0",
+                "Fixed a bug where some versions would disappear from the changelog select menu",
                 "Improved logging"
             ]
         },
