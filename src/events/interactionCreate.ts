@@ -28,7 +28,7 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
     if (i.isChatInputCommand() && i.isCommand())
     {
         // Get the command name
-        client.logger.info(`Slash command '${i.commandName}' called by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
+        client.logger.info(`Command '${i.commandName}' called by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
         const command = client.commands.get(i.commandName);
 
         // Defer reply
@@ -57,6 +57,8 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
     // Check if the interaction is a select menu change
     else if (i.isMessageComponent() && i.isSelectMenu())
     {
+        client.logger.verbose(`Select menu change called for select menu '${i.customId}' by ${i.user.tag}`);
+
         switch (i.customId)
         {
             case 'help': await i.update((client.commands.get('help') as Help).helpMessage(i.values[0])); break;
@@ -66,6 +68,8 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
     // Check if the interaction is a button
     else if (i.isMessageComponent() && i.isButton())
     {
+        client.logger.verbose(`Button '${i.customId}' interaction called by ${i.user.tag}`);
+
         if (i.customId.includes('changelog-older'))
         {
             // Get current page from the interaction ID

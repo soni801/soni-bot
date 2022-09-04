@@ -23,6 +23,32 @@ export default class Help implements Command
     client: Client;
     logger = new Logger(Help.name);
     category: 'bot' = 'bot';
+    private _CATEGORIES = [
+        {
+            label: "Soni Bot",
+            name: "Soni Bot",
+            description: "Commands for information about the bot",
+            value: "bot"
+        },
+        {
+            label: "Useful",
+            name: "Useful",
+            description: "Useful commands",
+            value: "useful"
+        },
+        {
+            label: "Moderation",
+            name: "Moderation",
+            description: "Commands for server moderation",
+            value: "moderation"
+        },
+        {
+            label: "Fun",
+            name: "Fun",
+            description: "Fun, not so useful commands",
+            value: "fun"
+        }
+    ];
 
     /**
      * Creates a new help command
@@ -50,7 +76,7 @@ export default class Help implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
-        return await i.editReply(this.helpMessage());
+        return await i.editReply(this.helpMessage(i.options.getString('category') || undefined));
     }
 
     helpMessage(category?: string)
@@ -133,28 +159,7 @@ export default class Help implements Command
                         new SelectMenuBuilder()
                             .setCustomId('help')
                             .setPlaceholder('Select a category')
-                            .addOptions(
-                                {
-                                    label: "Soni Bot",
-                                    description: "Commands for information about the bot",
-                                    value: "bot"
-                                },
-                                {
-                                    label: "Useful",
-                                    description: "Useful commands",
-                                    value: "useful"
-                                },
-                                {
-                                    label: "Moderation",
-                                    description: "Commands for server moderation",
-                                    value: "moderation"
-                                },
-                                {
-                                    label: "Fun",
-                                    description: "Fun, not so useful commands",
-                                    value: "fun"
-                                }
-                            )
+                            .addOptions(...this._CATEGORIES)
                     )
             ]
         };
@@ -174,6 +179,9 @@ export default class Help implements Command
     {
         return new SlashCommandBuilder()
             .setName(this.name)
-            .setDescription(this.description);
+            .setDescription(this.description)
+            .addStringOption(option => option.setName('category')
+                .setDescription('The help category to show')
+                .addChoices(...this._CATEGORIES)) as SlashCommandBuilder;
     }
 }

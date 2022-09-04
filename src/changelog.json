@@ -3,7 +3,9 @@
         {
             "version": "6.2.0",
             "changes": [
-                "Fixed a bug where the dice command would break on specific input"
+                "Added an option to specify help category directly in the command",
+                "Fixed a bug where the dice command would break on specific input",
+                "Improved logging"
             ]
         },
         {
