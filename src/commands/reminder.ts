@@ -11,6 +11,7 @@ import type Client from '../util/Client';
 import { CONSTANTS } from '../util/config';
 import Logger from '../util/Logger';
 
+// noinspection DuplicatedCode
 /**
  * The reminder command
  *
@@ -225,8 +226,8 @@ export default class Reminder implements Command
                         .setTitle('Successfully edited reminder')
                         .addFields([
                             {
-                                name: 'New content:',
-                                value: reminder.content
+                                name: 'New due time:',
+                                value: `<t:${(reminder.due.getTime() / 1000).toFixed(0)}:R>`
                             }
                         ])
                 ] });
@@ -292,7 +293,7 @@ export default class Reminder implements Command
                 ] });
 
                 // Delete the reminder
-                reminder.reminded = true;
+                reminder.active = false;
                 await reminder.save();
                 this.logger.info(`Deleted reminder #${reminder.id} on user ${i.user.tag}`);
 

@@ -8,6 +8,7 @@
                 "Added an option to specify help category directly in the command",
                 "Fixed a bug where the dice command would break when min and max are both 0",
                 "Fixed a bug where some versions would disappear from the changelog select menu",
+                "Improved the database storage format for reminders",
                 "Improved logging"
             ]
         },

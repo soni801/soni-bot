@@ -22,7 +22,7 @@ let ormConfig: DataSourceOptions = {
     username: process.env.DB_USER ?? 'postgres',
     password: process.env.DB_PASS ?? 'postgres',
     database: process.env.DB_NAME ?? 'discord_bot',
-    synchronize: true,
+    synchronize: false,
     logging: ['error'],
     namingStrategy: new SnakeNamingStrategy(),
 

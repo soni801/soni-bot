@@ -8,7 +8,7 @@ import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeo
  * @see {@link BaseEntity}
  */
 @Entity('reminder')
-@Index([ 'reminded' ])
+@Index([ 'active' ])
 export default class ReminderEntity extends BaseEntity
 {
     constructor(partial?: Partial<ReminderEntity>)
@@ -36,6 +36,6 @@ export default class ReminderEntity extends BaseEntity
     @Column()
     due: Date;
 
-    @Column({ default: false })
-    reminded: boolean;
+    @Column({ default: true })
+    active: boolean;
 }

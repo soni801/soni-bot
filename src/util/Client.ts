@@ -106,6 +106,10 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             Promise.reject(e);
         });
 
+        // Run migrations
+        this.logger.verbose('Running migrations');
+        await this.db.runMigrations().then(() => this.logger.verbose('Ran all migrations successfully'));
+
         this.logger.info('Connected to the database');
         return this.db;
     }
@@ -264,8 +268,8 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Reject the promise if the database is not reachable
         if (!this.db.isInitialized) await Promise.reject();
 
-        // Fetch all reminders that are not reminded
-        let reminders = await ReminderEntity.find({ where: { reminded: false } });
+        // Fetch all active reminders
+        let reminders = await ReminderEntity.find({ where: { active: true } });
 
         // Filter to only include due reminders if desired
         if (due) reminders = reminders.filter(r => r.due.getTime() <= new Date().getTime());
@@ -280,7 +284,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * Reminds a user of a given reminder
      *
      * @param {ReminderEntity} reminder The reminder to remind the user of
-     * @returns {Promise<ReminderEntity>} The reminded reminder
+     * @returns {Promise<ReminderEntity>} The reminder
      *
      * @author Soni
      * @since 6.0.0
@@ -310,8 +314,8 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Log the reminder
         this.logger.info(`Reminded ${user.username}#${user.discriminator} of reminder #${reminder.id}`);
 
-        // Change the reminded state of the reminder
-        reminder.reminded = true;
+        // Mark the reminder as inactive
+        reminder.active = false;
         return await reminder.save();
     }
 
