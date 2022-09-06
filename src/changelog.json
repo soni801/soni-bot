@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "6.2.2",
+            "changes": [
+                "Tried to fix a bug that causes the bot to disconnect after being online for a couple hours",
+                "Improved some older changelog texts"
+            ]
+        },
+        {
             "version": "6.2.1",
             "changes": [
                 "Fixed a bug that caused reminders to be saved incorrectly"
@@ -11,8 +18,8 @@
             "changes": [
                 "Added `/reminder edit time` and `/reminder edit content` commands",
                 "Added `/reminder remove` command",
-                "Added an option to specify help category directly in the command",
-                "Fixed a bug where the dice command would break when min and max are both 0",
+                "Added an option to specify help category directly in the `/help` command",
+                "Fixed a bug where the `/dice` command would break when min and max are both 0",
                 "Fixed a bug where some versions would disappear from the changelog select menu",
                 "Improved the database storage format for reminders",
                 "Improved logging"
@@ -48,13 +55,13 @@
             "changes": [
                 "Yikes, I accidentally rewrote the actual entire codebase again",
                 "Replaced the `/responses` command with the `/response` command",
-                "Added the joke ID to the output of the joke command",
-                "Added an option to specify joke in joke command",
-                "Added an option to provide a custom number range for the dice command",
-                "Added an option to provide version number directly in the changelog command",
+                "Added the joke ID to the output of the `/joke` command",
+                "Added an option to specify joke in the `/joke` command",
+                "Added an option to provide a custom number range for the `/dice` command",
+                "Added an option to provide version number directly in the `/changelog` command",
                 "Improved error formatting to the user",
                 "Changed the footer format",
-                "Internal changes to the 8ball output values"
+                "Internal changes to the `/8ball` output values"
             ]
         },
         {
