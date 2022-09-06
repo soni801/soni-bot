@@ -1,6 +1,14 @@
 {
     "changelog": [
         {
+            "version": "6.2.3",
+            "changes": [
+                "Improved the formatting of some `/8ball` responses",
+                "Removed a bad `/8ball` response",
+                "Added 20 new `/8ball` responses (Thanks Fibes)"
+            ]
+        },
+        {
             "version": "6.2.2",
             "changes": [
                 "Tried to fix a bug that causes the bot to disconnect after being online for a couple hours",
