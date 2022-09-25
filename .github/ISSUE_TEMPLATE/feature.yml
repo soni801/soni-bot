@@ -1,0 +1,34 @@
+name: Feature suggestion
+description: Request a new feature or change
+body:
+  - type: checkboxes
+    attributes:
+      label: Request validity
+      description: Please check to make sure that this request is valid
+      options:
+        - label: I confirm that there are no existing requests for this feature/change
+          required: true
+  - type: textarea
+    attributes:
+      label: Is your request related to a problem?
+      description: Do you want this feature/change because you are experiencing a problem or inconvenience? Please describe.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Requested solution
+      description: A concise description of the solution you'd like
+      placeholder: A new option on the command...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Other solutions
+      description: Have you considered any alternative solutions?
+    validations:
+      required: false
+assignees:
+  - soni801
+labels:
+  - enhancement

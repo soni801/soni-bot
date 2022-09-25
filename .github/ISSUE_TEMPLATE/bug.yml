@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a misbehaviour
+body:
+  - type: checkboxes
+    attributes:
+      label: Report validity
+      description: Please check to make sure that this bug is valid and not already reported
+      options:
+        - label: I confirm that there are no existing reports for this bug
+          required: true
+  - type: input
+    attributes:
+      label: Soni Bot version
+      description: The version this happened on, shown at the top when running the `/help` command.
+      placeholder: 4.1.2
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Summary
+      description: A short summary of the issue you're having
+      placeholder: When I run a command...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behaviour
+      description: A clear description of what you expected to happen
+      placeholder: The output should be...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: If you are able to reproduce this bug, please describe how
+      placeholder: |
+        1. Go to channel...
+        2. Try to run the command...
+        3. Input the values...
+    validations:
+      required: false
+assignees:
+  - soni801
+labels:
+  - bug
