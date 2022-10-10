@@ -85,7 +85,7 @@ export default class Help implements Command
         const header = [
             {
                 name: "Version",
-                value: `v${this.client.version}`,
+                value: this.client.version,
                 inline: true
             },
             {

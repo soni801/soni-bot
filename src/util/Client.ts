@@ -65,7 +65,12 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
                 this.logger.error('An error occurred while fetching reminders');
                 return [];
             });
-            reminders.forEach(r => this.remind(r));
+            reminders.forEach(r => this.remind(r).catch((e: Error) =>
+            {
+                // The reminder was probably created in a channel that the bot doesn't have access to
+                this.logger.error('An error occurred while trying to process reminders');
+                console.error(e);
+            }));
         }, 1000)));
     }
 
