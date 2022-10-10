@@ -61,7 +61,7 @@ export abstract class Command
      * @since 6.0.0
      * @see {@link Client}
      */
-    constructor(client: Client);
+    protected constructor(client: Client);
 
     /**
      * The slash command builder for this command interaction.

@@ -1,7 +1,12 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Migrates the reminded column of the reminder entity to a superior active model.
+ *
+ * @author theS1LV3R, Soni
+ * @since 6.2.0
+ * @see {@link MigrationInterface}
  */
 export class remindedToActive1662305752822 implements MigrationInterface
 {
