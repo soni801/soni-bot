@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "6.2.4",
+            "changes": [
+                "Added more info to the `/about` command",
+                "Tried to fix a bug that causes the bot to disconnect after being online for a couple hours",
+                "Fixed a bug that would sometimes cause a reminder to be sent twice",
+                "Minor code improvements"
+            ]
+        },
+        {
             "version": "6.2.3",
             "changes": [
                 "Improved the formatting of some `/8ball` responses",
