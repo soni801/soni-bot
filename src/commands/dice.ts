@@ -4,6 +4,7 @@ import type Client from '../util/Client';
 import { CONSTANTS } from '../util/config';
 import Logger from '../util/Logger';
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * The dice command
  *

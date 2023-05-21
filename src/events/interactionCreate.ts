@@ -10,7 +10,7 @@ import { CONSTANTS } from '../util/config';
  *
  * @param {Client<true>} client The Client to use for the event
  * @param {Interaction} i The Interaction that was created
- * @returns {Promise<Message | ChatInputCommandInteraction<"cached">>} The provided Interaction
+ * @returns {Promise<any>} The provided Interaction
  *
  * @author theS1LV3R
  * @since 6.0.0
@@ -119,4 +119,5 @@ async function handleAutocomplete(client: Client, i: AutocompleteInteraction<'ca
     })
 }
 
+// noinspection JSUnusedGlobalSymbols
 export default interactionCreate;

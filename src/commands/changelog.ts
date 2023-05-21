@@ -7,7 +7,7 @@ import {
     MessageActionRowComponentBuilder,
     SelectMenuBuilder,
     SlashCommandBuilder,
-    WebhookEditMessageOptions
+    WebhookMessageEditOptions
 } from 'discord.js';
 import { changelog as changelogFile } from '../changelog.json';
 import { Changelist } from '../types';
@@ -100,12 +100,12 @@ export default class Changelog implements Command
      * Returns a changelist message for the provided version
      *
      * @param {string} version The version to get the changelist from
-     * @returns {WebhookEditMessageOptions} A message containing the changelist
+     * @returns {WebhookMessageEditOptions} A message containing the changelist
      *
      * @author Soni
      * @since 6.0.0
      */
-    changelistMessage(version: string): WebhookEditMessageOptions
+    changelistMessage(version: string): WebhookMessageEditOptions
     {
         // Get the changes for the provided version
         const changes = this._changelog.find(ver => ver.version === version)!.changes;

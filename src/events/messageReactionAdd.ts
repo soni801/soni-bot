@@ -20,4 +20,5 @@ const messageReactionAdd: event<'messageReactionAdd'> = async (client: Client<tr
     return client.handleReaction(r, u, true);
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default messageReactionAdd;

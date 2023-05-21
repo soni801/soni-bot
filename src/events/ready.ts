@@ -23,9 +23,10 @@ const ready: event<'ready'> = async (client: Client<true>) =>
 
     client.logger.verbose(`Loaded ${client.guilds.cache.size} guild(s)`);
     client.logger.verbose(`Loaded ${client.commands.size} command(s)`);
-    client.logger.warn(`Logged in as ${client.user?.tag}!`);
+    client.logger.info(`Logged in as ${client.user?.tag} with Soni Bot version ${client.version}`);
 
     return client;
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default ready;

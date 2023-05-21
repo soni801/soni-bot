@@ -4,6 +4,7 @@ import type { Command } from '../types/Command';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * The 8ball command
  *

@@ -1,6 +1,14 @@
 {
     "changelog": [
         {
+            "version": "6.2.5",
+            "changes": [
+                "Updated internal libraries",
+                "Minor code changes",
+                "Code readability improvements"
+            ]
+        },
+        {
             "version": "6.2.4",
             "changes": [
                 "Added more info to the `/about` command",

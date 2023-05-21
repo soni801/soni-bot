@@ -60,4 +60,5 @@ function react(client: Client<true>, message: Message, phrase: string, emoteID: 
     message.react(emote).then(() => client.logger.info(`Reacted with emote ${emote} to phrase '${phrase}' in #${channel.name}, ${guild.name}`));
 }
 
+// noinspection JSUnusedGlobalSymbols
 export default messageCreate;

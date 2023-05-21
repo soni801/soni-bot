@@ -20,4 +20,5 @@ const messageReactionRemove: event<'messageReactionRemove'> = async (client: Cli
     return client.handleReaction(r, u, false);
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default messageReactionRemove;
