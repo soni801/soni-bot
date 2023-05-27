@@ -129,6 +129,21 @@ export default class Reminder implements Command
                 const reminder = new ReminderEntity({ user, channel, content, due });
                 await reminder.save();
 
+                // Calculate what to output as the specified time in the confirmation message
+                let outputTime = 'unspecified time';
+                switch (unit)
+                {
+                    case 'days':
+                        outputTime = `<t:${(due.getTime() / 1000).toFixed(0)}:D>`;
+                        break;
+                    case 'hours': case 'minutes':
+                        outputTime = `<t:${(due.getTime() / 1000).toFixed(0)}:t>`;
+                        break;
+                    case 'seconds':
+                        outputTime = `<t:${(due.getTime() / 1000).toFixed(0)}:T>`;
+                        break;
+                }
+
                 // Send a confirmation to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
@@ -140,7 +155,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded <t:${(due.getTime() / 1000).toFixed(0)}:R>`
+                                value: `You will be reminded at ${outputTime}`
                             }
                         ])
                 ] });
