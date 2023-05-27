@@ -1,5 +1,6 @@
-import { event } from '../types/events';
+import {event} from '../types/events';
 import Client from '../util/Client';
+import {ActivityType} from "discord-api-types/v10";
 
 /**
  * The ready event
@@ -20,6 +21,9 @@ const ready: event<'ready'> = async (client: Client<true>) =>
         console.error(e);
         throw e;
     });
+
+    // Set the bot activity
+    client.user.setActivity('/help', { type: ActivityType.Listening })
 
     client.logger.verbose(`Loaded ${client.guilds.cache.size} guild(s)`);
     client.logger.verbose(`Loaded ${client.commands.size} command(s)`);

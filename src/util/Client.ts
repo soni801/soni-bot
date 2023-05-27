@@ -239,7 +239,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         return new EmbedBuilder(embed)
             .setColor(CONSTANTS.COLORS.default)
             .setFooter({
-                text: this.user?.tag ?? '',
+                text: ((this.user?.tag + ' ') ?? '') + `version ${this.version}`,
                 iconURL: this.user?.avatarURL({ extension: 'png' }) ?? '',
             });
     }
