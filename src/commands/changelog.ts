@@ -5,8 +5,8 @@ import {
     ButtonBuilder,
     ChatInputCommandInteraction,
     MessageActionRowComponentBuilder,
-    SelectMenuBuilder,
     SlashCommandBuilder,
+    StringSelectMenuBuilder,
     WebhookMessageEditOptions
 } from 'discord.js';
 import { changelog as changelogFile } from '../changelog.json';
@@ -144,25 +144,25 @@ export default class Changelog implements Command
         const selectMenuArray = this._selectMenuArrays[changelogPage];
 
         return [
-            new ActionRowBuilder<SelectMenuBuilder>()
+            new ActionRowBuilder<StringSelectMenuBuilder>()
                 .addComponents(
-                    new SelectMenuBuilder()
+                    new StringSelectMenuBuilder()
                         .setCustomId('changelog')
-                        .setPlaceholder(`Select a version (${selectMenuArray[selectMenuArray.length - 1].version} - ${selectMenuArray[0].version})`)
+                        .setPlaceholder(`Select a version (${selectMenuArray[0].version} - ${selectMenuArray[selectMenuArray.length - 1].version})`)
                         .addOptions(...selectMenuArray)
                 ),
             new ActionRowBuilder<ButtonBuilder>()
                 .addComponents(
                     new ButtonBuilder()
-                        .setCustomId(`${changelogPage}-changelog-older`)
-                        .setLabel('\u2b05 Older')
-                        .setStyle(ButtonStyle.Secondary)
-                        .setDisabled(changelogPage === this._selectMenuArrays.length - 1),
-                    new ButtonBuilder()
                         .setCustomId(`${changelogPage}-changelog-newer`)
-                        .setLabel('Newer \u27a1')
+                        .setLabel('\u2b05 Newer')
                         .setStyle(ButtonStyle.Secondary)
-                        .setDisabled(changelogPage === 0)
+                        .setDisabled(changelogPage === 0),
+                    new ButtonBuilder()
+                        .setCustomId(`${changelogPage}-changelog-older`)
+                        .setLabel('Older \u27a1')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setDisabled(changelogPage === this._selectMenuArrays.length - 1)
                 )
         ]
     }

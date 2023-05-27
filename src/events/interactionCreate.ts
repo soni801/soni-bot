@@ -55,7 +55,7 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
         });
     }
     // Check if the interaction is a select menu change
-    else if (i.isMessageComponent() && i.isSelectMenu())
+    else if (i.isMessageComponent() && i.isStringSelectMenu())
     {
         client.logger.verbose(`Select menu change called for select menu '${i.customId}' by ${i.user.tag}`);
 
