@@ -54,7 +54,7 @@ export default class Family implements Command
                         value: `Wanna join the family? Just tell ${this.client.users.cache.get("443058373022318593")}, and we'll figure it out.`
                     }
                 ])
-                .setImage('https://cdn.yessness.com/family.png')
+                .setImage('https://files.soni.recalstudios.net/family.png')
         ] });
     }
 
