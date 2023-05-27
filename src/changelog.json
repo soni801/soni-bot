@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "6.2.6",
+            "changes": [
+                "Fixed the family tree output",
+                "Changed the formatting of the reminder creation message",
+                "Made the changelog list slightly easier to navigate",
+                "Minor code improvements"
+            ]
+        },
+        {
             "version": "6.2.5",
             "changes": [
                 "Updated internal libraries",
