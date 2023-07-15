@@ -5,27 +5,27 @@ import Logger from '../util/Logger';
 
 // noinspection JSUnusedGlobalSymbols
 /**
- * The uptime command
+ * The status command
  *
  * @author Soni
- * @since 6.0.0
+ * @since 6.0.0 // FIXME
  * @see {@link Command}
  */
-export default class Uptime implements Command
+export default class Status implements Command
 {
-    name = 'uptime';
-    description = 'Show the uptime of Soni Bot';
+    name = 'status';
+    description = 'Display bot status and runtime information';
     client: Client<true>;
-    logger = new Logger(Uptime.name);
+    logger = new Logger(Status.name);
     category: 'bot' = 'bot';
 
     /**
-     * Creates a new uptime command
+     * Creates a new status command
      *
      * @param {Client} client The Client the command is attached to
      *
      * @author Soni
-     * @since 6.0.0
+     * @since 6.0.0 // FIXME
      * @see {@link Client}
      */
     constructor(client: Client)
@@ -40,18 +40,30 @@ export default class Uptime implements Command
      * @returns {Promise<Message<boolean>>} The reply sent by the bot
      *
      * @author Soni
-     * @since 6.0.0
+     * @since 6.0.0 // FIXME
      * @see {@link ChatInputCommandInteraction}
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
     {
+        // Fetch the message and check the latency
+        const message = await i.fetchReply();
+
+        // Send reply to user
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
-                .setTitle('Soni Bot uptime')
+                .setTitle('Soni Bot status')
                 .addFields([
                     {
                         name: "Uptime",
                         value: this._timeConversion(this.client.uptime)
+                    },
+                    {
+                        name: 'Soni Bot latency (RTT)',
+                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
+                    },
+                    {
+                        name: 'Discord API latency',
+                        value: `${Math.round(this.client.ws.ping)}ms`
                     }
                 ])
         ] });
@@ -76,7 +88,7 @@ export default class Uptime implements Command
      * @returns {string} The converted amount
      *
      * @author theS1LV3R, Soni
-     * @since 6.0.0
+     * @since 6.0.0 // FIXME
      * @see {@link https://stackoverflow.com/a/58826445/9088682|This code on StackOverflow}
      */
     private _timeConversion(duration: number)

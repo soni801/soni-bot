@@ -28,7 +28,7 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
     if (i.isChatInputCommand() && i.isCommand())
     {
         // Get the command name
-        client.logger.info(`Command '${i.commandName}' called by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
+        client.logger.info(`Command '${i.commandName}' called by ${i.user.username} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);
         const command = client.commands.get(i.commandName);
 
         // Defer reply
