@@ -4,7 +4,6 @@ import Client from '../util/Client';
 /**
  * Decorates a function as an event
  *
- * @template {K} The event that is being decorated
  * @param {Client} client The Client
  * @returns Awaitable<any> The event that is being decorated
  *

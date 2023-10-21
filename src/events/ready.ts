@@ -12,7 +12,7 @@ import Client from '../util/Client';
  * @since 6.0.0
  * @see {@link ClientEvents.ready}
  */
-const ready: event<'ready'> = async (client: Client<true>) =>
+const ready: event<'ready'> = async (client: Client<true>): Promise<Client<true>> =>
 {
     // Deploy the application's slash commands
     await client.deployCommands().catch((e: Error) =>

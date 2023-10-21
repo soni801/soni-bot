@@ -3,7 +3,7 @@ import {
     AutocompleteInteraction,
     ButtonBuilder,
     ButtonStyle,
-    ChatInputCommandInteraction,
+    ChatInputCommandInteraction, Message,
     MessageActionRowComponentBuilder,
     SlashCommandBuilder,
     StringSelectMenuBuilder,
@@ -71,7 +71,7 @@ export default class Changelog implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         // Get the current version
         const version = i.options.getString('version') || this.client.version;

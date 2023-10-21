@@ -91,7 +91,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Disconnect from the database
         if (this.db.isInitialized) this.db.destroy().catch(e => this.logger.error(`An error occurred while disconnecting from the database: ${e}`));
 
-        super.destroy();
+        super.destroy().then(() => this.logger.info('Destroyed the client'));
     }
 
     /**

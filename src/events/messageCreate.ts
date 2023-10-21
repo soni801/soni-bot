@@ -14,7 +14,7 @@ import Client from '../util/Client';
  * @see {@link ClientEvents.messageCreate}
  * @see {@link react}
  */
-const messageCreate: event<'messageCreate'> = async (client: Client<true>, m: Message) =>
+const messageCreate: event<'messageCreate'> = async (client: Client<true>, m: Message): Promise<Message> =>
 {
     react(client, m, 'ew', '808988372948615178');
     react(client, m, 'dbrug', '808989500058894376');

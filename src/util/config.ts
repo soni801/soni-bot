@@ -49,7 +49,6 @@ export const CONSTANTS = {
 /**
  * The ClientOptions used by the Client when logging in
  *
- * @type {{intents: (GatewayIntentBits.Guilds | GatewayIntentBits.GuildMessages)[], allowedMentions: {parse: (string)[]}}}
  * @since 6.0.0
  * @see {@link ClientOptions}
  */
