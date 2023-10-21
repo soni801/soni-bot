@@ -1,4 +1,3 @@
-import { Routes } from 'discord-api-types/v10';
 import {
     Client as DiscordClient,
     ClientOptions,
@@ -9,7 +8,8 @@ import {
     PartialMessageReaction,
     PartialUser,
     TextChannel,
-    User
+    User,
+    Routes
 } from 'discord.js';
 import { readdir } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
@@ -36,7 +36,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     db = new DataSource(ormconfig);
     logger = new Logger(Client.name);
     version = process.env.npm_package_version || 'Unknown';
-    intervals: NodeJS.Timer[] = [];
+    intervals: NodeJS.Timeout[] = [];
     private isReminding = false;
 
     /**
@@ -83,7 +83,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @author Soni
      * @since 6.0.2
      */
-    destroy()
+    async destroy()
     {
         // Clear all registered intervals
         this.intervals.forEach(i => clearInterval(i));

@@ -1,8 +1,8 @@
-import { ButtonStyle } from 'discord-api-types/v10';
 import {
     ActionRowBuilder,
     AutocompleteInteraction,
     ButtonBuilder,
+    ButtonStyle,
     ChatInputCommandInteraction,
     MessageActionRowComponentBuilder,
     SlashCommandBuilder,

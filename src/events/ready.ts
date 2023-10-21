@@ -1,6 +1,6 @@
+import { ActivityType } from 'discord.js';
 import {event} from '../types/events';
 import Client from '../util/Client';
-import {ActivityType} from "discord-api-types/v10";
 
 /**
  * The ready event

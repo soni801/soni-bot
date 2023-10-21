@@ -26,8 +26,7 @@ function start()
     client.on('restart', async () =>
     {
         client.logger.info('Restarting...');
-        client.destroy();
-        start();
+        client.destroy().then(() => start());
     });
 }
 
@@ -49,7 +48,7 @@ function exit(...arg: string[])
     client.logger.warn(`${arg} received, exiting...`);
 
     // Safely destroy the client
-    client.destroy();
+    client.destroy().then(() => client.logger.info('Destroyed client'));
 }
 
 /**
