@@ -1,6 +1,14 @@
 {
     "changelog": [
         {
+            "version": "6.2.7",
+            "changes": [
+                "Removed the `/family` command",
+                "Updated internal libraries",
+                "Minor code improvements"
+            ]
+        },
+        {
             "version": "6.2.6",
             "changes": [
                 "Fixed the family tree output",

@@ -9,7 +9,7 @@ import {
     StringSelectMenuBuilder,
     WebhookMessageEditOptions
 } from 'discord.js';
-import { changelog as changelogFile } from '../changelog.json';
+import { changelog as changelogFile } from '../responses/changelog.json';
 import { Changelist } from '../types';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
