@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord.js';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
@@ -43,7 +43,7 @@ export default class Status implements Command
      * @since 6.2.7
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         // Fetch the message and check the latency
         const message = await i.fetchReply();
@@ -74,7 +74,7 @@ export default class Status implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)
@@ -91,7 +91,7 @@ export default class Status implements Command
      * @since 6.2.7
      * @see {@link https://stackoverflow.com/a/58826445/9088682|This code on StackOverflow}
      */
-    private _timeConversion(duration: number)
+    private _timeConversion(duration: number): string
     {
         const portions: string[] = [];
 

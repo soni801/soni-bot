@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord.js';
 import { jokes } from '../responses/joke.json';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
@@ -45,7 +45,7 @@ export default class Joke implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         // Get the joke ID or generate one if omitted
         const joke = i.options.getInteger('joke') || this.client.randomNumber(1, jokes.length + 1);
@@ -80,7 +80,7 @@ export default class Joke implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)

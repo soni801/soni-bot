@@ -25,10 +25,10 @@ const COLORS: { [ key: string ]: ColorResolvable } = {
 /**
  * Constant values set at runtime
  *
- * @type {{COLORS: {[p: string]: ColorResolvable}, ERRORS: {DEPLOY_FAILED: string, DISABLED: string, BOT_MISSING_PERMS: string, GENERIC: string, NOT_IMPLEMENTED_NOT_EXIST: string, DB_NOT_CONNECTED: string, UNKNOWN_SUBCOMMAND: string, CLIENT_DESTROY: string, COMMAND_RUN_ERROR: string, USER_MISSING_PERMS: string, SHUTDOWN_USED: (user: User) => string}, logLevel: string}}
+ * @type {any}
  * @since 6.0.0
  */
-export const CONSTANTS = {
+export const CONSTANTS: any = {
     ERRORS: {
         GENERIC: 'An error has occurred.',
         DEPLOY_FAILED: 'Failed to deploy!',

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AutocompleteInteraction, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {AutocompleteInteraction, ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord.js';
 import { ResponseObject } from '../types';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
@@ -49,7 +49,7 @@ export default class Response implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         const response = this._responses.find(r => r.id === i.options.getString('response', true));
 
@@ -91,7 +91,7 @@ export default class Response implements Command
      * @since 6.0.0
      * @see {@link https://responses.yessness.com}
      */
-    async loadResponses()
+    async loadResponses(): Promise<void>
     {
 
         // This line looks cursed but do not worry about it please, it does its job :)
@@ -107,7 +107,7 @@ export default class Response implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)
@@ -127,7 +127,7 @@ export default class Response implements Command
      * @author theS1LV3R
      * @since 6.0.0
      */
-    async handleAutocomplete(i: AutocompleteInteraction<'cached'>)
+    async handleAutocomplete(i: AutocompleteInteraction<'cached'>): Promise<void>
     {
         // Get the focused value
         const focusedValue = i.options.getFocused();

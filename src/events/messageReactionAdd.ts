@@ -15,7 +15,7 @@ import Client from '../util/Client';
  * @see {@link ClientEvents.messageReactionAdd}
  * @see {@link Client.handleReaction}
  */
-const messageReactionAdd: event<'messageReactionAdd'> = async (client: Client<true>, r: MessageReaction | PartialMessageReaction, u: User | PartialUser) =>
+const messageReactionAdd: event<'messageReactionAdd'> = async (client: Client<true>, r: MessageReaction | PartialMessageReaction, u: User | PartialUser): Promise<undefined | boolean> =>
 {
     return client.handleReaction(r, u, true);
 };

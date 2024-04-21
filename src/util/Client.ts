@@ -213,7 +213,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @since 6.0.0
      * @see {@link https://discordjs.guide/creating-your-bot/creating-commands.html#command-deployment-script|DiscordJS command deployment documentation}
      */
-    async deployCommands()
+    async deployCommands(): Promise<void>
     {
         // Create the body of the request
         const body = [];
@@ -255,7 +255,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @since 6.0.0
      * @see {@link Math.random}
      */
-    randomNumber(min: number, max: number)
+    randomNumber(min: number, max: number): number
     {
         return Math.floor(Math.random() * (max - min) + min);
     }
@@ -298,7 +298,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @since 6.0.0
      * @see {@link ReminderEntity}
      */
-    async remind(reminder: ReminderEntity)
+    async remind(reminder: ReminderEntity): Promise<ReminderEntity>
     {
         // Fetch the channel and user from the client cache
         const channel = await this.channels.fetch(reminder.channel);
@@ -338,7 +338,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * @author Soni
      * @since 6.0.0
      */
-    async handleReaction(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, reactionExists: boolean)
+    async handleReaction(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, reactionExists: boolean): Promise<boolean | undefined>
     {
         // Get all matching reaction roles
         const matchingReactionRoles = await ReactionRoleEntity.find({ where: { message: reaction.message.id, reaction: reaction.emoji.toString() } });

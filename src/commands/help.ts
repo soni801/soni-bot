@@ -1,6 +1,6 @@
 import {
     ActionRowBuilder,
-    ChatInputCommandInteraction,
+    ChatInputCommandInteraction, Message,
     MessageActionRowComponentBuilder,
     SelectMenuBuilder,
     SlashCommandBuilder
@@ -74,7 +74,7 @@ export default class Help implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         return await i.editReply(this.helpMessage(i.options.getString('category') || undefined));
     }
@@ -175,7 +175,7 @@ export default class Help implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)

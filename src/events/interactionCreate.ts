@@ -16,7 +16,7 @@ import { CONSTANTS } from '../util/config';
  * @since 6.0.0
  * @see {@link ClientEvents.interactionCreate}
  */
-const interactionCreate: event<'interactionCreate'> = async (client: Client<true>, i: Interaction) =>
+const interactionCreate: event<'interactionCreate'> = async (client: Client<true>, i: Interaction): Promise<any> =>
 {
     // Check that the interaction happens in a cached guild
     if (!i.inCachedGuild()) return;
@@ -101,7 +101,7 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
  * @author theS1LV3R
  * @since 6.0.0
  */
-async function handleAutocomplete(client: Client, i: AutocompleteInteraction<'cached'>)
+async function handleAutocomplete(client: Client, i: AutocompleteInteraction<'cached'>): Promise<void>
 {
     // Get the command name
     client.logger.debug(`Autocomplete called for command '${i.commandName}' by ${i.user.tag} (subcommand?: ${i.options.getSubcommand(false) || i.options.getSubcommandGroup(false) || 'none'})`);

@@ -1,4 +1,11 @@
-import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder, TextChannel } from 'discord.js';
+import {
+    ChatInputCommandInteraction,
+    Message,
+    PermissionsBitField,
+    SlashCommandBuilder,
+    SlashCommandSubcommandsOnlyBuilder,
+    TextChannel
+} from 'discord.js';
 import ReactionRoleEntity from '../entity/ReactionRole.entity';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
@@ -45,7 +52,7 @@ export default class ReactionRole implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message | undefined>
     {
         // Make sure the user has permission to use the command
         if (!i.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) return await i.editReply({ embeds: [
@@ -177,9 +184,9 @@ export default class ReactionRole implements Command
     /**
      * The slash command builder for this command interaction.
      *
-     * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
+     * @returns {Promise<SlashCommandSubcommandsOnlyBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandSubcommandsOnlyBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)

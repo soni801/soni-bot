@@ -172,7 +172,7 @@ export default class Changelog implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)
@@ -191,7 +191,7 @@ export default class Changelog implements Command
      * @author Soni
      * @since 6.1.0
      */
-    async handleAutocomplete(i: AutocompleteInteraction<'cached'>)
+    async handleAutocomplete(i: AutocompleteInteraction<'cached'>): Promise<void>
     {
         // Get the focused value
         const focusedValue = i.options.getFocused().toLowerCase();

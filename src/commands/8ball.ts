@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord.js';
 import { responses } from '../responses/8ball.json';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
@@ -44,7 +44,7 @@ export default class EightBall implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
@@ -67,7 +67,7 @@ export default class EightBall implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)

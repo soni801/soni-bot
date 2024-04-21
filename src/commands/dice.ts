@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord.js';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
 import { CONSTANTS } from '../util/config';
@@ -44,7 +44,7 @@ export default class Dice implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         // Define the minimum and maximum values for the output
         // This has to be done like this to only check falsy values other than 0
@@ -83,7 +83,7 @@ export default class Dice implements Command
      *
      * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)

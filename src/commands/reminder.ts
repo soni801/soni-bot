@@ -1,9 +1,9 @@
 import {
     AutocompleteInteraction,
-    ChatInputCommandInteraction,
+    ChatInputCommandInteraction, Message,
     SlashCommandBuilder,
     SlashCommandIntegerOption,
-    SlashCommandStringOption
+    SlashCommandStringOption, SlashCommandSubcommandsOnlyBuilder
 } from 'discord.js';
 import ReminderEntity from '../entity/Reminder.entity';
 import type { Command } from '../types/Command';
@@ -84,7 +84,7 @@ export default class Reminder implements Command
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
      */
-    async execute(i: ChatInputCommandInteraction<'cached'>)
+    async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         // Get the subcommand
         switch (i.options.getSubcommand())
@@ -343,9 +343,9 @@ export default class Reminder implements Command
     /**
      * The slash command builder for this command interaction.
      *
-     * @returns {Promise<SlashCommandBuilder>} The slash command builder for this command interaction.
+     * @returns {Promise<SlashCommandSubcommandsOnlyBuilder>} The slash command builder for this command interaction.
      */
-    async slashCommand()
+    async slashCommand(): Promise<SlashCommandSubcommandsOnlyBuilder>
     {
         return new SlashCommandBuilder()
             .setName(this.name)
@@ -386,7 +386,7 @@ export default class Reminder implements Command
      * @author Soni
      * @since 6.2.0
      */
-    async handleAutocomplete(i: AutocompleteInteraction<'cached'>)
+    async handleAutocomplete(i: AutocompleteInteraction<'cached'>): Promise<void>
     {
         // Get the focused value
         const focusedValue = i.options.getFocused();
