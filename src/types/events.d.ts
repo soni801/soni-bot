@@ -11,4 +11,4 @@ import Client from '../util/Client';
  * @since 6.0.0
  * @see {@link ClientEvents}
  */
-export type event<K extends keyof ClientEvents> = (client: Client, ...arg: ClientEvents[K]) => Awaitable<any>;
+export type event<K extends keyof ClientEvents> = (client: Client<true>, ...arg: ClientEvents[K]) => Awaitable<any>;

@@ -28,7 +28,7 @@ export default class Status implements Command
      * @since 6.0.0 // FIXME
      * @see {@link Client}
      */
-    constructor(client: Client)
+    constructor(client: Client<true>)
     {
         this.client = client;
     }

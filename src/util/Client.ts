@@ -156,7 +156,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             const eventName = basename(file).split('.')[0];
 
             // Bind the event to the client
-            this.on(eventName as any, event.bind(null, this));
+            this.on(eventName as any, event.bind(null, this as Client<true>));
 
             // Increment successful loads
             successfulLoads++;
@@ -188,7 +188,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         for (const file of files)
         {
             this.logger.debug(`Starting load of ${file}`);
-            
+
             // Skip files that are not of the correct type
             const filePath = resolve(__dirname, dir, file);
             if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
