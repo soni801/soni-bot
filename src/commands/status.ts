@@ -8,7 +8,7 @@ import Logger from '../util/Logger';
  * The status command
  *
  * @author Soni
- * @since 6.0.0 // FIXME
+ * @since 6.2.7
  * @see {@link Command}
  */
 export default class Status implements Command
@@ -25,7 +25,7 @@ export default class Status implements Command
      * @param {Client} client The Client the command is attached to
      *
      * @author Soni
-     * @since 6.0.0 // FIXME
+     * @since 6.2.7
      * @see {@link Client}
      */
     constructor(client: Client<true>)
@@ -40,7 +40,7 @@ export default class Status implements Command
      * @returns {Promise<Message<boolean>>} The reply sent by the bot
      *
      * @author Soni
-     * @since 6.0.0 // FIXME
+     * @since 6.2.7
      * @see {@link ChatInputCommandInteraction}
      */
     async execute(i: ChatInputCommandInteraction<'cached'>)
@@ -88,7 +88,7 @@ export default class Status implements Command
      * @returns {string} The converted amount
      *
      * @author theS1LV3R, Soni
-     * @since 6.0.0 // FIXME
+     * @since 6.2.7
      * @see {@link https://stackoverflow.com/a/58826445/9088682|This code on StackOverflow}
      */
     private _timeConversion(duration: number)
