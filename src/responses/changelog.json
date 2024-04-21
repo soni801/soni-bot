@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "6.3.0",
+            "changes": [
+                "Added `/reminder clear` command",
+                "Removed `/svensdum` command",
+                "Updated internal libraries",
+                "Several code and stability improvements"
+            ]
+        },
+        {
             "version": "6.2.7",
             "changes": [
                 "Removed the `/family` command",
