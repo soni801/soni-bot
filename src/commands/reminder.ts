@@ -396,7 +396,7 @@ export default class Reminder implements Command
 
         // Filter user's reminders by entries matching the focused value
         const search = (s: string) => s.toLowerCase().replace(/['.!,?]/gi, '').includes(focusedValue);
-        const filteredReminders: any[] = reminders.filter(r => search(r.content)).filter((r, i) => i < 25);
+        const filteredReminders: any[] = reminders.filter(r => search(r.content)).filter((_r, i) => i < 25);
 
         // Format changelog to comply with autocomplete syntax
         filteredReminders.map(reminder =>

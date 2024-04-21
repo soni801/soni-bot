@@ -1,4 +1,4 @@
-import { ClientOptions, ColorResolvable, GatewayIntentBits, Partials, User } from 'discord.js';
+import { ClientOptions, ColorResolvable, GatewayIntentBits, Partials } from 'discord.js';
 import './dotenv';
 
 /**

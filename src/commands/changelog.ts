@@ -197,7 +197,7 @@ export default class Changelog implements Command
         const focusedValue = i.options.getFocused().toLowerCase();
 
         // Filter the changelog list by entries matching the focused value
-        const filteredChangelogList = this._changelog.filter(version => version.version.toLowerCase().includes(focusedValue)).filter((r, i) => i < 25);
+        const filteredChangelogList = this._changelog.filter(version => version.version.toLowerCase().includes(focusedValue)).filter((_r, i) => i < 25);
 
         // Return the filtered response list
         await i.respond(filteredChangelogList);

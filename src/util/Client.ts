@@ -37,7 +37,6 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     logger = new Logger(Client.name);
     version = process.env.npm_package_version || 'Unknown';
     intervals: NodeJS.Timeout[] = [];
-    private isReminding = false;
 
     /**
      * Creates a Client with the provided ClientOptions
@@ -61,7 +60,6 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             this.loadCommands('../commands')
         ])).then(() => this.intervals.push(setInterval(async () =>
         {
-            this.isReminding = true;
             const reminders = await this.fetchReminders(true).catch(() =>
             {
                 this.logger.error('An error occurred while fetching reminders');
@@ -73,7 +71,6 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
                 this.logger.error('An error occurred while trying to process reminders');
                 console.error(e);
             }));
-            this.isReminding = false;
         }, 1000)));
     }
 

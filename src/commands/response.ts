@@ -134,7 +134,7 @@ export default class Response implements Command
 
         // Filter the response list by entries matching the focused value
         const search = (s: string) => s.toLowerCase().replace(/['.!,?]/gi, '').includes(focusedValue);
-        const filteredResponseList = this._responses.filter(r => search(r.id) || search(r.value) || search(r.name) || search(r.src)).filter((r, i) => i < 25);
+        const filteredResponseList = this._responses.filter(r => search(r.id) || search(r.value) || search(r.name) || search(r.src)).filter((_r, i) => i < 25);
 
         // Return the filtered response list
         await i.respond(filteredResponseList);

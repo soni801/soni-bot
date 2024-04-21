@@ -2,8 +2,8 @@ import {
     ActionRowBuilder,
     ChatInputCommandInteraction, Message,
     MessageActionRowComponentBuilder,
-    SelectMenuBuilder,
-    SlashCommandBuilder
+    SlashCommandBuilder,
+    StringSelectMenuBuilder
 } from 'discord.js';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
@@ -156,7 +156,7 @@ export default class Help implements Command
             components: [
                 new ActionRowBuilder<MessageActionRowComponentBuilder>()
                     .addComponents(
-                        new SelectMenuBuilder()
+                        new StringSelectMenuBuilder()
                             .setCustomId('help')
                             .setPlaceholder('Select a category')
                             .addOptions(...this._CATEGORIES)
