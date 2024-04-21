@@ -324,6 +324,32 @@ export default class Reminder implements Command
                         ])
                 ] });
             }
+            // Clear all your reminders
+            case 'clear':
+            {
+                // Fetch all reminders from the user that called the command
+                const userReminders = await this.client.fetchReminders(false, i.user.id);
+
+                // Set all reminders as inactive
+                for (const reminder of userReminders)
+                {
+                    reminder.active = false;
+                    await reminder.save();
+                    this.logger.info(`Deleted reminder #${reminder.id} on user ${i.user.tag}`);
+                }
+
+                // Send result to the user
+                return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setTitle('Deleted reminder')
+                        .addFields([
+                            {
+                                name: 'Successfully cleared reminders',
+                                value: `Deleted ${userReminders.length} reminder(s).`
+                            }
+                        ])
+                ] });
+            }
             default:
                 // This should never happen - show an error to the user
                 return await i.editReply({ embeds: [
@@ -374,7 +400,9 @@ export default class Reminder implements Command
                         .setRequired(true))))
             .addSubcommand(command => command.setName('remove')
                 .setDescription('Remove a reminder')
-                .addStringOption(this._commandOptions.reminderOption));
+                .addStringOption(this._commandOptions.reminderOption))
+            .addSubcommand(command => command.setName('clear')
+                .setDescription('Delete all your reminders'));
     }
 
     /**
