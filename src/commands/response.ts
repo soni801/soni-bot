@@ -73,11 +73,11 @@ export default class Response implements Command
                     .setTitle(response.name)
                     .addFields([
                         {
-                            name: 'This response was provided by the yessness response service',
-                            value: 'Check it out for yourself at https://responses.yessness.com/.'
+                            name: '\u200B',
+                            value: '-# Provided by https://responses.yessness.com/.'
                         }
                     ])
-                    .setImage(response.src)
+                    .setImage(`https://responses.yessness.com/media/${response.id}.jpg`)
             ]
         });
     }
@@ -93,8 +93,7 @@ export default class Response implements Command
      */
     async loadResponses(): Promise<void>
     {
-
-        // This line looks cursed but do not worry about it please, it does its job :)
+        // Add a 'value' field to the response list to be able to directly use it in the autocomplete handler
         this._responses = (await axios.get<ResponseObject[]>('https://responses.yessness.com/responses.json')).data.map((r: ResponseObject) =>
             ({
                 ...r,
@@ -134,7 +133,7 @@ export default class Response implements Command
 
         // Filter the response list by entries matching the focused value
         const search = (s: string) => s.toLowerCase().replace(/['.!,?]/gi, '').includes(focusedValue);
-        const filteredResponseList = this._responses.filter(r => search(r.id) || search(r.value) || search(r.name) || search(r.src)).filter((_r, i) => i < 25);
+        const filteredResponseList = this._responses.filter(r => search(r.id) || search(r.name)).filter((_r, i) => i < 25);
 
         // Return the filtered response list
         await i.respond(filteredResponseList);

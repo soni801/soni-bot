@@ -11,6 +11,5 @@ export interface ResponseObject
 {
     name: string;
     id: string;
-    src: string;
     value: string;
 }
