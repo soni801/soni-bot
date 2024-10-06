@@ -164,7 +164,7 @@ export default class Reminder implements Command
             case 'list':
             {
                 // Fetch reminders for the user that called the command
-                const reminders = await this.client.fetchReminders(false, i.user.id);
+                const reminders = (await this.client.fetchReminders(false, i.user.id)).sort((a, b) => a.due.getTime() - b.due.getTime());
 
                 // Determine the output (relevant reminders, stringified)
                 let output = '';
