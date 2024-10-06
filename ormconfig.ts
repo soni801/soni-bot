@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import type { DataSourceOptions } from 'typeorm';
+import {DataSource, DataSourceOptions} from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import './src/util/dotenv';
@@ -39,3 +39,6 @@ if (existsSync('./ormconfig.local.ts'))
 }
 
 export default ormConfig;
+
+// Also export the data source as an object for use with the typeorm cli
+export const dataSource = new DataSource(ormConfig);
