@@ -238,7 +238,8 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             .setFooter({
                 text: ((this.user?.tag ?? '') + ` version ${this.version}`).trim(),
                 iconURL: this.user?.avatarURL({ extension: 'png' }) ?? '',
-            });
+            })
+            .setTimestamp();
     }
 
     /**

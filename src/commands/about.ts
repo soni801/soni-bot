@@ -55,17 +55,22 @@ export default class About implements Command
                     },
                     {
                         name: 'What am I?',
-                        value: `I am a lightweight toolkit bot developed by ${this.client.users.cache.get("443058373022318593")}. I was originally just meant for fun inside jokes, but my functionality has since expanded to include things like moderation and utility.`,
+                        value: `I am a lightweight toolkit bot developed by ${this.client.users.cache.get("443058373022318593")}.\
+                        I was originally just meant for fun inside jokes, but my functionality has since expanded to include\
+                        things like moderation and utility.`,
                         inline: true
                     },
                     {
                         name: 'How do I function?',
-                        value: 'There is more details about each command in the /help command, and every command has autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/).',
+                        value: `There is more details about each command in the \`/help\` command, and every command has\
+                        autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/).`,
                         inline: true
                     },
                     {
                         name: 'Want to report a bug?',
-                        value: 'If you have encountered a bug and you want to report it, head over to the [GitHub issue tracker](https://github.com/soni801/soni-bot/issues/new/choose) and submit a bug or feature request using the provided forms.'
+                        value: `If you have encountered a bug and you want to report it, head over to the [GitHub issue\
+                        tracker](https://github.com/soni801/soni-bot/issues/new/choose) and submit a bug or feature request\
+                        using the provided forms.`
                     }
                 ])
         ] });
