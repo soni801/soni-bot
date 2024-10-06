@@ -1,6 +1,18 @@
 {
     "changelog": [
         {
+            "version": "6.3.1",
+            "changes": [
+                "Now sorts reminders by due date when using `/reminder list`",
+                "Fixed images not displaying in the `/response` command",
+                "Slightly changed formatting of the `/response` command",
+                "Slightly changed formatting of the `/about` command",
+                "Added timestamp to embed footer",
+                "Updated internal libraries",
+                "Other minor code changes"
+            ]
+        },
+        {
             "version": "6.3.0",
             "changes": [
                 "Added `/reminder clear` command",
