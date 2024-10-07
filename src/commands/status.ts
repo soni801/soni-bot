@@ -58,12 +58,14 @@ export default class Status implements Command
                         value: this._timeConversion(this.client.uptime)
                     },
                     {
-                        name: 'Soni Bot latency (RTT)',
-                        value: `${message.createdTimestamp - i.createdTimestamp}ms`
+                        name: 'Total latency (RTT)',
+                        value: `${message.createdTimestamp - i.createdTimestamp}ms`,
+                        inline: true
                     },
                     {
                         name: 'Discord API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`
+                        value: `${Math.round(this.client.ws.ping)}ms`,
+                        inline: true
                     }
                 ])
         ] });
