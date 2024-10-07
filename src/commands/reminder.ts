@@ -160,6 +160,51 @@ export default class Reminder implements Command
                         ])
                 ] });
             }
+            // Create a new absolute reminder
+            case 'absolute':
+            {
+                // Fetch data from command
+                const content = i.options.getString('reminder', true);
+                const day = i.options.getInteger('day', true);
+                const month = i.options.getInteger('month', true);
+                const year = i.options.getInteger('year', true);
+                const hour = i.options.getInteger('hour', false);
+                const minute = i.options.getInteger('minute', false);
+                const second = i.options.getInteger('second', false);
+
+                // Fetch other data
+                const user = i.user.id;
+                const channel = i.channelId;
+
+                // Declare due time
+                const due = new Date();
+                due.setDate(day);
+                due.setMonth(month);
+                due.setFullYear(year);
+                if (hour) due.setUTCHours(hour);
+                if (minute) due.setMinutes(minute);
+                if (second) due.setSeconds(second);
+
+                // Create and save the reminder
+                const reminder = new ReminderEntity({ user, channel, content, due });
+                await reminder.save();
+
+                // Send a confirmation to the user
+                return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setTitle('Reminder registered')
+                        .addFields([
+                            {
+                                name: 'Content',
+                                value: content
+                            },
+                            {
+                                name: "\u200b",
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                            }
+                        ])
+                ] });
+            }
             // List all active reminders
             case 'list':
             {
@@ -399,25 +444,25 @@ export default class Reminder implements Command
                         .setDescription('The month to be reminded')
                         .setRequired(true)
                         .addChoices(
-                            { name: 'January', value: 1 },
-                            { name: 'February', value: 2 },
-                            { name: 'March', value: 3 },
-                            { name: 'April', value: 4 },
-                            { name: 'May', value: 5 },
-                            { name: 'June', value: 6 },
-                            { name: 'July', value: 7 },
-                            { name: 'August', value: 8 },
-                            { name: 'September', value: 9 },
-                            { name: 'October', value: 10 },
-                            { name: 'November', value: 11 },
-                            { name: 'December', value: 12 }
+                            { name: 'January', value: 0 },
+                            { name: 'February', value: 1 },
+                            { name: 'March', value: 2 },
+                            { name: 'April', value: 3 },
+                            { name: 'May', value: 4 },
+                            { name: 'June', value: 5 },
+                            { name: 'July', value: 6 },
+                            { name: 'August', value: 7 },
+                            { name: 'September', value: 8 },
+                            { name: 'October', value: 9 },
+                            { name: 'November', value: 10 },
+                            { name: 'December', value: 11 }
                         ))
                     .addIntegerOption(option => option.setName('year')
                         .setDescription('The year to be reminded')
                         .setRequired(true)
                         .setMinValue(2000))
                     .addIntegerOption(option => option.setName('hour')
-                        .setDescription('The hour to be reminded')
+                        .setDescription('The hour to be reminded (UTC timezone)')
                         .setMinValue(0)
                         .setMaxValue(23))
                     .addIntegerOption(option => option.setName('minute')
