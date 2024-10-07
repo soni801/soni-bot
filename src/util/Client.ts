@@ -22,6 +22,7 @@ import { Command } from '../types/Command';
 import { event } from '../types/events';
 import { CONSTANTS } from './config';
 import Logger from './Logger';
+import UptimeResultEntity from "../entity/UptimeResult.entity";
 
 /**
  * A custom wrapper of the Discord client, providing more utility methods
@@ -37,6 +38,12 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     logger = new Logger(Client.name);
     version = process.env.npm_package_version || 'Unknown';
     intervals: NodeJS.Timeout[] = [];
+
+    /**
+     * Whether this client is currently being destroyed.
+     * This field is used to make sure the bot is never attempted to be destroyed multiple times simultaneously.
+     */
+    destroying = false;
 
     /**
      * Creates a Client with the provided ClientOptions
@@ -82,8 +89,22 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      */
     async destroy()
     {
+        // Don't run this function if it's already being run
+        if (this.destroying) return;
+
+        // Mark this function as being run
+        this.destroying = true;
+
         // Clear all registered intervals
         this.intervals.forEach(i => clearInterval(i));
+
+        // Save the uptime result to the database
+        if (this.uptime) // Make sure that the uptime is actually valid
+        {
+            const uptimeResult = new UptimeResultEntity({ uptime: this.uptime });
+            await uptimeResult.save();
+            this.logger.info('Saved uptime to DB');
+        }
 
         // Disconnect from the database
         if (this.db.isInitialized) this.db.destroy().catch(e => this.logger.error(`An error occurred while disconnecting from the database: ${e}`));
