@@ -89,8 +89,8 @@ export default class Reminder implements Command
         // Get the subcommand
         switch (i.options.getSubcommand())
         {
-            // Create a new reminder
-            case 'create':
+            // Create a new relative reminder
+            case 'relative':
             {
                 // Fetch data from command
                 const content = i.options.getString('reminder', true);
@@ -376,13 +376,58 @@ export default class Reminder implements Command
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
-            .addSubcommand(command => command.setName('create')
+            .addSubcommandGroup(group => group.setName('create')
                 .setDescription('Create a reminder')
-                .addStringOption(option => option.setName('reminder')
-                    .setDescription('What to be reminded of')
-                    .setRequired(true))
-                .addIntegerOption(this._commandOptions.timeOption)
-                .addStringOption(this._commandOptions.unitOption))
+                .addSubcommand(command => command.setName('relative')
+                    .setDescription('Create a reminder relative to the current time')
+                    .addStringOption(option => option.setName('reminder')
+                        .setDescription('What to be reminded of')
+                        .setRequired(true))
+                    .addIntegerOption(this._commandOptions.timeOption)
+                    .addStringOption(this._commandOptions.unitOption))
+                .addSubcommand(command => command.setName('absolute')
+                    .setDescription('Create a reminder at a specific time')
+                    .addStringOption(option => option.setName('reminder')
+                        .setDescription('What to be reminded of')
+                        .setRequired(true))
+                    .addIntegerOption(option => option.setName('day')
+                        .setDescription('The date of the month to be reminded')
+                        .setRequired(true)
+                        .setMinValue(1)
+                        .setMaxValue(31))
+                    .addIntegerOption(option => option.setName('month')
+                        .setDescription('The month to be reminded')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'January', value: 1 },
+                            { name: 'February', value: 2 },
+                            { name: 'March', value: 3 },
+                            { name: 'April', value: 4 },
+                            { name: 'May', value: 5 },
+                            { name: 'June', value: 6 },
+                            { name: 'July', value: 7 },
+                            { name: 'August', value: 8 },
+                            { name: 'September', value: 9 },
+                            { name: 'October', value: 10 },
+                            { name: 'November', value: 11 },
+                            { name: 'December', value: 12 }
+                        ))
+                    .addIntegerOption(option => option.setName('year')
+                        .setDescription('The year to be reminded')
+                        .setRequired(true)
+                        .setMinValue(2000))
+                    .addIntegerOption(option => option.setName('hour')
+                        .setDescription('The hour to be reminded')
+                        .setMinValue(0)
+                        .setMaxValue(23))
+                    .addIntegerOption(option => option.setName('minute')
+                        .setDescription('The minute to be reminded')
+                        .setMinValue(0)
+                        .setMaxValue(59))
+                    .addIntegerOption(option => option.setName('second')
+                        .setDescription('The second to be reminded')
+                        .setMinValue(0)
+                        .setMaxValue(59))))
             .addSubcommand(command => command.setName('list')
                 .setDescription('List all your reminders'))
             .addSubcommandGroup(group => group.setName('edit')
