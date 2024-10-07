@@ -2,6 +2,7 @@ import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
+import UptimeResultEntity from "../entity/UptimeResult.entity";
 
 // noinspection JSUnusedGlobalSymbols
 /**
@@ -54,7 +55,7 @@ export default class Status implements Command
                 .setTitle('Soni Bot status')
                 .addFields([
                     {
-                        name: "Uptime",
+                        name: 'Current uptime',
                         value: this._timeConversion(this.client.uptime)
                     },
                     {
@@ -66,6 +67,10 @@ export default class Status implements Command
                         name: 'Discord API latency',
                         value: `${Math.round(this.client.ws.ping)}ms`,
                         inline: true
+                    },
+                    {
+                        name: 'Top 5 uptimes (not counting current)',
+                        value: await this._topUptimes()
                     }
                 ])
         ] });
@@ -132,5 +137,27 @@ export default class Status implements Command
 
         portions.push(duration + 'ms');
         return portions.join(" ");
+    }
+
+    /**
+     * Fetch the top 5 uptimes of the bot from the database, and return them in a human-readable format
+     *
+     * @returns {Promise<string>} A human-readable stringified list of the top uptimes
+     *
+     * @author Soni
+     * @since 6.4.0
+     */
+    private async _topUptimes(): Promise<string>
+    {
+        // Show an error if the database is disconnected
+        if (!this.client.db.isInitialized) return 'An error occurred while fetching top uptimes';
+
+        // Fetch top 5 uptimes
+        let uptimes = await UptimeResultEntity.find({ order: { uptime: 'DESC' }, take: 5 });
+
+        // Stringify the output
+        let output = '';
+        for (const uptime of uptimes) output += `**${uptimes.indexOf(uptime) + 1}.** ${this._timeConversion(uptime.uptime)}, achieved <t:${(uptime.achieved.getTime() / 1000).toFixed(0)}:f>\n`;
+        return output;
     }
 }
