@@ -67,9 +67,9 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             this.loadCommands('../commands')
         ])).then(() => this.intervals.push(setInterval(async () =>
         {
-            const reminders = await this.fetchReminders(true).catch(() =>
+            const reminders = await this.fetchReminders(true).catch((e: Error) =>
             {
-                this.logger.error('An error occurred while fetching reminders');
+                this.logger.error(`An error occurred while fetching reminders: ${e.message}`);
                 return [];
             });
             reminders.forEach(r => this.remind(r).catch((e: Error) =>
