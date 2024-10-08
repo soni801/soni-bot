@@ -28,6 +28,6 @@ export default class UptimeResultEntity extends BaseEntity
     /**
      * The timestamp of when this uptime was achieved (when bot is shutting down)
      */
-    @Column({ default: () => "(now() at time zone 'cest')", type: "timestamptz" })
+    @Column({ default: () => "now()", type: "timestamptz" })
     achieved: Date;
 }
