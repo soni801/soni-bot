@@ -4,7 +4,7 @@ import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
  * An uptime result entity in the database, used to track how long the uptime has been throughout several launches
  *
  * @author Soni
- * @since 6.4.0
+ * @since 7.0.0
  * @see {@link BaseEntity}
  */
 @Entity('uptime_result')

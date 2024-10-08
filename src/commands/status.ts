@@ -145,7 +145,7 @@ export default class Status implements Command
      * @returns {Promise<string>} A human-readable stringified list of the top uptimes
      *
      * @author Soni
-     * @since 6.4.0
+     * @since 7.0.0
      */
     private async _topUptimes(): Promise<string>
     {
