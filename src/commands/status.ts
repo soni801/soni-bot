@@ -68,6 +68,22 @@ export default class Status implements Command
                         value: `${Math.round(this.client.ws.ping)}ms`,
                         inline: true
                     },
+                    // This next field is used to put the database status on a new line
+                    // See https://github.com/discord/discord-api-docs/discussions/3233#discussioncomment-6505046
+                    {
+                        name: ' ',
+                        value: ' '
+                    },
+                    {
+                        name: 'Database status',
+                        value: this.client.db.isInitialized ? 'Connected' : 'Not connected',
+                        inline: true
+                    },
+                    {
+                        name: 'Database type',
+                        value: `${this.client.db.driver.options.type} version ${this.client.db.driver.version}`,
+                        inline: true
+                    },
                     {
                         name: 'Top 5 uptimes (not counting current)',
                         value: await this._topUptimes()

@@ -7,6 +7,7 @@
                 "Added tracking of the top 5 longest uptimes to the `/status` command",
                 "Renamed the `/reminder create` command to `/reminder create relative`",
                 "Added the `/reminder create absolute` command",
+                "Added database info to the `/status` command",
                 "Changed the formatting of the `/status` command",
                 "Improved internal logging"
             ]
