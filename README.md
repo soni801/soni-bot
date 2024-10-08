@@ -6,43 +6,85 @@ but the functionality has since expanded to include things like moderation and u
 Soni Bot can be added to servers upon request, given that I have at least some prior knowledge of the server. If you
 want the functionality without inviting the bot itself, feel free to clone the repository and self-host it.
 
-Soni Bot is built in JavaScript using Node.js. Discord functionality is provided by
-[discord.js](https://discord.js.org/).
+Soni Bot is built with TypeScript using [Bun](https://bun.sh/).
+Discord functionality is provided by [discord.js](https://discord.js.org/).
 
-# Installation
+## Deploying
 
-This installation guide will assume you are running a Unix-like operating system. It is recommended to run Soni Bot as a
-Docker container using the provided Docker file or docker-compose file. However, this will also briefly go over how to
-run it as a standalone program.
+There are two primary ways in which you can deploy Soni Bot on your own:
 
-First, clone this repository.
+### Using Docker (recommended)
 
-```shell
-git clone https://github.com/soni801/soni-bot --depth 1
-# or
-git clone git@github.com:soni801/soni-bot --depth 1
-```
+To run Soni Bot through Docker Compose, use the provided [docker-compose.yml](docker-compose.yml) file.
 
-Fill in the required configuration. For normal deployment, copy `.env.template` to `.env.production.local`, and fill all
-variables. Note that Soni Bot needs a postgres database to launch properly. This can optionally be changed to a
-different engine by editing `ormconfig.ts`. Make sure to populate `TOKEN` with a valid Discord API token, acquired from
-the Discord developer dashboard.
-
-If you are using Docker, you can now start the container. It should build and connect successfully.
-
-If running without Docker, you need to start by installing the required packages and building the source:
+If you want to use 'Plain Docker,' you can use the following template command to start the container:
 
 ```shell
-pnpm install
-pnpm run build
+docker run -d \
+-e TOKEN=changeme \
+-e DB_HOST=changeme \
+-e DB_USER=changeme \
+-e DB_PASS=changeme \
+-e DB_NAME=changeme \
+ghcr.io/soni801/soni-bot
 ```
 
-You can now start the bot using `node .`. It should launch and connect successfully.
+If using plain Docker, also make sure you have a PostgreSQL database running separately.
 
-Soni Bot is made with `pnpm` in mind as the recommended node package manager, but you can use whatever suits your
-environment.
+### Manual installation
 
-# Troubleshooting
+If you don't want to use Docker, you can run Soni Bot locally with Bun:
+
+1. Clone the repository
+   ```shell
+   git clone --depth 1 https://github.com/soni801/soni-bot
+   cd soni-bot
+   ```
+2. Copy `.env.template` to `.env.production.local`, and populate all the fields.
+   Note that Soni Bot needs a PostgreSQL database running separately to work properly.
+   This can optionally be changed to a different database engine by editing `ormconfig.ts`.
+3. Install the dependencies and build Soni Bot
+   ```shell
+   bun install --production
+   bun run build
+   ```
+4. Run Soni Bot!
+   ```shell
+   bun run start
+   ```
+
+## Updating
+
+If you're using **Docker Compose**, it's enough to restart the container. It'll automatically fetch the latest image:
+
+```shell
+docker compose down
+docker compose up -d
+```
+
+If you're using **plain Docker**, you need to re-pull the image and then restart the container:
+
+```shell
+docker pull ghcr.io/soni801/soni-bot:latest
+docker stop soni-bot
+```
+
+To start the container, run the same command as the first time you launched it.
+
+With a **manual installation**, you'll have to stop the bun process, pull the changes, rebuild and restart:
+```shell
+git pull
+bun install --production # make sure that all packages are up to date
+bun run build
+bun run start
+```
+
+## Configuration
+
+Soni Bot is configured using environment variables.
+A more detailed explanation can be found in the [template](.env.template) .env file.
+
+## Troubleshooting
 
 If the bot does not work, make sure to read the error message thoroughly. It will most likely explain the issue. Common
 problems include:
@@ -58,3 +100,6 @@ potential issues, as most crashes are silent. If run through Docker, the contain
 This is not the case for manual installation, so it is recommended to check the logs more often with a manual
 installation. You can also use process managers like [PM2](https://pm2.keymetrics.io/) to automate restarts without
 Docker.
+
+Logs are printed to `stdout`,
+and also saved in both text and JSON format to the `logs/` directory (generated at runtime).
