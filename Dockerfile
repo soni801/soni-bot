@@ -1,10 +1,8 @@
-# syntax=docker/dockerfile:1
-FROM node:18
+# As of 08.10.24, canary must be used to enable typeorm support
+FROM oven/bun:canary
 WORKDIR /data
-COPY package.json .
-COPY pnpm-lock.yaml .
-RUN npm install -g pnpm
-RUN pnpm install
+
 COPY . .
-RUN pnpm run build
-CMD ["pnpm", "run", "start"]
+RUN bun install --production
+
+CMD ["bun", "run", "start"]
