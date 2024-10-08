@@ -157,7 +157,8 @@ export default class Status implements Command
 
         // Stringify the output
         let output = '';
-        for (const uptime of uptimes) output += `**${uptimes.indexOf(uptime) + 1}.** ${this._timeConversion(uptime.uptime)}, achieved <t:${(uptime.achieved.getTime() / 1000).toFixed(0)}:f>\n`;
+        for (const uptime of uptimes) output += `**${uptimes.indexOf(uptime) + 1}.** _${this._timeConversion(uptime.uptime)}_, achieved <t:${(uptime.achieved.getTime() / 1000).toFixed(0)}:f>\n`;
+        if (output === '') output = '_No uptimes on record yet_'; // Tell user if there are no uptimes
         return output;
     }
 }
