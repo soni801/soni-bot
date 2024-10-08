@@ -3,14 +3,14 @@
     "version": "7.0.0",
     "description": "A lightweight toolkit bot for small Discord communities.",
     "scripts": {
-        "dev": "cross-env-shell NODE_ENV=development node --trace-warnings --inspect --require ts-node/register src/main.ts src/main.ts",
-        "dev:watch": "cross-env-shell NODE_ENV=development nodemon --exec node --trace-warnings --inspect --require ts-node/register src/main.ts",
-        "build": "pnpm run build:clean && pnpm run build:src",
-        "build:src": "cross-env-shell NODE_ENV=production pnpm tsc",
-        "build:watch": "cross-env-shell NODE_ENV=production  tsc --watch",
+        "dev": "cross-env-shell NODE_ENV=development bun run src/main.ts",
+        "dev:watch": "cross-env-shell NODE_ENV=development bun run --hot src/main.ts",
+        "build": "bun run build:clean && bun run build:src",
+        "build:src": "cross-env-shell NODE_ENV=production bun run tsc",
+        "build:watch": "cross-env-shell NODE_ENV=production bun run tsc --watch",
         "build:clean": "rm -rf dist",
-        "start": "cross-env-shell NODE_ENV=production node dist/src/main.js",
-        "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
+        "start": "cross-env-shell NODE_ENV=production bun run dist/src/main.js",
+        "typeorm": "bun run node_modules/typeorm/cli.js"
     },
     "keywords": [
         "discord",
