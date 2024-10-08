@@ -3,7 +3,7 @@ FROM oven/bun:canary
 WORKDIR /data
 
 COPY . .
-RUN bun install --production
+RUN bun install
 RUN bun run build
 
 CMD ["bun", "run", "start"]

@@ -45,7 +45,7 @@ If you don't want to use Docker, you can run Soni Bot locally with Bun:
    This can optionally be changed to a different database engine by editing `ormconfig.ts`.
 3. Install the dependencies and build Soni Bot
    ```shell
-   bun install --production
+   bun install
    bun run build
    ```
 4. Run Soni Bot!
@@ -74,7 +74,7 @@ To start the container, run the same command as the first time you launched it.
 With a **manual installation**, you'll have to stop the bun process, pull the changes, rebuild and restart:
 ```shell
 git pull
-bun install --production # make sure that all packages are up to date
+bun install # make sure that all packages are up to date
 bun run build
 bun run start
 ```
