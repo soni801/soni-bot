@@ -1,6 +1,17 @@
 {
     "changelog": [
         {
+            "version": "7.0.0",
+            "changes": [
+                "Changed the entire framework the bot is running on (this will probably be the last major version increase ever)",
+                "Added tracking of the top 5 longest uptimes to the `/status` command",
+                "Renamed the `/reminder create` command to `/reminder create relative`",
+                "Added the `/reminder create absolute` command",
+                "Changed the formatting of the `/status` command",
+                "Improved internal logging"
+            ]
+        },
+        {
             "version": "6.3.1",
             "changes": [
                 "Now sorts reminders by due date when using `/reminder list`",
