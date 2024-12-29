@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "7.0.1",
+            "changes": [
+                "Fixed top uptimes not saving correctly",
+                "Updated internal libraries"
+            ]
+        },
+        {
             "version": "7.0.0",
             "changes": [
                 "Changed the entire framework the bot is running on (this will probably be the last major version increase ever)",

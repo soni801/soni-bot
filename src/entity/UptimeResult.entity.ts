@@ -26,8 +26,14 @@ export default class UptimeResultEntity extends BaseEntity
     uptime: number;
 
     /**
-     * The timestamp of when this uptime was achieved (when bot is shutting down)
+     * The UUID of the session in which this uptime was achieved
      */
-    @Column({ default: () => "now()", type: "timestamptz" })
+    @Column()
+    session: string;
+
+    /**
+     * The timestamp of when this uptime was updated
+     */
+    @Column({ type: "timestamptz" })
     achieved: Date;
 }

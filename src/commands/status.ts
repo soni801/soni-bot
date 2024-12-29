@@ -85,7 +85,7 @@ export default class Status implements Command
                         inline: true
                     },
                     {
-                        name: 'Top 5 uptimes (not counting current)',
+                        name: 'Top 5 uptimes (including current)',
                         value: await this._topUptimes()
                     }
                 ])

@@ -23,6 +23,7 @@ import { event } from '../types/events';
 import { CONSTANTS } from './config';
 import Logger from './Logger';
 import UptimeResultEntity from "../entity/UptimeResult.entity";
+import {randomUUID} from "node:crypto";
 
 /**
  * A custom wrapper of the Discord client, providing more utility methods
@@ -38,6 +39,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     logger = new Logger(Client.name);
     version = process.env.npm_package_version || 'Unknown';
     intervals: NodeJS.Timeout[] = [];
+    session = randomUUID();
 
     /**
      * Whether this client is currently being destroyed.
@@ -67,6 +69,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             this.loadCommands('../commands')
         ])).then(() => this.intervals.push(setInterval(async () =>
         {
+            // Send reminder notifications
             const reminders = await this.fetchReminders(true).catch((e: Error) =>
             {
                 this.logger.error(`An error occurred while fetching reminders: ${e.message}`);
@@ -78,6 +81,22 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
                 this.logger.error('An error occurred while trying to process reminders');
                 console.error(e);
             }));
+
+            // Update uptime result
+            if (!this.uptime) return; // Only do it if uptime actually exists
+            const existingUptimes = await UptimeResultEntity.find({ where: { session: this.session } });
+            if (existingUptimes.length > 0)
+            {
+                const uptime = existingUptimes[0];
+                uptime.uptime = this.uptime;
+                uptime.achieved = new Date();
+                await uptime.save();
+            }
+            else
+            {
+                const uptime = new UptimeResultEntity({ uptime: this.uptime, session: this.session, achieved: new Date() });
+                await uptime.save();
+            }
         }, 1000)));
     }
 
@@ -97,14 +116,6 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
 
         // Clear all registered intervals
         this.intervals.forEach(i => clearInterval(i));
-
-        // Save the uptime result to the database
-        if (this.uptime) // Make sure that the uptime is actually valid
-        {
-            const uptimeResult = new UptimeResultEntity({ uptime: this.uptime });
-            await uptimeResult.save();
-            this.logger.info('Saved uptime to DB');
-        }
 
         // Disconnect from the database
         if (this.db.isInitialized) this.db.destroy().catch(e => this.logger.error(`An error occurred while disconnecting from the database: ${e}`));
