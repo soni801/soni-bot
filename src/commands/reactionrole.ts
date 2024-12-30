@@ -70,6 +70,7 @@ export default class ReactionRole implements Command
         switch (i.options.getSubcommand())
         {
             case 'create':
+            {
                 // Fetch data from command
                 const message = i.options.getString('message', true);
                 const emote = i.options.getString('emote', true);
@@ -153,18 +154,72 @@ export default class ReactionRole implements Command
                             }
                         ])
                 ] });
+            }
             case "remove":
-                return await i.editReply({ embeds: [
+            {
+                // Fetch message ID from command
+                const message = i.options.getString('message', true);
+
+                // Fetch the channel and message object
+                let channel, messageObject;
+                try
+                {
+                    channel = this.client.channels.cache.get(i.channelId) as TextChannel;
+                    messageObject = await channel.messages.fetch(message);
+                }
+                catch
+                {
+                    // Show an error to the user
+                    return await i.editReply({ embeds: [
+                        this.client.defaultEmbed()
+                            .setColor(CONSTANTS.COLORS.warning)
+                            .setTitle('Incorrect channel')
+                            .addFields([
+                                {
+                                    name: 'The channel in invalid',
+                                    value: 'The reaction message must be in the same channel as this command interaction.'
+                                }
+                            ])
+                    ] });
+                }
+
+                // Get all reaction roles on this message from the DB
+                const reactionRoles = await ReactionRoleEntity.find({ where: { message } });
+
+                // Remove all reaction roles or warn user if there are no reaction roles on the message.
+                if (reactionRoles.length > 0) for (const reactionRole of reactionRoles) await reactionRole.remove();
+                else return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
                         .setColor(CONSTANTS.COLORS.warning)
-                        .setTitle('Not implemented')
+                        .setTitle('Failed to remove reaction roles')
                         .addFields([
                             {
-                                name: 'Can\'t remove reaction role',
-                                value: `Removing reaction roles has not yet been implemented. Contact ${this.client.users.cache.get("443058373022318593")} if you want a reaction role to be removed.`
+                                name: 'No reaction roles to remove',
+                                value: 'The specified message does not have any reaction roles.'
                             }
                         ])
                 ] });
+
+                // Fetch the bot user
+                const me = i.guild.members.me;
+                if (!me) return;
+
+                // Remove all Soni Bot reactions from the message
+                const reactions = messageObject.reactions.cache.filter(r => r.users.cache.has(me.id));
+                for (const reaction of reactions.values()) await reaction.users.remove(me.id);
+
+                return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setTitle('Successfully removed reaction role')
+                        .addFields([
+                            {
+                                name: 'Reaction role removed',
+                                value: `This reaction role is no longer active. Users that already have the role will still\
+                                keep it, but it will no longer be assignable through a reaction.`
+                            }
+                        ])
+                ] });
+            }
             default:
                 // This should never happen - show an error to the user
                 return await i.editReply({ embeds: [
@@ -203,7 +258,7 @@ export default class ReactionRole implements Command
                     .setDescription('The role to assign')
                     .setRequired(true)))
             .addSubcommand(command => command.setName('remove')
-                .setDescription('Remove a reaction role tied to a message')
+                .setDescription('Remove all reaction roles tied to a specific message (users will keep the role)')
                 .addStringOption(option => option.setName('message')
                     .setDescription('The message to remove the reaction role from (right click, copy ID)')
                     .setRequired(true)));
