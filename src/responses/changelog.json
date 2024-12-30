@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "7.1.0",
+            "changes": [
+                "Implemented `/reactionrole remove` command",
+                "Improved some text formatting"
+            ]
+        },
+        {
             "version": "7.0.1",
             "changes": [
                 "Fixed top uptimes not saving correctly",

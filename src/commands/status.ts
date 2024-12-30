@@ -85,7 +85,7 @@ export default class Status implements Command
                         inline: true
                     },
                     {
-                        name: 'Top 5 uptimes (including current)',
+                        name: 'Top 5 uptimes',
                         value: await this._topUptimes()
                     }
                 ])
@@ -173,7 +173,15 @@ export default class Status implements Command
 
         // Stringify the output
         let output = '';
-        for (const uptime of uptimes) output += `**${uptimes.indexOf(uptime) + 1}.** _${this._timeConversion(uptime.uptime)}_, achieved <t:${(uptime.achieved.getTime() / 1000).toFixed(0)}:f>\n`;
+        for (const uptime of uptimes)
+        {
+            // Add the uptime result
+            output += `**${uptimes.indexOf(uptime) + 1}.** _${this._timeConversion(uptime.uptime)}_`;
+
+            // Check if this was achieved in the current session
+            if (uptime.session === this.client.session) output += ' (current)\n';
+            else output += `, achieved <t:${(uptime.achieved.getTime() / 1000).toFixed(0)}:f>\n`;
+        }
         if (output === '') output = '_No uptimes on record yet_'; // Tell user if there are no uptimes
         return output;
     }

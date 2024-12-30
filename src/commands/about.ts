@@ -61,16 +61,28 @@ export default class About implements Command
                         inline: true
                     },
                     {
-                        name: 'How do I function?',
+                        name: 'What can I do?',
                         value: `There is more details about each command in the \`/help\` command, and every command has\
                         autofill. The code is also open source and available [on GitHub](https://github.com/soni801/soni-bot/).`,
                         inline: true
+                    },
+                    // This next field is used to split the upcoming fields onto its own line
+                    // See https://github.com/discord/discord-api-docs/discussions/3233#discussioncomment-6505046
+                    {
+                        name: ' ',
+                        value: ' '
                     },
                     {
                         name: 'Want to report a bug?',
                         value: `If you have encountered a bug and you want to report it, head over to the [GitHub issue\
                         tracker](https://github.com/soni801/soni-bot/issues/new/choose) and submit a bug or feature request\
-                        using the provided forms.`
+                        using the provided forms.`,
+                        inline: true
+                    },
+                    {
+                        name: 'What are the future plans?',
+                        value: 'You can see the future plans of this bot in the [GitHub Project](https://github.com/users/soni801/projects/3).',
+                        inline: true
                     }
                 ])
         ] });
