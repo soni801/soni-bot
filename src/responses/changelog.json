@@ -1,6 +1,12 @@
 {
     "changelog": [
         {
+            "version": "7.2.0",
+            "changes": [
+                "Added `/balls` command"
+            ]
+        },
+        {
             "version": "7.1.0",
             "changes": [
                 "Implemented `/reactionrole remove` command",
