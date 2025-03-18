@@ -286,6 +286,10 @@ export default class Reminder implements Command
                         .setTitle('Successfully edited reminder')
                         .addFields([
                             {
+                                name: 'Reminder',
+                                value: reminder.content
+                            },
+                            {
                                 name: 'New due time:',
                                 value: `<t:${(reminder.due.getTime() / 1000).toFixed(0)}:R>`
                             }
