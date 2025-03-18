@@ -2,21 +2,20 @@ import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from 'discord
 import { balls } from '../responses/balls.json';
 import type { Command } from '../types/Command';
 import type Client from '../util/Client';
-import { CONSTANTS } from '../util/config';
 import Logger from '../util/Logger';
 
 // noinspection JSUnusedGlobalSymbols
 /**
  * The balls command
  *
- * @author Soni
+ * @author rudkoLA
  * @since 7.2.0
  * @see {@link Command}
  */
 export default class Balls implements Command
 {
     name = 'balls';
-    description = 'Gives a balls cat gif';
+    description = 'Sends a random cat & balls GIF';
     client: Client;
     logger = new Logger(Balls.name);
     category: 'fun' = 'fun';
@@ -26,7 +25,7 @@ export default class Balls implements Command
      *
      * @param {Client} client The Client the command is attached to
      *
-     * @author Soni
+     * @author rudkoLA
      * @since 7.2.0
      * @see {@link Client}
      */
@@ -41,16 +40,16 @@ export default class Balls implements Command
      * @param {ChatInputCommandInteraction<"cached">} i The command interaction
      * @returns {Promise<Message<boolean>>} The reply sent by the bot
      *
-     * @author Soni
+     * @author rudkoLA
      * @since 7.2.0
      * @see {@link ChatInputCommandInteraction}
      */
     async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
         // Generate a random balls index
-        const balls_index = this.client.randomNumber(0, balls.length);
+        const responseIndex = this.client.randomNumber(0, balls.length);
 
-        return await i.editReply({ content: balls[balls_index], embeds: [] });
+        return await i.editReply({ content: balls[responseIndex] });
     }
 
     /**
