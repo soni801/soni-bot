@@ -332,8 +332,8 @@ export default class Reminder implements Command
                         ])
                 ] });
             }
-            // Remove a reminder
-            case 'remove':
+            // Delete a reminder
+            case 'delete':
             {
                 // Fetch the reminder from the command
                 const reminderId = i.options.getString('reminder', true);
@@ -363,7 +363,7 @@ export default class Reminder implements Command
                         .setTitle('Deleted reminder')
                         .addFields([
                             {
-                                name: 'Successfully removed the reminder',
+                                name: 'Successfully deleted the reminder',
                                 value: reminder.content
                             }
                         ])
@@ -488,8 +488,8 @@ export default class Reminder implements Command
                     .addStringOption(option => option.setName('content')
                         .setDescription('What to be reminded of')
                         .setRequired(true))))
-            .addSubcommand(command => command.setName('remove')
-                .setDescription('Remove a reminder')
+            .addSubcommand(command => command.setName('delete')
+                .setDescription('Delete a reminder')
                 .addStringOption(this._commandOptions.reminderOption))
             .addSubcommand(command => command.setName('clear')
                 .setDescription('Delete all your reminders'));
