@@ -3,7 +3,11 @@
         {
             "version": "7.2.0",
             "changes": [
-                "Added `/balls` command"
+                "Added `/balls` command",
+                "Renamed the `/reminder remove` command to `/reminder delete`",
+                "Now says which reminder is updated when updating the due time of a reminder",
+                "Improved the grammatical quality of the `/joke` command",
+                "Updated internal libraries"
             ]
         },
         {
