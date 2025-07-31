@@ -42,6 +42,12 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     session = randomUUID();
 
     /**
+     * Whether this client is currently sending a reminder.
+     * This field is used to make sure a reminder notification is never attempted sent multiple times.
+     */
+    reminding = false;
+
+    /**
      * Whether this client is currently being destroyed.
      * This field is used to make sure the bot is never attempted to be destroyed multiple times simultaneously.
      */
@@ -70,17 +76,24 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         ])).then(() => this.intervals.push(setInterval(async () =>
         {
             // Send reminder notifications
+            this.reminding = true;
             const reminders = await this.fetchReminders(true).catch((e: Error) =>
             {
                 this.logger.error(`An error occurred while fetching reminders: ${e.message}`);
                 return [];
             });
-            reminders.forEach(r => this.remind(r).catch((e: Error) =>
+
+            for (const reminder of reminders)
             {
-                // The reminder was probably created in a channel that the bot doesn't have access to
-                this.logger.error('An error occurred while trying to process reminders');
-                console.error(e);
-            }));
+                await this.remind(reminder).catch((e: Error) =>
+                {
+                    // The reminder was probably created in a channel that the bot doesn't have access to
+                    this.logger.error('An error occurred while trying to process reminders');
+                    console.error(e);
+                });
+            }
+
+            this.reminding = false;
 
             // Update uptime result
             if (!this.uptime) return; // Only do it if uptime actually exists
