@@ -49,6 +49,10 @@ export default class Status implements Command
         // Fetch the message and check the latency
         const message = await i.fetchReply();
 
+        // Get the Discord API latency
+        let apiLatency: string = Math.round(this.client.ws.ping).toString() + 'ms';
+        if (apiLatency === "-1ms") apiLatency = "*Unknown*";
+
         // Send reply to user
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
@@ -65,7 +69,7 @@ export default class Status implements Command
                     },
                     {
                         name: 'Discord API latency',
-                        value: `${Math.round(this.client.ws.ping)}ms`,
+                        value: apiLatency,
                         inline: true
                     },
                     // This next field is used to put the database status on a new line
