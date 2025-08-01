@@ -2,6 +2,7 @@ import {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
     SlashCommandBuilder,
+    SlashCommandOptionsOnlyBuilder,
     SlashCommandSubcommandGroupBuilder,
     SlashCommandSubcommandsOnlyBuilder
 } from 'discord.js';
@@ -78,6 +79,7 @@ export abstract class Command
         | SlashCommandBuilder
         | SlashCommandSubcommandsOnlyBuilder
         | SlashCommandSubcommandGroupBuilder
+        | SlashCommandOptionsOnlyBuilder
         >;
 
     /**
@@ -85,7 +87,7 @@ export abstract class Command
      *
      * @param {ChatInputCommandInteraction<"cached">} i The interaction object
      * @returns {Promise<any>} The entry point for this interaction
-     * 
+     *
      * @author theS1LV3R
      * @since 6.0.0
      * @see {@link ChatInputCommandInteraction}
