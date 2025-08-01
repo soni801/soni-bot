@@ -19,23 +19,23 @@
     "author": "Soni",
     "license": "GPL-3.0-or-later",
     "dependencies": {
-        "axios": "^1.8.3",
+        "axios": "^1.11.0",
         "bufferutil": "^4.0.9",
         "cross-env": "^7.0.3",
-        "discord.js": "^14.18.0",
-        "dotenv": "^16.4.7",
+        "discord.js": "^14.21.0",
+        "dotenv": "^16.6.1",
         "erlpack": "^0.1.4",
-        "pg": "^8.14.1",
-        "typeorm": "^0.3.21",
+        "pg": "^8.16.3",
+        "typeorm": "^0.3.25",
         "typeorm-naming-strategies": "^4.1.0",
         "utf-8-validate": "^6.0.5",
         "winston": "^3.17.0"
     },
     "devDependencies": {
-        "@types/node": "^22.13.10",
-        "eslint": "^9.22.0",
+        "@types/node": "^22.17.0",
+        "eslint": "^9.32.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.8.2"
+        "typescript": "^5.9.2"
     },
     "peerDependencies": {
         "prettier": "^3.5.3"
