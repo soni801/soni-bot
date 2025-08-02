@@ -66,8 +66,10 @@ export default class Ban implements Command
 
         // Ban the specified user
         const user = i.options.getUser('user', true);
-        i.guild.members.ban(user, {reason: `Requested by ${i.user.tag}`}).then(async () =>
+        try
         {
+            await i.guild.members.ban(user, {reason: `Requested by ${i.user.tag}`});
+
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
                     .setTitle('Banned user')
@@ -78,7 +80,9 @@ export default class Ban implements Command
                         }
                     ])
             ] });
-        }).catch(async (error: Error) => {
+        }
+        catch
+        {
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
                     .setColor(CONSTANTS.COLORS.warning)
@@ -86,15 +90,11 @@ export default class Ban implements Command
                     .addFields([
                         {
                             name: `Failed to ban ${user.tag}`,
-                            value: error.message
-                        },
-                        {
-                            name: '\u200b',
-                            value: 'Make sure the bot has the *Ban Members* permission.'
+                            value: 'The bot needs the *Ban Members* permission to use this command'
                         }
                     ])
             ] });
-        });
+        }
     }
 
     /**
