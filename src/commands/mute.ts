@@ -101,9 +101,26 @@ export default class Mute implements Command
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
-        // Mute the specified user
+        // Get the member
         const user = i.options.getUser('user', true);
         const member = await i.guild.members.fetch(user);
+
+        if (member.isCommunicationDisabled())
+        {
+            return await i.editReply({ embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle("Couldn't mute user")
+                    .addFields([
+                        {
+                            name: `${user.tag} is already muted`,
+                            value: `Mute expires <t:${Math.floor(member.communicationDisabledUntilTimestamp / 1000)}:R>. Use \`/unmute\` to remove the mute now`
+                        }
+                    ])
+            ] });
+        }
+
+        // Mute the member
         try
         {
             await member.timeout(duration * 60 * 1000, reason);
