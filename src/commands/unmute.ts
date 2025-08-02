@@ -90,6 +90,7 @@ export default class Unmute implements Command
 
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.success)
                     .setTitle('Unmuted user')
                     .addFields([
                         {

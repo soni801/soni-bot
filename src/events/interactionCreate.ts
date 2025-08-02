@@ -43,7 +43,7 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
 
             return i.editReply({ embeds: [
                 client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.warning)
+                    .setColor(CONSTANTS.COLORS.error)
                     .setTitle('An error occurred')
                     .addFields([
                         {

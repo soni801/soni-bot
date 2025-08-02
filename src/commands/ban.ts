@@ -89,6 +89,7 @@ export default class Ban implements Command
 
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.success)
                     .setTitle('Banned user')
                     .addFields([
                         {

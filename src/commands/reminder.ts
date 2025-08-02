@@ -147,6 +147,7 @@ export default class Reminder implements Command
                 // Send a confirmation to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Reminder registered')
                         .addFields([
                             {
@@ -192,6 +193,7 @@ export default class Reminder implements Command
                 // Send a confirmation to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Reminder registered')
                         .addFields([
                             {
@@ -283,6 +285,7 @@ export default class Reminder implements Command
                 // Send result to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Successfully edited reminder')
                         .addFields([
                             {
@@ -327,6 +330,7 @@ export default class Reminder implements Command
                 // Send result to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Successfully edited reminder')
                         .addFields([
                             {
@@ -364,6 +368,7 @@ export default class Reminder implements Command
                 // Send result to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Deleted reminder')
                         .addFields([
                             {
@@ -390,6 +395,7 @@ export default class Reminder implements Command
                 // Send result to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Deleted reminder')
                         .addFields([
                             {
@@ -403,7 +409,7 @@ export default class Reminder implements Command
                 // This should never happen - show an error to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
-                        .setColor(CONSTANTS.COLORS.warning)
+                        .setColor(CONSTANTS.COLORS.error)
                         .setTitle('An error occurred')
                         .addFields([
                             {

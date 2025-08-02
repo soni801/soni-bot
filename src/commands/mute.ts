@@ -127,6 +127,7 @@ export default class Mute implements Command
 
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.success)
                     .setTitle('Muted user')
                     .addFields([
                         {

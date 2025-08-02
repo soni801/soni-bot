@@ -146,6 +146,7 @@ export default class ReactionRole implements Command
                 // Send a confirmation to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Successfully created reaction role')
                         .addFields([
                             {
@@ -210,6 +211,7 @@ export default class ReactionRole implements Command
 
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Successfully removed reaction role')
                         .addFields([
                             {
@@ -224,7 +226,7 @@ export default class ReactionRole implements Command
                 // This should never happen - show an error to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
-                        .setColor(CONSTANTS.COLORS.warning)
+                        .setColor(CONSTANTS.COLORS.error)
                         .setTitle('An error occurred')
                         .addFields([
                             {

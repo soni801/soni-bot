@@ -17,9 +17,9 @@ export const token = process.env.TOKEN;
  */
 const COLORS: { [ key: string ]: ColorResolvable } = {
     default: 0x3ba3a1,
-    success: 'Green',
+    success: 0x72e85a,
     warning: 0xe88e5a,
-    error: 'Red'
+    error: 0xe8655a
 };
 
 /**
