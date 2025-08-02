@@ -64,11 +64,28 @@ export default class Ban implements Command
                 ])
         ] });
 
+        // Get ban reason
+        let reason = i.options.getString('reason');
+        if (!reason) reason = `Requested by ${i.user.tag}`;
+
         // Ban the specified user
         const user = i.options.getUser('user', true);
         try
         {
-            await i.guild.members.ban(user, {reason: `Requested by ${i.user.tag}`});
+            // First, notify the user
+            await user.send({ embeds: [
+                this.client.defaultEmbed()
+                    .setTitle('You have been banned')
+                    .addFields([
+                        {
+                            name: `You were banned from ${i.guild.name}`,
+                            value: `Reason: ${reason}`
+                        }
+                    ])
+            ] }).catch(e => this.logger.warn(`Failed to notify ${user.tag} of ban: ${e}`));
+
+            // After that's done, remove them from the server
+            await i.guild.members.ban(user, { reason });
 
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
@@ -76,7 +93,7 @@ export default class Ban implements Command
                     .addFields([
                         {
                             name: `Successfully banned ${user.tag}`,
-                            value: `Requested by <@${i.user.id}>`
+                            value: reason
                         }
                     ])
             ] });
@@ -109,6 +126,8 @@ export default class Ban implements Command
             .setDescription(this.description)
             .addUserOption(option => option.setName('user')
                 .setDescription('The user to ban')
-                .setRequired(true));
+                .setRequired(true))
+            .addStringOption(option => option.setName('reason')
+                .setDescription('The reason for the ban'));
     }
 }
