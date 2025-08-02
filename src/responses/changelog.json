@@ -1,6 +1,17 @@
 {
     "changelog": [
         {
+            "version": "7.3.0",
+            "changes": [
+                "Added moderation commands `/ban`, `/mute` and `/unmute`",
+                "Reimplemented `/family` command",
+                "Updated embed colors for certain actions",
+                "Fixed a bug that could cause reminders to be sent several times",
+                "Minor improvements on various bot responses",
+                "Updated internal libraries"
+            ]
+        },
+        {
             "version": "7.2.0",
             "changes": [
                 "Added `/balls` command",
