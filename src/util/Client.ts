@@ -291,22 +291,26 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      * An embed with the error template applied.
      * This embed should only be used for errors that should never occur under normal operation.
      *
-     * @param {EmbedData} embed The EmbedData to use for the embed
+     * @param error The error hint to display
      * @returns {EmbedBuilder} The error embed with the applied EmbedData
      *
      * @author Soni
      * @since 7.3.1
      * @see {@link EmbedData}
      */
-    errorEmbed(embed?: EmbedData): EmbedBuilder
+    errorEmbed(error: any): EmbedBuilder
     {
-        return this.defaultEmbed(embed)
+        return this.defaultEmbed()
             .setColor(CONSTANTS.COLORS.error)
             .setTitle('An error occurred')
             .addFields([
                 {
                     name: 'An internal error prevented the command from being executed',
                     value: `This should never happen. Please contact ${this.users.cache.get("443058373022318593")}.`
+                },
+                {
+                    name: 'Error hint',
+                    value: `\`${error}\``
                 }
             ]);
     }

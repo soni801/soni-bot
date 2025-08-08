@@ -145,11 +145,11 @@ export default class Ban implements Command
                     ])
             ] });
         }
-        catch
+        catch (error)
         {
             // This should never happen - show an error to the user
             return await i.editReply({ embeds: [
-                this.client.errorEmbed()
+                this.client.errorEmbed(error)
             ] });
         }
     }

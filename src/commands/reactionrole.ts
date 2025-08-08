@@ -225,7 +225,7 @@ export default class ReactionRole implements Command
             default:
                 // This should never happen - show an error to the user
                 return await i.editReply({ embeds: [
-                    this.client.errorEmbed()
+                    this.client.errorEmbed('getSubcommand default branch')
                 ] });
         }
     }
