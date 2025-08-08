@@ -288,6 +288,30 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     }
 
     /**
+     * An embed with the error template applied.
+     * This embed should only be used for errors that should never occur under normal operation.
+     *
+     * @param {EmbedData} embed The EmbedData to use for the embed
+     * @returns {EmbedBuilder} The error embed with the applied EmbedData
+     *
+     * @author Soni
+     * @since 7.3.1
+     * @see {@link EmbedData}
+     */
+    errorEmbed(embed?: EmbedData): EmbedBuilder
+    {
+        return this.defaultEmbed(embed)
+            .setColor(CONSTANTS.COLORS.error)
+            .setTitle('An error occurred')
+            .addFields([
+                {
+                    name: 'An internal error prevented the command from being executed',
+                    value: `This should never happen. Please contact ${this.users.cache.get("443058373022318593")}.`
+                }
+            ]);
+    }
+
+    /**
      * Get a random number in the provided range
      *
      * @param {number} min The minimum number (included)

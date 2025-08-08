@@ -149,15 +149,7 @@ export default class Ban implements Command
         {
             // This should never happen - show an error to the user
             return await i.editReply({ embeds: [
-                this.client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.error)
-                    .setTitle('An error occurred')
-                    .addFields([
-                        {
-                            name: 'An internal error prevented the command from being executed',
-                            value: `This should never happen, please contact ${this.client.users.cache.get("443058373022318593")}.`
-                        }
-                    ])
+                this.client.errorEmbed()
             ] });
         }
     }
