@@ -46,7 +46,7 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
         ] });
 
         // Execute the command
-        command.execute(i).catch(e =>
+        command.execute(i).catch((e: Error) =>
         {
             client.logger.error(`An error occurred while executing command '${i.commandName}': ${e.message}`);
             console.error(e);
@@ -58,7 +58,11 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
                     .addFields([
                         {
                             name: 'The command failed to run',
-                            value: CONSTANTS.ERRORS.COMMAND_RUN_ERROR
+                            value: `An error occurred while executing the command. Please contact ${client.users.cache.get("443058373022318593")} if the problem persists.`
+                        },
+                        {
+                            name: 'Error hint',
+                            value: `\`${e.message}\``
                         }
                     ])
             ] });

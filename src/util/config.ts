@@ -33,7 +33,6 @@ export const CONSTANTS: any = {
         GENERIC: 'An error has occurred.',
         DEPLOY_FAILED: 'Failed to deploy!',
         CLIENT_DESTROY: 'Client destroyed, exiting process...',
-        COMMAND_RUN_ERROR: 'An error occurred while running the command. Please try again later or contact Soni if the problem persists.',
         DISABLED: ':lock: This command has been disabled.',
         BOT_MISSING_PERMS: ':x: The command could not be preformed because one or more permissions are missing.',
         USER_MISSING_PERMS: ':lock: You do not have permission to use this command.',
