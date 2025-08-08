@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "7.3.1",
+            "changes": [
+                "The ban command no longer accepts admin users by default. Added a `force` flag to still allow for it.",
+                "Fixed a bug that sometimes caused the bot to send a DM even when ban requests failed",
+                "Improved error messages",
+                "Other minor code improvements"
+            ]
+        },
+        {
             "version": "7.3.0",
             "changes": [
                 "Added moderation commands `/ban`, `/mute` and `/unmute`",
