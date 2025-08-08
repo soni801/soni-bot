@@ -68,6 +68,20 @@ export default class Ban implements Command
         const user = i.options.getUser('user', true);
         const member = await i.guild.members.fetch(user);
 
+        // Don't let users ban themselves
+        if (user.id === i.user.id) return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('Invalid user')
+                .addFields([
+                    {
+                        name: 'You cannot ban yourself',
+                        value: 'silly goofy'
+                    }
+                ])
+        ] });
+
+
         // Make sure the bot has ban permissions
         if (!i.guild.members.me?.permissions.has(PermissionsBitField.Flags.BanMembers)) return await i.editReply({
             embeds: [
@@ -110,6 +124,22 @@ export default class Ban implements Command
                     }
                 ])
         ] });
+
+        // Error if the bot's role is lower than the member's highest role (this would probably be blocked on discord's end)
+        if (i.guild.members.me.roles.highest.position <= member.roles.highest.position) return await i.editReply({
+            embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle(`Couldn't ban user`)
+                    .addFields([
+                        {
+                            name: `Bot's role is too low`,
+                            value: `The bot's highest role must be above the target user's highest role to perform this action.`
+                        }
+                    ])
+            ]
+        });
+
 
         // Get ban reason
         let reason = i.options.getString('reason');
