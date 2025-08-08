@@ -95,7 +95,7 @@ export default class Unmute implements Command
                     .addFields([
                         {
                             name: `Removed the mute from ${user.tag}`,
-                            value: `Requested by ${i.user}`
+                            value: `Requested by ${i.user.tag}`
                         }
                     ])
             ] });

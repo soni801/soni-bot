@@ -64,12 +64,58 @@ export default class Ban implements Command
                 ])
         ] });
 
+        // Get user to ban
+        const user = i.options.getUser('user', true);
+        const member = await i.guild.members.fetch(user);
+
+        // Make sure the bot has ban permissions
+        if (!i.guild.members.me?.permissions.has(PermissionsBitField.Flags.BanMembers)) return await i.editReply({
+            embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle("Couldn't ban user")
+                    .addFields([
+                        {
+                            name: `Failed to ban ${user.tag}`,
+                            value: 'The bot needs the *Ban Members* permission to use this command.'
+                        }
+                    ])
+            ]
+        });
+
+        // Check if the ban was forced
+        const force = i.options.getBoolean('force');
+
+        // Make sure the user to ban doesn't have administrative privileges
+        if (!force &&
+            (member.permissions.has(PermissionsBitField.Flags.ManageGuild)
+            || member.permissions.has(PermissionsBitField.Flags.BanMembers)
+            || member.permissions.has(PermissionsBitField.Flags.ModerateMembers)
+            || member.permissions.has(PermissionsBitField.Flags.ManageMessages)
+            || member.permissions.has(PermissionsBitField.Flags.ManageThreads)
+            || member.permissions.has(PermissionsBitField.Flags.Administrator))
+        ) return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle(`Couldn't ban user`)
+                .addFields([
+                    {
+                        name: `The specified user has administrative permissions`,
+                        value: `To avoid accidental bans, requests targeting members with any administrative permissions are prevented by default.
+                        
+                        This includes the following permissions:
+                        \`Manage Server\`, \`Ban Members\`, \`Time out members\`, \`Manage Messages\`, \`Manage Threads and Posts\`, \`Administrator\`
+                        
+                        To bypass this restriction, use the \`force\` flag.`
+                    }
+                ])
+        ] });
+
         // Get ban reason
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
         // Ban the specified user
-        const user = i.options.getUser('user', true);
         try
         {
             // First, notify the user
@@ -101,14 +147,15 @@ export default class Ban implements Command
         }
         catch
         {
+            // This should never happen - show an error to the user
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.warning)
-                    .setTitle("Couldn't ban user")
+                    .setColor(CONSTANTS.COLORS.error)
+                    .setTitle('An error occurred')
                     .addFields([
                         {
-                            name: `Failed to ban ${user.tag}`,
-                            value: 'The bot needs the *Ban Members* permission to use this command'
+                            name: 'An internal error prevented the command from being executed',
+                            value: `This should never happen, please contact ${this.client.users.cache.get("443058373022318593")}.`
                         }
                     ])
             ] });
@@ -129,6 +176,8 @@ export default class Ban implements Command
                 .setDescription('The user to ban')
                 .setRequired(true))
             .addStringOption(option => option.setName('reason')
-                .setDescription('The reason for the ban'));
+                .setDescription('The reason for the ban'))
+            .addBooleanOption(option => option.setName('force')
+                .setDescription('Attempt the ban regardless of target user permissions'));
     }
 }
