@@ -1,6 +1,13 @@
 {
     "changelog": [
         {
+            "version": "7.3.2",
+            "changes": [
+                "No longer allows users to ban themselves",
+                "No longer allows banning roles higher in the hierarchy than the bot"
+            ]
+        },
+        {
             "version": "7.3.1",
             "changes": [
                 "The ban command no longer accepts admin users by default. Added a `force` flag to still allow for it.",
