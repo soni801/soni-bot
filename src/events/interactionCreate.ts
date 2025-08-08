@@ -33,7 +33,17 @@ const interactionCreate: event<'interactionCreate'> = async (client: Client<true
 
         // Defer reply
         await i.deferReply();
-        if (!command) return i.editReply(CONSTANTS.ERRORS.NOT_IMPLEMENTED_NOT_EXIST);
+        if (!command) return await i.editReply({ embeds: [
+            client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.error)
+                .setTitle('Invalid command')
+                .addFields([
+                    {
+                        name: 'You inputted an invalid command',
+                        value: `This command either doesn't exist or isn't implemented.`
+                    }
+                ])
+        ] });
 
         // Execute the command
         command.execute(i).catch(e =>
