@@ -3,6 +3,7 @@ import type { Command } from '../types/Command';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
 import UptimeResultEntity from "../entity/UptimeResult.entity";
+import { status } from '../responses/status.json';
 
 // noinspection JSUnusedGlobalSymbols
 /**
@@ -53,13 +54,20 @@ export default class Status implements Command
         let apiLatency: string = Math.round(this.client.ws.ping).toString() + 'ms';
         if (apiLatency === "-1ms") apiLatency = "*Unknown*";
 
+        // Choose a random status string
+        const statusString = status[this.client.randomNumber(0, status.length)];
+
         // Send reply to user
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
                 .setTitle('Soni Bot status')
                 .addFields([
                     {
-                        name: 'Current uptime',
+                        name: 'Mood',
+                        value: statusString
+                    },
+                    {
+                        name: 'Uptime',
                         value: this._timeConversion(this.client.uptime)
                     },
                     {
