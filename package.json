@@ -1,6 +1,6 @@
 {
     "name": "soni-bot",
-    "version": "7.3.2",
+    "version": "7.3.3",
     "description": "A lightweight toolkit bot for small Discord communities.",
     "scripts": {
         "dev": "cross-env-shell NODE_ENV=development bun run src/main.ts",

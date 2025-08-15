@@ -1,6 +1,14 @@
 {
     "changelog": [
         {
+            "version": "7.3.3",
+            "changes": [
+                "Added funny messages to the `/status` command",
+                "No longer allows users to mute themselves",
+                "Hopefully fixed some bugs with the `/mute` command"
+            ]
+        },
+        {
             "version": "7.3.2",
             "changes": [
                 "No longer allows users to ban themselves",
