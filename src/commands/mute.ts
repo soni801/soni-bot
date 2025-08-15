@@ -105,6 +105,20 @@ export default class Mute implements Command
         const user = i.options.getUser('user', true);
         const member = await i.guild.members.fetch(user);
 
+        // Don't let users mute themselves
+        if (user.id === i.user.id) return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('Invalid user')
+                .addFields([
+                    {
+                        name: 'You cannot mute yourself',
+                        value: 'silly goofy'
+                    }
+                ])
+        ] });
+
+        // Don't allow muting users that are already muted
         if (member.isCommunicationDisabled())
         {
             return await i.editReply({ embeds: [
@@ -119,6 +133,36 @@ export default class Mute implements Command
                     ])
             ] });
         }
+
+        // Make sure the bot has mute permissions
+        if (!i.guild.members.me?.permissions.has(PermissionsBitField.Flags.ModerateMembers)) return await i.editReply({
+            embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle("Couldn't mute user")
+                    .addFields([
+                        {
+                            name: `Failed to mute ${user.tag}`,
+                            value: 'The bot needs the *Time out members* permission to use this command'
+                        }
+                    ])
+            ]
+        });
+
+        // Error if the bot's role is lower than the member's highest role (this would probably be blocked on discord's end)
+        if (i.guild.members.me.roles.highest.position <= member.roles.highest.position) return await i.editReply({
+            embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle(`Couldn't mute user`)
+                    .addFields([
+                        {
+                            name: `Bot's role is too low`,
+                            value: `The bot's highest role must be above the target user's highest role to perform this action.`
+                        }
+                    ])
+            ]
+        });
 
         // Mute the member
         try
@@ -137,18 +181,11 @@ export default class Mute implements Command
                     ])
             ] });
         }
-        catch
+        catch (error)
         {
+            // This should never happen - show an error to the user
             return await i.editReply({ embeds: [
-                this.client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.warning)
-                    .setTitle("Couldn't mute user")
-                    .addFields([
-                        {
-                            name: `Failed to mute ${user.tag}`,
-                            value: 'The bot needs the *Time out members* permission to use this command'
-                        }
-                    ])
+                this.client.errorEmbed(error)
             ] });
         }
     }
