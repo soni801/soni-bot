@@ -182,9 +182,9 @@ export default class Reminder implements Command
                 due.setDate(day);
                 due.setMonth(month);
                 due.setFullYear(year);
-                if (hour) due.setUTCHours(hour);
-                if (minute) due.setMinutes(minute);
-                if (second) due.setSeconds(second);
+                if (hour !== null) due.setUTCHours(hour);
+                if (minute !== null) due.setMinutes(minute);
+                if (second !== null) due.setSeconds(second);
 
                 // Create and save the reminder
                 const reminder = new ReminderEntity({ user, channel, content, due });
