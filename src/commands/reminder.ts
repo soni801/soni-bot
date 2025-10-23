@@ -27,32 +27,6 @@ export default class Reminder implements Command
     logger = new Logger(Reminder.name);
     category: 'useful' = 'useful';
     private _commandOptions = {
-        timeOption: new SlashCommandIntegerOption()
-            .setName('time')
-            .setDescription('The amount of time to wait before sending the reminder')
-            .setRequired(true),
-        unitOption: new SlashCommandStringOption()
-            .setName('unit')
-            .setDescription('Which time unit to use')
-            .setRequired(true)
-            .addChoices(
-                {
-                    name: 'days',
-                    value: 'days'
-                },
-                {
-                    name: 'hours',
-                    value: 'hours'
-                },
-                {
-                    name: 'minutes',
-                    value: 'minutes'
-                },
-                {
-                    name: 'seconds',
-                    value: 'seconds'
-                }
-            ),
         reminderOption: new SlashCommandStringOption()
             .setName('reminder')
             .setDescription('The reminder to use')
@@ -94,55 +68,26 @@ export default class Reminder implements Command
             {
                 // Fetch data from command
                 const content = i.options.getString('reminder', true);
-                let time = i.options.getInteger('time', true); // Modifiable to change unit
-                const unit = i.options.getString('unit', true);
-
-                // Make sure the reminder is in the future
-                if (time < 1) return await i.editReply({ embeds: [
-                    this.client.defaultEmbed()
-                        .setColor(CONSTANTS.COLORS.warning)
-                        .setTitle('An error occurred')
-                        .addFields([
-                            {
-                                name: 'Invalid time',
-                                value: 'The provided time must be in the future'
-                            }
-                        ])
-                ] });
+                const days = i.options.getInteger('days', false);
+                const hours = i.options.getInteger('hours', false);
+                const minutes = i.options.getInteger('minutes', false);
+                const seconds = i.options.getInteger('seconds', false);
 
                 // Calculate time offset in ms
-                // noinspection FallThroughInSwitchStatementJS
-                switch (unit)
-                {
-                    case 'days': time *= 24;
-                    case 'hours': time *= 60;
-                    case 'minutes': time *= 60;
-                    case 'seconds': time *= 1000;
-                }
+                let timeOffset = 0;
+                if (days) timeOffset += days * 24 * 60 * 60 * 1000;
+                if (hours) timeOffset += hours * 60 * 60 * 1000;
+                if (minutes) timeOffset += minutes * 60 * 1000;
+                if (seconds) timeOffset += seconds * 1000;
 
                 // Store values
                 const user = i.user.id;
                 const channel = i.channelId;
-                const due = new Date(i.createdTimestamp + time);
+                const due = new Date(i.createdTimestamp + timeOffset);
 
                 // Create and save the reminder
                 const reminder = new ReminderEntity({ user, channel, content, due });
                 await reminder.save();
-
-                // Calculate what to output as the specified time in the confirmation message
-                let outputTime = 'unspecified time';
-                switch (unit)
-                {
-                    case 'days':
-                        outputTime = `<t:${(due.getTime() / 1000).toFixed(0)}:D>`;
-                        break;
-                    case 'hours': case 'minutes':
-                        outputTime = `<t:${(due.getTime() / 1000).toFixed(0)}:t>`;
-                        break;
-                    case 'seconds':
-                        outputTime = `<t:${(due.getTime() / 1000).toFixed(0)}:T>`;
-                        break;
-                }
 
                 // Send a confirmation to the user
                 return await i.editReply({ embeds: [
@@ -156,7 +101,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at ${outputTime}`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
                             }
                         ])
                 ] });
@@ -235,6 +180,7 @@ export default class Reminder implements Command
             {
                 // Fetch data from command
                 const reminderId = i.options.getString('reminder', true);
+                const action = i.options.getString('action', true);
                 let time = i.options.getInteger('time', true); // Modifiable to change unit
                 const unit = i.options.getString('unit', true);
 
@@ -254,19 +200,6 @@ export default class Reminder implements Command
                         ])
                 ] });
 
-                // Make sure the reminder is in the future
-                if (time < 1) return await i.editReply({ embeds: [
-                    this.client.defaultEmbed()
-                        .setColor(CONSTANTS.COLORS.warning)
-                        .setTitle('An error occurred')
-                        .addFields([
-                            {
-                                name: 'Invalid time',
-                                value: 'The provided time must be in the future'
-                            }
-                        ])
-                ] });
-
                 // Calculate time offset in ms
                 // noinspection FallThroughInSwitchStatementJS
                 switch (unit)
@@ -277,8 +210,31 @@ export default class Reminder implements Command
                     case 'seconds': time *= 1000;
                 }
 
+                // Calculate the new due time
+                let due = reminder.due.getTime();
+                switch (action)
+                {
+                    case 'add': due += time; break;
+                    case 'subtract': due -= time; break;
+                }
+
+                // Cancel if the new due time is in the past
+                if (due < Date.now()) return await i.editReply({
+                    embeds: [
+                        this.client.defaultEmbed()
+                            .setColor(CONSTANTS.COLORS.warning)
+                            .setTitle('An error occurred')
+                            .addFields([
+                                {
+                                    name: 'Invalid time',
+                                    value: 'The reminder cannot be set in the past'
+                                }
+                            ])
+                    ]
+                });
+
                 // Edit the reminder
-                reminder.due = new Date(i.createdTimestamp + time);
+                reminder.due = new Date(due);
                 await reminder.save();
                 this.logger.info(`Edited due date of reminder #${reminder.id} on user ${i.user.tag}`);
 
@@ -294,7 +250,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: 'New due time:',
-                                value: `<t:${(reminder.due.getTime() / 1000).toFixed(0)}:R>`
+                                value: `<t:${(reminder.due.getTime() / 1000).toFixed(0)}:f>`
                             }
                         ])
                 ] });
@@ -430,8 +386,21 @@ export default class Reminder implements Command
                     .addStringOption(option => option.setName('reminder')
                         .setDescription('What to be reminded of')
                         .setRequired(true))
-                    .addIntegerOption(this._commandOptions.timeOption)
-                    .addStringOption(this._commandOptions.unitOption))
+                    .addIntegerOption(option => option.setName('days')
+                        .setDescription('The number of days to be reminded')
+                        .setMinValue(0))
+                    .addIntegerOption(option => option.setName('hours')
+                        .setDescription('The number of hours to be reminded')
+                        .setMinValue(0)
+                        .setMaxValue(23))
+                    .addIntegerOption(option => option.setName('minutes')
+                        .setDescription('The number of minutes to be reminded')
+                        .setMinValue(0)
+                        .setMaxValue(59))
+                    .addIntegerOption(option => option.setName('seconds')
+                        .setDescription('The number of seconds to be reminded')
+                        .setMinValue(0)
+                        .setMaxValue(59)))
                 .addSubcommand(command => command.setName('absolute')
                     .setDescription('Create a reminder at a specific time')
                     .addStringOption(option => option.setName('reminder')
@@ -482,8 +451,44 @@ export default class Reminder implements Command
                 .addSubcommand(command => command.setName('time')
                     .setDescription('Edit the due time of a reminder')
                     .addStringOption(this._commandOptions.reminderOption)
-                    .addIntegerOption(this._commandOptions.timeOption)
-                    .addStringOption(this._commandOptions.unitOption))
+                    .addStringOption(option => option.setName('action')
+                        .setDescription('The action to be taken')
+                        .setRequired(true)
+                        .addChoices(
+                            {
+                                name: 'add',
+                                value: 'add'
+                            },
+                            {
+                                name: 'subtract',
+                                value: 'subtract'
+                            }
+                        ))
+                    .addIntegerOption(option => option.setName('time')
+                        .setDescription('The amount of time to be added or subtracted')
+                        .setRequired(true)
+                        .setMinValue(1))
+                    .addStringOption(option => option.setName('unit')
+                        .setDescription('Which time unit to use')
+                        .setRequired(true)
+                        .addChoices(
+                            {
+                                name: 'days',
+                                value: 'days'
+                            },
+                            {
+                                name: 'hours',
+                                value: 'hours'
+                            },
+                            {
+                                name: 'minutes',
+                                value: 'minutes'
+                            },
+                            {
+                                name: 'seconds',
+                                value: 'seconds'
+                            }
+                        )))
                 .addSubcommand(command => command.setName('content')
                     .setDescription('Edit the content of a reminder')
                     .addStringOption(this._commandOptions.reminderOption)
