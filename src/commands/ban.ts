@@ -145,6 +145,10 @@ export default class Ban implements Command
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
+        // Get message delete seconds
+        let deleteMessageSeconds = i.options.getInteger('delete');
+        if (deleteMessageSeconds) deleteMessageSeconds *= (60 * 60);
+
         // Ban the specified user
         try
         {
@@ -161,7 +165,8 @@ export default class Ban implements Command
             ] }).catch(e => this.logger.warn(`Failed to notify ${user.tag} of ban: ${e}`));
 
             // After that's done, remove them from the server
-            await i.guild.members.ban(user, { reason });
+            if (deleteMessageSeconds) await i.guild.members.ban(user, { reason, deleteMessageSeconds });
+            else await i.guild.members.ban(user, { reason });
 
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
@@ -199,6 +204,10 @@ export default class Ban implements Command
                 .setRequired(true))
             .addStringOption(option => option.setName('reason')
                 .setDescription('The reason for the ban'))
+            .addIntegerOption(option => option.setName('delete')
+                .setDescription('Optionally delete the users messages sent the last X hours')
+                .setMinValue(1)
+                .setMaxValue(168))
             .addBooleanOption(option => option.setName('force')
                 .setDescription('Attempt the ban regardless of target user permissions'));
     }
