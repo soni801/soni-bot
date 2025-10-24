@@ -1,14 +1,15 @@
 import {
     AutocompleteInteraction,
-    ChatInputCommandInteraction, Message,
+    ChatInputCommandInteraction,
+    Message,
     SlashCommandBuilder,
-    SlashCommandIntegerOption,
-    SlashCommandStringOption, SlashCommandSubcommandsOnlyBuilder
+    SlashCommandStringOption,
+    SlashCommandSubcommandsOnlyBuilder
 } from 'discord.js';
 import ReminderEntity from '../entity/Reminder.entity';
-import type { Command } from '../types/Command';
+import type {Command} from '../types/Command';
 import type Client from '../util/Client';
-import { CONSTANTS } from '../util/config';
+import {CONSTANTS} from '../util/config';
 import Logger from '../util/Logger';
 
 // noinspection DuplicatedCode,JSUnusedGlobalSymbols
@@ -73,6 +74,19 @@ export default class Reminder implements Command
                 const minutes = i.options.getInteger('minutes', false);
                 const seconds = i.options.getInteger('seconds', false);
 
+                // Make sure content is within a reasonable length limit
+                if (content.length > 1000) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('An error occurred')
+                        .addFields([
+                            {
+                                name: 'Invalid content',
+                                value: 'The reminder content cannot exceed 1000 characters'
+                            }
+                        ])
+                ] });
+
                 // Calculate time offset in ms
                 let timeOffset = 0;
                 if (days) timeOffset += days * 24 * 60 * 60 * 1000;
@@ -117,6 +131,19 @@ export default class Reminder implements Command
                 const hour = i.options.getInteger('hour', false);
                 const minute = i.options.getInteger('minute', false);
                 const second = i.options.getInteger('second', false);
+
+                // Make sure content is within a reasonable length limit
+                if (content.length > 1000) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('An error occurred')
+                        .addFields([
+                            {
+                                name: 'Invalid content',
+                                value: 'The reminder content cannot exceed 1000 characters'
+                            }
+                        ])
+                ] });
 
                 // Fetch other data
                 const user = i.user.id;
