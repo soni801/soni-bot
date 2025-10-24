@@ -44,10 +44,13 @@ export default class Family implements Command
      */
     async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
     {
+        // Use current time as parameter for the image to avoid Discord caching
+        const seed = new Date().getTime();
+
         return await i.editReply({ embeds: [
             this.client.defaultEmbed()
                 .setTitle('The family tree:tm:')
-                .setImage('https://files.soni.recalstudios.net/family.png')
+                .setImage(`https://files.soni.recalstudios.net/family.png?${seed}`)
         ] });
     }
 
