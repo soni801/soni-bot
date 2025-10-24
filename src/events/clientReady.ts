@@ -3,16 +3,16 @@ import {event} from '../types/events';
 import Client from '../util/Client';
 
 /**
- * The ready event
+ * The clientReady event
  *
  * @param {Client<true>} client The Client to use for the event
  * @returns {Promise<Client<true>>} The provided Client
  *
  * @author Soni
  * @since 6.0.0
- * @see {@link ClientEvents.ready}
+ * @see {@link ClientEvents.clientReady}
  */
-const ready: event<'ready'> = async (client: Client<true>): Promise<Client<true>> =>
+const clientReady: event<'clientReady'> = async (client: Client<true>): Promise<Client<true>> =>
 {
     // Deploy the application's slash commands
     await client.deployCommands().catch((e: Error) =>
@@ -33,4 +33,4 @@ const ready: event<'ready'> = async (client: Client<true>): Promise<Client<true>
 };
 
 // noinspection JSUnusedGlobalSymbols
-export default ready;
+export default clientReady;
