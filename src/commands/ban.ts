@@ -153,7 +153,7 @@ export default class Ban implements Command
                         .addFields([
                             {
                                 name: 'Invalid Reason',
-                                value: 'The unban content cannot exceed 1000 characters'
+                                value: 'The unban reason cannot exceed 1000 characters'
                             }
                         ])
                     ] });
