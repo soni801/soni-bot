@@ -87,7 +87,7 @@ export default class Unban implements Command
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
-        // Make sure content is within a reasonable length limit
+        // Make sure reason is within a reasonable length limit
                 if (reason.length > 1000) return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
                         .setColor(CONSTANTS.COLORS.warning)
@@ -95,7 +95,7 @@ export default class Unban implements Command
                         .addFields([
                             {
                                 name: 'Invalid Reason',
-                                value: 'The unban content cannot exceed 1000 characters'
+                                value: 'The unban reason cannot exceed 1000 characters'
                             }
                         ])
                 ] });
