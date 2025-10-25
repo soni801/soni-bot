@@ -145,6 +145,19 @@ export default class Ban implements Command
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
+        // Make sure ban reason is within a reasonable length limit
+                if (reason.length > 1000) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('An error occurred')
+                        .addFields([
+                            {
+                                name: 'Invalid Reason',
+                                value: 'The unban content cannot exceed 1000 characters'
+                            }
+                        ])
+                    ] });
+        
         // Get message delete seconds
         let deleteMessageSeconds = i.options.getInteger('delete');
         if (deleteMessageSeconds) deleteMessageSeconds *= (60 * 60);
