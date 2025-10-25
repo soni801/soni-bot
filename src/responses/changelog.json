@@ -1,6 +1,19 @@
 {
     "changelog": [
         {
+            "version": "7.4.0",
+            "changes": [
+                "Changed arguments for the `/reminder create relative` command",
+                "Changed arguments for the `/reminder edit time` command",
+                "Added an option to delete messages when banning users",
+                "No longer allows muting admin users",
+                "Fixed a bug where long reminders would stall the bot",
+                "Fixed a bug where Discord would incorrectly cache the `/family` output",
+                "Added additional status messages",
+                "Updated internal libraries"
+            ]
+        },
+        {
             "version": "7.3.3",
             "changes": [
                 "Added funny messages to the `/status` command",
