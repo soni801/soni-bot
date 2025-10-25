@@ -149,6 +149,20 @@ export default class Mute implements Command
             ]
         });
 
+        // Make sure the user to mute doesn't have administrative privileges
+        // I think this fixes https://github.com/soni801/soni-bot/issues/13
+        if (member.permissions.has(PermissionsBitField.Flags.Administrator)) return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle(`Couldn't mute user`)
+                .addFields([
+                    {
+                        name: 'The specified user has administrative permissions',
+                        value: 'Why would you mute an admin anyway?'
+                    }
+                ])
+        ] });
+
         // Error if the bot's role is lower than the member's highest role (this would probably be blocked on discord's end)
         if (i.guild.members.me.roles.highest.position <= member.roles.highest.position) return await i.editReply({
             embeds: [
