@@ -15,7 +15,7 @@ import {CONSTANTS} from "../util/config";
  * The unban command
  *
  * @author MinAbility
- * @since 7.3.0
+ * @since 7.4.0
  * @see {@link Command}
  */
 export default class Unban implements Command
