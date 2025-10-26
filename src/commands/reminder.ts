@@ -187,7 +187,12 @@ export default class Reminder implements Command
 
                 // Determine the output (relevant reminders, stringified)
                 let output = '';
-                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
+                reminders.forEach(r => {
+                    const truncatedContent = r.content.length > 200 
+                        ? r.content.substring(0, 197) + '...' 
+                        : r.content;
+                    output += `\u2022 \`${truncatedContent}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`;
+                });
                 if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
 
                 // Send result to the user
