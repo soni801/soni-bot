@@ -101,6 +101,18 @@ export default class Mute implements Command
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
+        // Make sure reason is within a 1000 characters
+        if (reason.length > 1000) return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('An error occurred')
+                .addFields([
+                    {
+                        name: 'Invalid Reason',
+                        value: 'The reason cannot exceed 1000 characters'
+                    }
+                ])
+        ] });
         // Get the member
         const user = i.options.getUser('user', true);
         const member = await i.guild.members.fetch(user);

@@ -187,7 +187,12 @@ export default class Reminder implements Command
 
                 // Determine the output (relevant reminders, stringified)
                 let output = '';
-                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
+                reminders.forEach(r => {
+                    const truncatedContent = r.content.length > 200 
+                        ? r.content.substring(0, 197) + '...' 
+                        : r.content;
+                    output += `\u2022 \`${truncatedContent}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`;
+                });
                 if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
 
                 // Send result to the user
@@ -305,6 +310,19 @@ export default class Reminder implements Command
                         ])
                 ] });
 
+        // Make sure content is within a reasonable length 
+        if (content.length > 1000) return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('An error occurred')
+                .addFields([
+                    {
+                        name: 'Invalid Content',
+                        value: 'The content cannot exceed 1000 characters'
+                    }
+                ])
+        ] });
+
                 // Edit the reminder
                 reminder.content = content;
                 await reminder.save();
@@ -351,7 +369,7 @@ export default class Reminder implements Command
                 // Send result to the user
                 return await i.editReply({ embeds: [
                     this.client.defaultEmbed()
-                        .setColor(CONSTANTS.COLORS.success)
+                       .setColor(CONSTANTS.COLORS.success)
                         .setTitle('Deleted reminder')
                         .addFields([
                             {
@@ -553,7 +571,10 @@ export default class Reminder implements Command
         // Format changelog to comply with autocomplete syntax
         filteredReminders.map(reminder =>
         {
-            reminder.name = reminder.content;
+            // Truncate content to 100 characters for display
+            reminder.name = reminder.content.length > 100 
+                ? reminder.content.substring(0, 97) + '...' 
+                : reminder.content;
             reminder.value = reminder.id.toString();
         });
 
