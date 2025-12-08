@@ -31,8 +31,8 @@ export default class Unban implements Command
      *
      * @param {Client} client The Client the command is attached to
      *
-     * @author Soni
-     * @since 7.3.0
+     * @author MinAbility
+     * @since 7.4.0
      * @see {@link Client}
      */
     constructor(client: Client)
@@ -46,8 +46,8 @@ export default class Unban implements Command
      * @param {ChatInputCommandInteraction<"cached">} i The command interaction
      * @returns {Promise<Message<boolean>>} The reply sent by the bot
      *
-     * @author Soni
-     * @since 7.3.0
+     * @author MinAbility
+     * @since 7.4.0
      * @see {@link ChatInputCommandInteraction}
      */
     async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
