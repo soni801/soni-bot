@@ -54,6 +54,14 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     destroying = false;
 
     /**
+     * All bans of all guilds the bot is in.
+     *
+     * Key: Guild ID
+     * Value: Array of banned user objects.
+     */
+    bans = new Map<string, User[]>();
+
+    /**
      * Creates a Client with the provided ClientOptions
      *
      * @param {ClientOptions} options The options for the Client
@@ -72,7 +80,8 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // This is dumb :)
         this.connectDb().then(() => Promise.all([
             this.loadEvents('../events'),
-            this.loadCommands('../commands')
+            this.loadCommands('../commands'),
+            this.fetchBans()
         ])).then(() => this.intervals.push(setInterval(async () =>
         {
             // Send reminder notifications
@@ -396,6 +405,41 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Mark the reminder as inactive
         reminder.active = false;
         return await reminder.save();
+    }
+
+    /**
+     * Fetches bans from all guilds the bot is in
+     *
+     * @returns {Promise<Map<string, string[]>>} Map of guild IDs to arrays of banned user IDs
+     *
+     * @author Soni
+     * @since 7.5.0
+     */
+    async fetchBans(): Promise<Map<string, User[]>>
+    {
+        // Get all the guilds the bot is in
+        const guilds = await this.guilds.fetch();
+
+        // Clear existing bans
+        this.bans.clear();
+
+        // Count total bans fetched
+        let bansFetched = 0;
+
+        // Fetch bans for each guild
+        for (const [guildId, guild] of guilds)
+        {
+            // Fetch bans for the guild
+            const fetchedGuild = await guild.fetch();
+            const guildBans = await fetchedGuild.bans.fetch();
+            bansFetched += guildBans.size;
+
+            // Add bans to the client map
+            this.bans.set(guildId, guildBans.map(ban => ban.user));
+        }
+
+        this.logger.info(`Fetched ${bansFetched} ban(s) across ${this.bans.size} guild(s).`);
+        return this.bans;
     }
 
     /**

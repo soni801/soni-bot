@@ -7,7 +7,8 @@ import {
     Message,
     PermissionsBitField,
     SlashCommandBuilder,
-    SlashCommandOptionsOnlyBuilder
+    SlashCommandOptionsOnlyBuilder,
+    User
 } from "discord.js";
 import {CONSTANTS} from "../util/config";
 
@@ -15,13 +16,13 @@ import {CONSTANTS} from "../util/config";
  * The unban command
  *
  * @author MinAbility
- * @since 7.3.0
+ * @since 7.5.0
  * @see {@link Command}
  */
 export default class Unban implements Command
 {
     name = 'unban';
-    description = 'Unban a user';
+    description = 'Remove the ban from a user';
     client: Client;
     logger = new Logger(Unban.name);
     category: 'moderation' = 'moderation';
@@ -32,7 +33,7 @@ export default class Unban implements Command
      * @param {Client} client The Client the command is attached to
      *
      * @author MinAbility
-     * @since 7.4.0
+     * @since 7.5.0
      * @see {@link Client}
      */
     constructor(client: Client)
@@ -47,7 +48,7 @@ export default class Unban implements Command
      * @returns {Promise<Message<boolean>>} The reply sent by the bot
      *
      * @author MinAbility
-     * @since 7.4.0
+     * @since 7.5.0
      * @see {@link ChatInputCommandInteraction}
      */
     async execute(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
@@ -82,37 +83,68 @@ export default class Unban implements Command
 
         // Get user ID to unban
         const userId = i.options.getString('user', true);
-        
+
+        // Check if the user is banned
+        if (!this._userBanned(i.guildId, userId)) return await i.editReply({
+            embeds: [
+                this.client.defaultEmbed()
+                    .setColor(CONSTANTS.COLORS.warning)
+                    .setTitle('User not banned')
+                    .addFields([
+                        {
+                            name: 'Failed to unban user',
+                            value: 'The specified user is not banned from this server.'
+                        }
+                    ])
+            ]
+        });
+
         // Get unban reason
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
 
         // Unban the specified user
-        try
-        {
-            // Fetch the ban to get user info
-            const ban = await i.guild.bans.fetch(userId);
-            await i.guild.members.unban(userId, reason);
+        await i.guild.members.unban(userId, reason);
 
-            return await i.editReply({ embeds: [
-                this.client.defaultEmbed()
-                    .setColor(CONSTANTS.COLORS.success)
-                    .setTitle('Unbanned user')
-                    .addFields([
-                        {
-                            name: `Successfully unbanned ${ban.user.tag}`,
-                            value: reason
-                        }
-                    ])
-            ] });
-        }
-        catch (error)
-        {
-            // This should never happen - show an error to the user
-            return await i.editReply({ embeds: [
-                this.client.errorEmbed(error)
-            ] });
-        }
+        // Refresh client banlist
+        await this.client.fetchBans();
+
+        return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.success)
+                .setTitle('Unbanned user')
+                .addFields([
+                    {
+                        name: 'Successfully removed ban',
+                        value: `Removed the ban from ${await this.client.users.fetch(userId)}`
+                    },
+                    {
+                        name: 'Reason',
+                        value: reason
+                    }
+                ])
+        ] });
+    }
+
+    /**
+     * Checks if the specified user is banned from the specified guild.
+     *
+     * @param guildId The guild ID to check for the user ban
+     * @param userId The user ID to check for ban
+     * @returns {boolean} True if the user is banned, false otherwise
+     * @private
+     *
+     * @author Soni
+     * @since 7.5.0
+     */
+    private _userBanned(guildId: string, userId: string): boolean
+    {
+        // Get guild bans
+        const bans = this.client.bans.get(guildId);
+        if (!bans) return false;
+
+        // Check for user ID in the guild banlist
+        return !!bans.find((user: User) => user.id === userId);
     }
 
     /**
@@ -133,22 +165,33 @@ export default class Unban implements Command
                 .setDescription('The reason for the unban'));
     }
 
+    /**
+     * Handles autocomplete for this command interaction.
+     *
+     * @param {AutocompleteInteraction<"cached">} i The interaction object
+     * @returns {Promise<void>} Nothing
+     *
+     * @author Soni
+     * @since 7.5.0
+     * @see {@link AutocompleteInteraction}
+     */
     async handleAutocomplete(i: AutocompleteInteraction<'cached'>): Promise<void>
     {
-        const focusedValue = i.options.getFocused().toLowerCase();
-        const bans = await i.guild.bans.fetch();
+        // Get the focused value
+        const focusedValue = i.options.getFocused();
 
-        const filtered = bans
-            .filter(ban => 
-                ban.user.tag.toLowerCase().includes(focusedValue) ||
-                ban.user.id.includes(focusedValue)
-            )
-            .map(ban => ({
-                name: `${ban.user.tag}`,
-                value: ban.user.id
-            }))
-            .slice(0, 25);
+        // Get guild bans
+        const bans = this.client.bans.get(i.guildId);
+        if (!bans) return await i.respond([]);
 
-        await i.respond(filtered);
+        // Filter by the focused value
+        const search = (user: User) =>
+        {
+            if (user.globalName && user.globalName.toLowerCase().includes(focusedValue.toLowerCase())) return true;
+            return user.username.toLowerCase().includes(focusedValue.toLowerCase());
+        };
+
+        // TODO: Check if this will break if there are too many bans
+        await i.respond(bans.filter(search).map((user: User) => ({ name: user.globalName || user.username, value: user.id })));
     }
 }
