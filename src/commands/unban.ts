@@ -177,6 +177,13 @@ export default class Unban implements Command
      */
     async handleAutocomplete(i: AutocompleteInteraction<'cached'>): Promise<void>
     {
+        // Check if user has permission to view bans
+        if (!i.memberPermissions?.has(PermissionsBitField.Flags.BanMembers))
+        {
+            await i.respond([]);
+            return;
+        }
+        
         // Get the focused value
         const focusedValue = i.options.getFocused();
 
