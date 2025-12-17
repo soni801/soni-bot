@@ -156,8 +156,12 @@ export default class Ban implements Command
                     .setTitle('You have been banned')
                     .addFields([
                         {
-                            name: `You were banned from ${i.guild.name}`,
-                            value: `Reason: ${reason}`
+                            name: 'You were banned from the following server:',
+                            value: i.guild.name
+                        },
+                        {
+                            name: 'Reason',
+                            value: reason
                         }
                     ])
             ] }).catch(e => this.logger.warn(`Failed to notify ${user.tag} of ban: ${e}`));
@@ -175,7 +179,11 @@ export default class Ban implements Command
                     .setTitle('Banned user')
                     .addFields([
                         {
-                            name: `Successfully banned ${user.tag}`,
+                            name: 'Successfully banned user',
+                            value: `${user}`
+                        },
+                        {
+                            name: 'Reason',
                             value: reason
                         }
                     ])

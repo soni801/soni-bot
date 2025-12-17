@@ -189,7 +189,11 @@ export default class Mute implements Command
                     .setTitle('Muted user')
                     .addFields([
                         {
-                            name: `Successfully muted ${user.tag} for ${duration}m`,
+                            name: 'Successfully muted user',
+                            value: `Muted ${user} for ${duration} minute(s).`
+                        },
+                        {
+                            name: 'Reason',
                             value: reason
                         }
                     ])
