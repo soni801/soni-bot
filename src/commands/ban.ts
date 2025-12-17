@@ -81,7 +81,6 @@ export default class Ban implements Command
                 ])
         ] });
 
-
         // Make sure the bot has ban permissions
         if (!i.guild.members.me?.permissions.has(PermissionsBitField.Flags.BanMembers)) return await i.editReply({
             embeds: [
@@ -140,7 +139,6 @@ export default class Ban implements Command
             ]
         });
 
-
         // Get ban reason
         let reason = i.options.getString('reason');
         if (!reason) reason = `Requested by ${i.user.tag}`;
@@ -167,6 +165,9 @@ export default class Ban implements Command
             // After that's done, remove them from the server
             if (deleteMessageSeconds) await i.guild.members.ban(user, { reason, deleteMessageSeconds });
             else await i.guild.members.ban(user, { reason });
+
+            // Refresh client banlist
+            await this.client.fetchBans();
 
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
