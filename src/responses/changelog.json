@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "7.5.0",
+            "changes": [
+                "Added `/unban` command",
+                "Improved the styling of some embeds",
+                "Improved status messages",
+                "Updated internal libraries"
+            ]
+        },
+        {
             "version": "7.4.0",
             "changes": [
                 "Changed arguments for the `/reminder create relative` command",
