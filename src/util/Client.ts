@@ -425,20 +425,30 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
 
         // Count total bans fetched
         let bansFetched = 0;
+        let skippedGuilds = 0;
 
         // Fetch bans for each guild
         for (const [guildId, guild] of guilds)
         {
-            // Fetch bans for the guild
-            const fetchedGuild = await guild.fetch();
-            const guildBans = await fetchedGuild.bans.fetch();
-            bansFetched += guildBans.size;
+            try
+            {
+                // Fetch bans for the guild
+                const fetchedGuild = await guild.fetch();
+                const guildBans = await fetchedGuild.bans.fetch();
+                bansFetched += guildBans.size;
 
-            // Add bans to the client map
-            this.bans.set(guildId, guildBans.map(ban => ban.user));
+                // Add bans to the client map
+                this.bans.set(guildId, guildBans.map(ban => ban.user));
+            }
+            catch (error)
+            {
+                // Log warning for missing permissions
+                this.logger.warn(`Skipping ban fetch for guild ${guild.name} (${guildId}) - Missing permissions`);
+                skippedGuilds++;
+            }
         }
 
-        this.logger.info(`Fetched ${bansFetched} ban(s) across ${this.bans.size} guild(s).`);
+        this.logger.info(`Fetched ${bansFetched} ban(s) across ${this.bans.size} guild(s), skipping ${skippedGuilds} guild(s).`);
         return this.bans;
     }
 

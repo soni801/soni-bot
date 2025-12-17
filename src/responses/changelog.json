@@ -1,6 +1,12 @@
 {
     "changelog": [
         {
+            "version": "7.5.1",
+            "changes": [
+                "Fixed a bug that causes the bot to crash on startup if it's missing ban permissions in any servers"
+            ]
+        },
+        {
             "version": "7.5.0",
             "changes": [
                 "Added `/unban` command",
