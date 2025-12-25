@@ -1,6 +1,16 @@
 {
     "changelog": [
         {
+            "version": "7.5.2",
+            "changes": [
+                "Added an option to notify users in DMs when they are muted",
+                "Improved the response to `/reactionrole create`",
+                "Fixed a security vulnerability that allowed any member to see a list of all banned users",
+                "Fixed a security vulnerability that allowed privilege escalation when creating a reaction role",
+                "Fixed a bug that caused autocomplete lists to be empty in some cases"
+            ]
+        },
+        {
             "version": "7.5.1",
             "changes": [
                 "Fixed a bug that causes the bot to crash on startup if it's missing ban permissions in any servers"
