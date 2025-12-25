@@ -181,8 +181,26 @@ export default class Mute implements Command
         // Mute the member
         try
         {
+            // First, notify the user
+            if (i.options.getBoolean('notify')) await user.send({ embeds: [
+                this.client.defaultEmbed()
+                    .setTitle('You were muted by the server moderators')
+                    .addFields([
+                        {
+                            name: 'You were muted in the following server:',
+                            value: i.guild.name
+                        },
+                        {
+                            name: 'Reason',
+                            value: reason
+                        }
+                    ])
+            ] }).catch(e => this.logger.warn(`Failed to notify ${user.tag} of mute: ${e}`));
+
+            // After that's done, mute the member
             await member.timeout(duration * 60 * 1000, reason);
 
+            // Send a success message
             return await i.editReply({ embeds: [
                 this.client.defaultEmbed()
                     .setColor(CONSTANTS.COLORS.success)
@@ -225,6 +243,8 @@ export default class Mute implements Command
                 .setDescription('How many minutes to mute the user for')
                 .setRequired(true))
             .addStringOption(option => option.setName('reason')
-                .setDescription('The reason for the mute'));
+                .setDescription('The reason for the mute'))
+            .addBooleanOption(option => option.setName('notify')
+                .setDescription('Whether to notify the user of the mute'));
     }
 }
