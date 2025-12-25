@@ -75,6 +75,7 @@ export default class ReactionRole implements Command
                 const message = i.options.getString('message', true);
                 const emote = i.options.getString('emote', true);
                 const role = i.options.getRole('role', true);
+                const force = i.options.getBoolean('force', false);
 
                 // Fetch the bot user
                 const me = i.guild.members.me;
@@ -89,6 +90,35 @@ export default class ReactionRole implements Command
                             {
                                 name: 'Role has too high permissions',
                                 value: 'You can only assign roles that are lower in the hierarchy than the role(s) for this bot.'
+                            }
+                        ])
+                ] });
+
+                // Make sure the role is not higher than the user's highest role
+                // Otherwise I think this can be used for privilege escalation, and we don't want that
+                if (role.comparePositionTo(i.member.roles.highest) > 0) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('Can\'t use role')
+                        .addFields([
+                            {
+                                name: 'Role has too high permissions',
+                                value: 'You can only assign roles that are lower in the hierarchy than your highest role.'
+                            }
+                        ])
+                ] });
+
+                // Warn the user if the reaction role will give users new permissions
+                if (!force && role.permissions.bitfield !== 0n) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('Role has permissions')
+                        .addFields([
+                            {
+                                name: 'This role grants permissions',
+                                value: `The role you are trying to assign has permissions attached to it. This could allow users to escalate their privileges.
+                                
+                                If you want to proceed anyway, run this command again with the \`force\` option set to \`true\`.`
                             }
                         ])
                 ] });
@@ -109,7 +139,7 @@ export default class ReactionRole implements Command
                             .setTitle('Incorrect channel')
                             .addFields([
                                 {
-                                    name: 'The channel in invalid',
+                                    name: 'The channel is invalid',
                                     value: 'The reaction message must be in the same channel as this command interaction.'
                                 }
                             ])
@@ -250,7 +280,9 @@ export default class ReactionRole implements Command
                     .setRequired(true))
                 .addRoleOption(option => option.setName('role')
                     .setDescription('The role to assign')
-                    .setRequired(true)))
+                    .setRequired(true))
+                .addBooleanOption(option => option.setName('force')
+                    .setDescription('Create the reaction role even if it escalates privileges')))
             .addSubcommand(command => command.setName('remove')
                 .setDescription('Remove all reaction roles tied to a specific message (users will keep the role)')
                 .addStringOption(option => option.setName('message')
