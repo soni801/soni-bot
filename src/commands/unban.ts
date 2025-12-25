@@ -177,6 +177,9 @@ export default class Unban implements Command
      */
     async handleAutocomplete(i: AutocompleteInteraction<'cached'>): Promise<void>
     {
+        // Make sure the user has permission to see banned members
+        if (!i.member.permissions.has(PermissionsBitField.Flags.BanMembers)) return await i.respond([]);
+
         // Get the focused value
         const focusedValue = i.options.getFocused();
 
@@ -191,7 +194,10 @@ export default class Unban implements Command
             return user.username.toLowerCase().includes(focusedValue.toLowerCase());
         };
 
-        // TODO: Check if this will break if there are too many bans
-        await i.respond(bans.filter(search).map((user: User) => ({ name: user.globalName || user.username, value: user.id })));
+        // Limit to the first 25 that match the filter
+        const limit = 25;
+        const filtered = bans.filter(search).slice(0, limit);
+
+        await i.respond(filtered.map((user: User) => ({ name: user.globalName || user.username, value: user.id })));
     }
 }
