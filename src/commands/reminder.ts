@@ -35,6 +35,17 @@ export default class Reminder implements Command
             .setAutocomplete(true)
     };
 
+    // Allow for recurring reminders
+    private _recurrenceOption = new SlashCommandStringOption()
+        .setName('recurrence')
+        .setDescription('How often to repeat this reminder')
+        .addChoices(
+            { name: 'Daily', value: 'daily' },
+            { name: 'Weekly', value: 'weekly' },
+            { name: 'Monthly', value: 'monthly' },
+            { name: 'Yearly', value: 'yearly' }
+        );
+
     /**
      * Creates a new reminder command
      *
@@ -73,6 +84,7 @@ export default class Reminder implements Command
                 const hours = i.options.getInteger('hours', false);
                 const minutes = i.options.getInteger('minutes', false);
                 const seconds = i.options.getInteger('seconds', false);
+                const recurrence = i.options.getString('recurrence', false);
 
                 // Make sure content is within a reasonable length limit
                 if (content.length > 1000) return await i.editReply({ embeds: [
@@ -100,7 +112,10 @@ export default class Reminder implements Command
                 const due = new Date(i.createdTimestamp + timeOffset);
 
                 // Create and save the reminder
-                const reminder = new ReminderEntity({ user, channel, content, due });
+                const reminder = new ReminderEntity({
+                    user, channel, content, due,
+                    recurrence: recurrence ?? null
+                });
                 await reminder.save();
 
                 // Send a confirmation to the user
@@ -115,7 +130,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>${recurrence ? ` and then **${recurrence}**` : ''}`
                             }
                         ])
                 ] });
@@ -131,6 +146,7 @@ export default class Reminder implements Command
                 const hour = i.options.getInteger('hour', false);
                 const minute = i.options.getInteger('minute', false);
                 const second = i.options.getInteger('second', false);
+                const recurrence = i.options.getString('recurrence', false);
 
                 // Make sure content is within a reasonable length limit
                 if (content.length > 1000) return await i.editReply({ embeds: [
@@ -159,7 +175,10 @@ export default class Reminder implements Command
                 if (second !== null) due.setSeconds(second);
 
                 // Create and save the reminder
-                const reminder = new ReminderEntity({ user, channel, content, due });
+                const reminder = new ReminderEntity({
+                    user, channel, content, due,
+                    recurrence: recurrence === 'none' ? null : recurrence
+                });
                 await reminder.save();
 
                 // Send a confirmation to the user
@@ -174,7 +193,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>${recurrence && recurrence !== 'none' ? ` and then **${recurrence}**` : ''}`
                             }
                         ])
                 ] });
@@ -187,7 +206,7 @@ export default class Reminder implements Command
 
                 // Determine the output (relevant reminders, stringified)
                 let output = '';
-                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
+                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>${r.recurrence ? ` *(${r.recurrence})*` : ''}\n`);
                 if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
 
                 // Send result to the user
@@ -427,7 +446,8 @@ export default class Reminder implements Command
                     .addIntegerOption(option => option.setName('seconds')
                         .setDescription('The number of seconds to be reminded')
                         .setMinValue(0)
-                        .setMaxValue(59)))
+                        .setMaxValue(59))
+                    .addStringOption(this._recurrenceOption))
                 .addSubcommand(command => command.setName('absolute')
                     .setDescription('Create a reminder at a specific time')
                     .addStringOption(option => option.setName('reminder')
@@ -470,7 +490,8 @@ export default class Reminder implements Command
                     .addIntegerOption(option => option.setName('second')
                         .setDescription('The second to be reminded')
                         .setMinValue(0)
-                        .setMaxValue(59))))
+                        .setMaxValue(59))
+                    .addStringOption(this._recurrenceOption)))
             .addSubcommand(command => command.setName('list')
                 .setDescription('List all your reminders'))
             .addSubcommandGroup(group => group.setName('edit')
@@ -482,14 +503,8 @@ export default class Reminder implements Command
                         .setDescription('The action to be taken')
                         .setRequired(true)
                         .addChoices(
-                            {
-                                name: 'add',
-                                value: 'add'
-                            },
-                            {
-                                name: 'subtract',
-                                value: 'subtract'
-                            }
+                            { name: 'add', value: 'add' },
+                            { name: 'subtract', value: 'subtract' }
                         ))
                     .addIntegerOption(option => option.setName('time')
                         .setDescription('The amount of time to be added or subtracted')
@@ -499,22 +514,10 @@ export default class Reminder implements Command
                         .setDescription('Which time unit to use')
                         .setRequired(true)
                         .addChoices(
-                            {
-                                name: 'days',
-                                value: 'days'
-                            },
-                            {
-                                name: 'hours',
-                                value: 'hours'
-                            },
-                            {
-                                name: 'minutes',
-                                value: 'minutes'
-                            },
-                            {
-                                name: 'seconds',
-                                value: 'seconds'
-                            }
+                            { name: 'days', value: 'days' },
+                            { name: 'hours', value: 'hours' },
+                            { name: 'minutes', value: 'minutes' },
+                            { name: 'seconds', value: 'seconds' }
                         )))
                 .addSubcommand(command => command.setName('content')
                     .setDescription('Edit the content of a reminder')

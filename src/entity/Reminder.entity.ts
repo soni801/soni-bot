@@ -2,15 +2,14 @@ import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeo
 
 /**
  * A reminder entity in the database
- * 
+ *
  * @author Soni
  * @since 6.0.0
  * @see {@link BaseEntity}
  */
 @Entity('reminder')
 @Index([ 'active' ])
-export default class ReminderEntity extends BaseEntity
-{
+export default class ReminderEntity extends BaseEntity {
     constructor(partial?: Partial<ReminderEntity>)
     {
         super();
@@ -38,4 +37,8 @@ export default class ReminderEntity extends BaseEntity
 
     @Column({ default: true })
     active: boolean;
+
+     // If null, the reminder will not repeat.
+    @Column({ nullable: true, default: null })
+    recurrence: string | null;
 }

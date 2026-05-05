@@ -14,7 +14,7 @@ import {
 import { readdir } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 import { clearInterval } from 'node:timers';
-import { DataSource } from 'typeorm';
+import { DataSource, LessThanOrEqual } from 'typeorm';
 import ormconfig from '../../ormconfig';
 import ReactionRoleEntity from '../entity/ReactionRole.entity';
 import ReminderEntity from '../entity/Reminder.entity';
@@ -23,7 +23,7 @@ import { event } from '../types/events';
 import { CONSTANTS } from './config';
 import Logger from './Logger';
 import UptimeResultEntity from "../entity/UptimeResult.entity";
-import {randomUUID} from "node:crypto";
+import { randomUUID } from "node:crypto";
 
 /**
  * A custom wrapper of the Discord client, providing more utility methods
@@ -77,7 +77,6 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         this.on('error', (e: Error) => this.logger.error(e.message));
 
         // Connect to the database, load events and commands and set an interval for checking stored reminders
-        // This is dumb :)
         this.connectDb().then(() => Promise.all([
             this.loadEvents('../events'),
             this.loadCommands('../commands'),
@@ -162,7 +161,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         await this.db.initialize().catch((e: Error) =>
         {
             this.logger.error(`Failed to connect to the database: ${e.message}`);
-            Promise.reject(e);
+            throw e; 
         });
 
         // Run migrations
@@ -356,16 +355,14 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Reject the promise if the database is not reachable
         if (!this.db.isInitialized) await Promise.reject();
 
-        // Fetch all active reminders
-        let reminders = await ReminderEntity.find({ where: { active: true } });
+        // Build the where clause for TypeORM filtering
+        const whereClause: any = { active: true };
+        
+        // Filter at the database level instead of in memory
+        if (due) whereClause.due = LessThanOrEqual(new Date());
+        if (user) whereClause.user = user;
 
-        // Filter to only include due reminders if desired
-        if (due) reminders = reminders.filter(r => r.due.getTime() <= new Date().getTime());
-
-        // Filter to only include reminders for a specific user if desired
-        if (user) reminders = reminders.filter(r => r.user === user);
-
-        return reminders;
+        return await ReminderEntity.find({ where: whereClause });
     }
 
     /**
@@ -398,12 +395,25 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
                     ])
             ]
         });
-
-        // Log the reminder
-        this.logger.info(`Reminded ${user.username} of reminder #${reminder.id}`);
-
-        // Mark the reminder as inactive
-        reminder.active = false;
+        
+        if (reminder.recurrence) {
+            const due = new Date(reminder.due);
+            switch (reminder.recurrence) {
+                case 'daily':   due.setDate(due.getDate() + 1); break;
+                case 'weekly':  due.setDate(due.getDate() + 7); break;
+                case 'monthly': due.setMonth(due.getMonth() + 1); break;
+                case 'yearly':  due.setFullYear(due.getFullYear() + 1); break;
+            }
+            reminder.due = due;
+            this.logger.info(`Rescheduled reminder #${reminder.id} (${reminder.recurrence}) to ${due.toISOString()}`);
+        } else {
+            // Log the reminder
+            this.logger.info(`Reminded ${user.username} of reminder #${reminder.id}`);
+            
+            // Mark the reminder as inactive
+            reminder.active = false;
+        }
+        
         return await reminder.save();
     }
 
