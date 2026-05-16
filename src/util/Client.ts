@@ -20,6 +20,7 @@ import ReactionRoleEntity from '../entity/ReactionRole.entity';
 import ReminderEntity from '../entity/Reminder.entity';
 import { Command } from '../types/Command';
 import { event } from '../types/events';
+import Thread from '../types/Thread';
 import { CONSTANTS } from './config';
 import Logger from './Logger';
 import UptimeResultEntity from "../entity/UptimeResult.entity";
@@ -35,17 +36,12 @@ import {randomUUID} from "node:crypto";
 export default class Client<T extends boolean = boolean> extends DiscordClient<T>
 {
     commands: Collection<string, Command> = new Collection();
+    threads: Collection<string, Thread> = new Collection();
     db = new DataSource(ormconfig);
     logger = new Logger(Client.name);
     version = process.env.npm_package_version || 'Unknown';
     intervals: NodeJS.Timeout[] = [];
     session = randomUUID();
-
-    /**
-     * Whether this client is currently sending a reminder.
-     * This field is used to make sure a reminder notification is never attempted sent multiple times.
-     */
-    reminding = false;
 
     /**
      * Whether this client is currently being destroyed.
@@ -76,34 +72,15 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         // Log any errors that might occur
         this.on('error', (e: Error) => this.logger.error(e.message));
 
-        // Connect to the database, load events and commands and set an interval for checking stored reminders
+        // Connect to the database, load events and commands and start background jobs
         // This is dumb :)
         this.connectDb().then(() => Promise.all([
             this.loadEvents('../events'),
             this.loadCommands('../commands'),
+            this.loadThreads('../threads'),
             this.fetchBans()
         ])).then(() => this.intervals.push(setInterval(async () =>
         {
-            // Send reminder notifications
-            this.reminding = true;
-            const reminders = await this.fetchReminders(true).catch((e: Error) =>
-            {
-                this.logger.error(`An error occurred while fetching reminders: ${e.message}`);
-                return [];
-            });
-
-            for (const reminder of reminders)
-            {
-                await this.remind(reminder).catch((e: Error) =>
-                {
-                    // The reminder was probably created in a channel that the bot doesn't have access to
-                    this.logger.error('An error occurred while trying to process reminders');
-                    console.error(e);
-                });
-            }
-
-            this.reminding = false;
-
             // Update uptime result
             if (!this.uptime) return; // Only do it if uptime actually exists
             const existingUptimes = await UptimeResultEntity.find({ where: { session: this.session } });
@@ -138,6 +115,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
 
         // Clear all registered intervals
         this.intervals.forEach(i => clearInterval(i));
+        for (const thread of this.threads.values()) await thread.stop();
 
         // Disconnect from the database
         if (this.db.isInitialized) this.db.destroy().catch(e => this.logger.error(`An error occurred while disconnecting from the database: ${e}`));
@@ -253,6 +231,45 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
 
         this.logger.info(`Loaded ${this.commands.size} slash commands.`);
         return this.commands;
+    }
+
+    /**
+     * Loads background threads into memory and starts them.
+     *
+     * @param {string} dir The directory where the threads are located
+     * @returns {Promise<Collection<string, Thread>>} The Client's loaded threads
+     *
+     * @author Soni
+     * @since 7.5.3
+     * @see {@link Thread}
+     */
+    async loadThreads(dir: string): Promise<Collection<string, Thread>>
+    {
+        // Find thread files
+        this.logger.verbose(`Loading threads from ${dir}...`);
+        const files = await readdir(resolve(__dirname, dir));
+        this.logger.debug(`Found ${files.length} files.`);
+
+        // Load threads into memory and start them
+        for (const file of files)
+        {
+            this.logger.debug(`Starting load of ${file}`);
+
+            // Skip files that are not of the correct type
+            const filePath = resolve(__dirname, dir, file);
+            if (!file.endsWith('.js') && !file.endsWith('.ts')) continue;
+
+            // Load the thread into this.threads
+            // noinspection JSPotentiallyInvalidConstructorUsage
+            const thread: Thread = new (await import(filePath)).default(this);
+            const threadName = thread.constructor.name;
+            this.threads.set(threadName, thread);
+            await thread.start();
+            this.logger.debug(`Loaded thread ${threadName}`);
+        }
+
+        this.logger.info(`Loaded ${this.threads.size} thread(s).`);
+        return this.threads;
     }
 
     /**
