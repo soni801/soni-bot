@@ -7,9 +7,8 @@ import {
     MessageReaction,
     PartialMessageReaction,
     PartialUser,
-    TextChannel,
-    User,
-    Routes
+    Routes,
+    User
 } from 'discord.js';
 import { readdir } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
@@ -383,45 +382,6 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
         if (user) reminders = reminders.filter(r => r.user === user);
 
         return reminders;
-    }
-
-    /**
-     * Reminds a user of a given reminder
-     *
-     * @param {ReminderEntity} reminder The reminder to remind the user of
-     * @returns {Promise<ReminderEntity>} The reminder
-     *
-     * @author Soni
-     * @since 6.0.0
-     * @see {@link ReminderEntity}
-     */
-    async remind(reminder: ReminderEntity): Promise<ReminderEntity>
-    {
-        // Fetch the channel and user from the client cache
-        const channel = await this.channels.fetch(reminder.channel);
-        const user = await this.users.fetch(reminder.user);
-
-        // Send the reminder
-        if (channel instanceof TextChannel) await channel.send({
-            content: `> ${user}`,
-            embeds: [
-                this.defaultEmbed()
-                    .setTitle('Reminder')
-                    .addFields([
-                        {
-                            name: 'Here is your reminder',
-                            value: reminder.content
-                        }
-                    ])
-            ]
-        });
-
-        // Log the reminder
-        this.logger.info(`Reminded ${user.username} of reminder #${reminder.id}`);
-
-        // Mark the reminder as inactive
-        reminder.active = false;
-        return await reminder.save();
     }
 
     /**
