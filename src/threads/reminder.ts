@@ -2,7 +2,7 @@ import ReminderEntity from '../entity/Reminder.entity';
 import Thread from '../types/Thread';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
-import {TextChannel} from "discord.js";
+import { PermissionFlagsBits, TextChannel } from 'discord.js';
 
 /**
  * The `reminder` thread handles fetching reminders and sending notifications for ones that are due.
@@ -120,10 +120,37 @@ export default class Reminder implements Thread
     {
         // Fetch the channel and user from the client cache
         const channel = await this._client.channels.fetch(reminder.channel);
+
+        if (!channel)
+        {
+            this._logger.warn(`Did not send reminder #${reminder.id}: channel ${reminder.channel} does not exist`);
+            this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
+            reminder.active = false;
+            return await reminder.save();
+        }
+
+        // Soft-cast channel to TextChannel
+        if (!(channel instanceof TextChannel))
+        {
+            this._logger.warn(`Did not send reminder #${reminder.id}: channel ${reminder.channel} is not a text channel`);
+            this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
+            reminder.active = false;
+            return await reminder.save();
+        }
+
+        if (!this._client.user || !channel.permissionsFor(this._client.user)?.has(PermissionFlagsBits.SendMessages))
+        {
+            this._logger.warn(`Did not send reminder #${reminder.id}: missing permission to send messages in channel ${reminder.channel}`);
+            this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
+            reminder.active = false;
+            return await reminder.save();
+        }
+
+        // Fetch the user after confirming that the reminder can be delivered.
         const user = await this._client.users.fetch(reminder.user);
 
         // Send the reminder
-        if (channel instanceof TextChannel) await channel.send({
+        await channel.send({
             content: `> ${user}`,
             embeds: [
                 this._client.defaultEmbed()
