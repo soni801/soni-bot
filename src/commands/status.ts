@@ -99,6 +99,10 @@ export default class Status implements Command
                     {
                         name: 'Top 5 uptimes',
                         value: await this._topUptimes()
+                    },
+                    {
+                        name: 'Average uptime',
+                        value: await this._averageUptime()
                     }
                 ])
         ] });
@@ -163,7 +167,7 @@ export default class Status implements Command
             duration = duration - seconds * msInSecond;
         }
 
-        portions.push(duration + 'ms');
+        portions.push(Math.round(duration) + 'ms');
         return portions.join(" ");
     }
 
@@ -196,5 +200,24 @@ export default class Status implements Command
         }
         if (output === '') output = '_No uptimes on record yet_'; // Tell user if there are no uptimes
         return output;
+    }
+
+    /**
+     * Calculate the average uptime using all database entries
+     *
+     * @returns {Promise<string>} The average uptime
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    private async _averageUptime(): Promise<string>
+    {
+        // Show an error if the database is disconnected
+        if (!this.client.db.isInitialized) return 'An error occurred while fetching average uptime';
+
+        const average = await UptimeResultEntity.average('uptime', {});
+        if (average === null) return 'An error occurred while fetching average uptime';
+
+        return this._timeConversion(average);
     }
 }
