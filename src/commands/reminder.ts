@@ -548,16 +548,33 @@ export default class Reminder implements Command
 
         // Filter user's reminders by entries matching the focused value
         const search = (s: string) => s.toLowerCase().replace(/['.!,?]/gi, '').includes(focusedValue);
-        const filteredReminders: any[] = reminders.filter(r => search(r.content)).filter((_r, i) => i < 25);
+        const filteredReminders: ReminderEntity[] = reminders.filter(r => search(r.content)).filter((_r, i) => i < 25);
 
         // Format changelog to comply with autocomplete syntax
-        filteredReminders.map(reminder =>
-        {
-            reminder.name = reminder.content;
-            reminder.value = reminder.id.toString();
-        });
+        const choices = filteredReminders.map(reminder =>
+        ({
+            name: this._fixLength(reminder.content, 100),
+            value: reminder.id.toString()
+        }));
 
         // Return the filtered response list
-        await i.respond(filteredReminders);
+        await i.respond(choices);
+    }
+
+    /**
+     * Makes sure that the given string is no longer than the given length.
+     *
+     * @param {string} s The string to check
+     * @param {number} length The maximum length of the string
+     * @returns The original string, trimmed if needed.
+     * @private
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    private _fixLength(s: string, length: number): string
+    {
+        if (s.length > length) return `${s.slice(0, length - 3)}...`;
+        return s;
     }
 }
