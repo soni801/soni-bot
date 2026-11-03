@@ -1,58 +1,218 @@
-import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
-
-export enum RecurrenceType
-{
-    Hourly = 'hourly',
-    Daily = 'daily',
-    Weekly = 'weekly',
-    Monthly = 'monthly',
-    Yearly = 'yearly'
-}
+import ReminderEntity, { RecurrenceType } from '../entity/Reminder.entity';
+import Thread from '../types/Thread';
+import type Client from '../util/Client';
+import Logger from '../util/Logger';
+import { PermissionFlagsBits, TextChannel } from 'discord.js';
 
 /**
- * A reminder entity in the database
- * 
+ * The `reminder` thread handles fetching reminders and sending notifications for ones that are due.
+ *
  * @author Soni
- * @since 6.0.0
- * @see {@link BaseEntity}
+ * @since 7.5.3
+ * @see {@link Thread}
  */
-@Entity('reminder')
-@Index([ 'active' ])
-export default class ReminderEntity extends BaseEntity
+export default class Reminder implements Thread
 {
-    constructor(partial?: Partial<ReminderEntity>)
+    private readonly _client: Client;
+    private readonly _logger = new Logger(Reminder.name);
+
+    /**
+     * Indicates whether the reminder thread is currently running.
+     */
+    private _running = false;
+
+    /**
+     * The amount of time to sleep between processing cycles.
+     */
+    private _sleepAmount = 1000;
+
+    /**
+     * Creates a new Reminder thread instance.
+     *
+     * @param client - The Discord client instance used to interact with the bot.
+     */
+    constructor(client: Client)
     {
-        super();
-        Object.assign(this, partial);
+        this._client = client;
     }
 
-    @PrimaryGeneratedColumn()
-    id: number;
+    /**
+     * Starts the reminder thread.
+     * Continuously processes reminders every second until the thread is stopped.
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    async start()
+    {
+        this._logger.info('Starting reminder thread...');
+        this._running = true;
 
-    @Column()
-    user: string;
+        while (this._running)
+        {
+            await this._processReminders();
+            await this._sleep(this._sleepAmount);
+            this._logger.debug(`Sleeping for ${this._sleepAmount}ms...`);
+        }
+    }
 
-    @Column()
-    channel: string;
+    /**
+     * Stops the reminder thread.
+     * The thread will stop after completing the current processing cycle.
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    stop()
+    {
+        this._running = false;
+        this._logger.info('Stopped reminder thread');
+    }
 
-    @Column()
-    content: string;
+    /**
+     * Fetches and processes all due reminders.
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    private async _processReminders()
+    {
+        // Fetch all due reminders
+        const reminders = await this._client.fetchReminders(true).catch((e: Error) =>
+        {
+            this._logger.error(`An error occurred while fetching reminders: ${e.message}`);
+            return [] as ReminderEntity[];
+        });
 
-    // The next line looks very cursed, but it does its job
-    @Column({ name: "created_at", default: () => "(now() at time zone 'cest')", type: "timestamptz" })
-    createdAt: Date;
+        await Promise.all(reminders.map(reminder => this._remind(reminder).catch((e: Error) =>
+        {
+            // The reminder was probably created in a channel that the bot doesn't have access to.
+            this._logger.error(`An error occurred while trying to process reminder #${reminder.id}: ${e.message}`);
+            console.error(e);
+        })));
+    }
 
-    @Column()
-    due: Date;
+    /**
+     * Pauses execution for a specified duration.
+     *
+     * @param ms - The number of milliseconds to sleep.
+     * @returns A promise that resolves after the specified duration.
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    private async _sleep(ms: number): Promise<void>
+    {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-    @Column({ default: true })
-    active: boolean;
+    /**
+     * Reminds a user of a given reminder
+     *
+     * @param {ReminderEntity} reminder The reminder to remind the user of
+     * @returns {Promise<ReminderEntity>} The reminder
+     *
+     * @author Soni
+     * @since 6.0.0
+     * @see {@link ReminderEntity}
+     */
+    private async _remind(reminder: ReminderEntity): Promise<ReminderEntity>
+    {
+        // Fetch the channel and user from the client cache
+        const channel = await this._client.channels.fetch(reminder.channel);
 
-    @Column({
-        type: 'enum',
-        enum: RecurrenceType,
-        nullable: true,
-        default: null
-    })
-    recurrence: RecurrenceType | null;
+        if (!channel)
+        {
+            this._logger.warn(`Did not send reminder #${reminder.id}: channel ${reminder.channel} does not exist`);
+            this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
+            reminder.active = false;
+            return await reminder.save();
+        }
+
+        // Soft-cast channel to TextChannel
+        if (!(channel instanceof TextChannel))
+        {
+            this._logger.warn(`Did not send reminder #${reminder.id}: channel ${reminder.channel} is not a text channel`);
+            this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
+            reminder.active = false;
+            return await reminder.save();
+        }
+
+        if (!this._client.user || !channel.permissionsFor(this._client.user)?.has(PermissionFlagsBits.SendMessages))
+        {
+            this._logger.warn(`Did not send reminder #${reminder.id}: missing permission to send messages in channel ${reminder.channel}`);
+            this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
+            reminder.active = false;
+            return await reminder.save();
+        }
+
+        // Fetch the user after confirming that the reminder can be delivered.
+        const user = await this._client.users.fetch(reminder.user);
+
+        // Send the reminder
+        await channel.send({
+            content: `> ${user}`,
+            embeds: [
+                this._client.defaultEmbed()
+                    .setTitle('Reminder')
+                    .addFields([
+                        {
+                            name: 'Here is your reminder',
+                            value: reminder.content
+                        }
+                    ])
+            ]
+        });
+
+        // Log the reminder
+        this._logger.info(`Reminded ${user.username} of reminder #${reminder.id}`);
+
+        // Reschedule recurring reminders, otherwise mark the reminder as inactive
+        if (reminder.recurrence)
+        {
+            // Skip any occurrences that were missed (e.g. while the bot was offline)
+            let due = reminder.due;
+            do due = this._nextOccurrence(due, reminder.recurrence);
+            while (due.getTime() <= Date.now());
+
+            reminder.due = due;
+            this._logger.verbose(`Rescheduled reminder #${reminder.id} to ${due.toISOString()}`);
+        }
+        else reminder.active = false;
+
+        return await reminder.save();
+    }
+
+    /**
+     * Calculates the next occurrence of a recurring reminder.
+     * Monthly and yearly recurrences are clamped to the last day of the target month (e.g. Jan 31 -> Feb 28).
+     *
+     * @param {Date} date The current due date
+     * @param {RecurrenceType} recurrence How often the reminder repeats
+     * @returns {Date} The next due date
+     */
+    private _nextOccurrence(date: Date, recurrence: RecurrenceType): Date
+    {
+        const next = new Date(date);
+
+        switch (recurrence)
+        {
+            case RecurrenceType.Hourly: next.setUTCHours(next.getUTCHours() + 1); break;
+            case RecurrenceType.Daily: next.setUTCDate(next.getUTCDate() + 1); break;
+            case RecurrenceType.Weekly: next.setUTCDate(next.getUTCDate() + 7); break;
+            case RecurrenceType.Monthly:
+            case RecurrenceType.Yearly:
+            {
+                const months = recurrence === RecurrenceType.Monthly ? 1 : 12;
+                const day = next.getUTCDate();
+                next.setUTCDate(1);
+                next.setUTCMonth(next.getUTCMonth() + months);
+                const lastDay = new Date(Date.UTC(next.getUTCFullYear(), next.getUTCMonth() + 1, 0)).getUTCDate();
+                next.setUTCDate(Math.min(day, lastDay));
+                break;
+            }
+        }
+
+        return next;
+    }
 }
