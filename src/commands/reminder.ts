@@ -6,7 +6,7 @@ import {
     SlashCommandStringOption,
     SlashCommandSubcommandsOnlyBuilder
 } from 'discord.js';
-import ReminderEntity from '../entity/Reminder.entity';
+import ReminderEntity, { RecurrenceType } from '../entity/Reminder.entity';
 import type {Command} from '../types/Command';
 import type Client from '../util/Client';
 import {CONSTANTS} from '../util/config';
@@ -32,7 +32,11 @@ export default class Reminder implements Command
             .setName('reminder')
             .setDescription('The reminder to use')
             .setRequired(true)
-            .setAutocomplete(true)
+            .setAutocomplete(true),
+        recurrenceOption: new SlashCommandStringOption()
+            .setName('recurrence')
+            .setDescription('How often the reminder should repeat')
+            .addChoices(...Object.entries(RecurrenceType).map(([name, value]) => ({ name, value })))
     };
 
     /**
@@ -73,6 +77,7 @@ export default class Reminder implements Command
                 const hours = i.options.getInteger('hours', false);
                 const minutes = i.options.getInteger('minutes', false);
                 const seconds = i.options.getInteger('seconds', false);
+                const recurrence = i.options.getString('recurrence', false) as RecurrenceType | null;
 
                 // Make sure content is within a reasonable length limit
                 if (content.length > 1000) return await i.editReply({ embeds: [
@@ -100,7 +105,7 @@ export default class Reminder implements Command
                 const due = new Date(i.createdTimestamp + timeOffset);
 
                 // Create and save the reminder
-                const reminder = new ReminderEntity({ user, channel, content, due });
+                const reminder = new ReminderEntity({ user, channel, content, due, recurrence });
                 await reminder.save();
 
                 // Send a confirmation to the user
@@ -115,7 +120,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>${recurrence ? `, repeating ${recurrence}` : ''}`
                             }
                         ])
                 ] });
@@ -131,6 +136,7 @@ export default class Reminder implements Command
                 const hour = i.options.getInteger('hour', false);
                 const minute = i.options.getInteger('minute', false);
                 const second = i.options.getInteger('second', false);
+                const recurrence = i.options.getString('recurrence', false) as RecurrenceType | null;
 
                 // Make sure content is within a reasonable length limit
                 if (content.length > 1000) return await i.editReply({ embeds: [
@@ -159,7 +165,7 @@ export default class Reminder implements Command
                 if (second !== null) due.setSeconds(second);
 
                 // Create and save the reminder
-                const reminder = new ReminderEntity({ user, channel, content, due });
+                const reminder = new ReminderEntity({ user, channel, content, due, recurrence });
                 await reminder.save();
 
                 // Send a confirmation to the user
@@ -174,7 +180,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>${recurrence ? `, repeating ${recurrence}` : ''}`
                             }
                         ])
                 ] });
@@ -187,7 +193,7 @@ export default class Reminder implements Command
 
                 // Determine the output (relevant reminders, stringified)
                 let output = '';
-                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
+                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>${r.recurrence ? ` (repeats ${r.recurrence})` : ''}\n`);
                 if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
 
                 // Send result to the user
@@ -427,7 +433,8 @@ export default class Reminder implements Command
                     .addIntegerOption(option => option.setName('seconds')
                         .setDescription('The number of seconds to be reminded')
                         .setMinValue(0)
-                        .setMaxValue(59)))
+                        .setMaxValue(59))
+                    .addStringOption(this._commandOptions.recurrenceOption))
                 .addSubcommand(command => command.setName('absolute')
                     .setDescription('Create a reminder at a specific time')
                     .addStringOption(option => option.setName('reminder')
@@ -470,7 +477,8 @@ export default class Reminder implements Command
                     .addIntegerOption(option => option.setName('second')
                         .setDescription('The second to be reminded')
                         .setMinValue(0)
-                        .setMaxValue(59))))
+                        .setMaxValue(59))
+                    .addStringOption(this._commandOptions.recurrenceOption)))
             .addSubcommand(command => command.setName('list')
                 .setDescription('List all your reminders'))
             .addSubcommandGroup(group => group.setName('edit')
@@ -548,16 +556,33 @@ export default class Reminder implements Command
 
         // Filter user's reminders by entries matching the focused value
         const search = (s: string) => s.toLowerCase().replace(/['.!,?]/gi, '').includes(focusedValue);
-        const filteredReminders: any[] = reminders.filter(r => search(r.content)).filter((_r, i) => i < 25);
+        const filteredReminders: ReminderEntity[] = reminders.filter(r => search(r.content)).filter((_r, i) => i < 25);
 
         // Format changelog to comply with autocomplete syntax
-        filteredReminders.map(reminder =>
-        {
-            reminder.name = reminder.content;
-            reminder.value = reminder.id.toString();
-        });
+        const choices = filteredReminders.map(reminder =>
+        ({
+            name: this._fixLength(reminder.content, 100),
+            value: reminder.id.toString()
+        }));
 
         // Return the filtered response list
-        await i.respond(filteredReminders);
+        await i.respond(choices);
+    }
+
+    /**
+     * Makes sure that the given string is no longer than the given length.
+     *
+     * @param {string} s The string to check
+     * @param {number} length The maximum length of the string
+     * @returns The original string, trimmed if needed.
+     * @private
+     *
+     * @author Soni
+     * @since 7.5.3
+     */
+    private _fixLength(s: string, length: number): string
+    {
+        if (s.length > length) return `${s.slice(0, length - 3)}...`;
+        return s;
     }
 }
