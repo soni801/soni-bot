@@ -5,9 +5,9 @@ import Logger from '../util/Logger';
 import { PermissionFlagsBits, TextChannel } from 'discord.js';
 
 /**
- * The reminder thread handles fetching reminders and sending notifications for ones that are due.
+ * The `reminder` thread handles fetching reminders and sending notifications for ones that are due.
  *
- * @author Min
+ * @author Soni
  * @since 7.5.3
  * @see {@link Thread}
  */
