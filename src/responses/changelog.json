@@ -1,6 +1,15 @@
 {
     "changelog": [
         {
+            "version": "7.5.3",
+            "changes": [
+                "Added average uptime to the `/status` command",
+                "Fixed a bug that caused reminders to be sent multiple times in some cases",
+                "Fixed a bug that flooded the log with errors if a reminder was due in a channel that has been deleted",
+                "Fixed a bug that could show an empty autocomplete list in some cases when running `/reminder delete`"
+            ]
+        },
+        {
             "version": "7.5.2",
             "changes": [
                 "Added an option to notify users in DMs when they are muted",
