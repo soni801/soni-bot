@@ -289,6 +289,19 @@ export default class Reminder implements Command
                 const reminderId = i.options.getString('reminder', true);
                 const content = i.options.getString('content', true);
 
+                // Make sure content is within a reasonable length limit
+                if (content.length > 1000) return await i.editReply({ embeds: [
+                    this.client.defaultEmbed()
+                        .setColor(CONSTANTS.COLORS.warning)
+                        .setTitle('An error occurred')
+                        .addFields([
+                            {
+                                name: 'Invalid content',
+                                value: 'The reminder content cannot exceed 1000 characters'
+                            }
+                        ])
+                ] });
+
                 // Get the reminder
                 const reminder = (await this.client.fetchReminders(false, i.user.id)).find(r => r.id === parseInt(reminderId));
 
