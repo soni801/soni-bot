@@ -1,5 +1,14 @@
 import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum RecurrenceType
+{
+    Hourly = 'hourly',
+    Daily = 'daily',
+    Weekly = 'weekly',
+    Monthly = 'monthly',
+    Yearly = 'yearly'
+}
+
 /**
  * A reminder entity in the database
  * 
@@ -38,4 +47,12 @@ export default class ReminderEntity extends BaseEntity
 
     @Column({ default: true })
     active: boolean;
+
+    @Column({
+        type: 'enum',
+        enum: RecurrenceType,
+        nullable: true,
+        default: null
+    })
+    recurrence: RecurrenceType | null;
 }
