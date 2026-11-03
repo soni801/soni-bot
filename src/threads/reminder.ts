@@ -2,7 +2,7 @@ import ReminderEntity from '../entity/Reminder.entity';
 import Thread from '../types/Thread';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
-import { PermissionFlagsBits, TextChannel } from 'discord.js';
+import { PermissionFlagsBits } from 'discord.js';
 
 /**
  * The `reminder` thread handles fetching reminders and sending notifications for ones that are due.
@@ -129,8 +129,8 @@ export default class Reminder implements Thread
             return await reminder.save();
         }
 
-        // Soft-cast channel to TextChannel
-        if (!(channel instanceof TextChannel))
+        // Make sure the channel is one that messages can be sent in
+        if (!channel.isSendable())
         {
             this._logger.warn(`Did not send reminder #${reminder.id}: channel ${reminder.channel} is not a text channel`);
             this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
@@ -138,7 +138,10 @@ export default class Reminder implements Thread
             return await reminder.save();
         }
 
-        if (!this._client.user || !channel.permissionsFor(this._client.user)?.has(PermissionFlagsBits.SendMessages))
+        // Make sure the bot has permission to send messages in the channel
+        // Threads use a separate permission for sending messages, and DMs have no permissions
+        const permission = channel.isThread() ? PermissionFlagsBits.SendMessagesInThreads : PermissionFlagsBits.SendMessages;
+        if (!this._client.user || (!channel.isDMBased() && !channel.permissionsFor(this._client.user)?.has(permission)))
         {
             this._logger.warn(`Did not send reminder #${reminder.id}: missing permission to send messages in channel ${reminder.channel}`);
             this._logger.verbose(`Set reminder #${reminder.id} to inactive`);
