@@ -1,4 +1,4 @@
-import { Message, TextChannel } from 'discord.js';
+import { Message } from 'discord.js';
 import { event } from '../types/events';
 import Client from '../util/Client';
 
@@ -45,8 +45,7 @@ function react(client: Client<true>, message: Message, phrase: string, emoteID: 
         return;
 
     // Fetch the channel
-    const channel = client.channels.cache.get(message.channelId);
-    if (!(channel instanceof TextChannel)) return;
+    const channel = message.channel;
 
     // Fetch the guild
     const guild = client.guilds.cache.get(message.guildId);
