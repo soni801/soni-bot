@@ -8,7 +8,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
  * @since 6.2.0
  * @see {@link MigrationInterface}
  */
-export class remindedToActive1662305752822 implements MigrationInterface
+export class RemindedToActive1662305752822 implements MigrationInterface
 {
     public async up(queryRunner: QueryRunner): Promise<void>
     {
