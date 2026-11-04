@@ -4,6 +4,7 @@ import {
     Collection,
     EmbedBuilder,
     EmbedData,
+    Message,
     MessageReaction,
     PartialMessageReaction,
     PartialUser,
@@ -15,6 +16,8 @@ import { basename, resolve } from 'node:path';
 import { clearInterval } from 'node:timers';
 import { DataSource } from 'typeorm';
 import ormconfig from '../../ormconfig';
+import ReactionActionEntity from '../entity/ReactionAction.entity';
+import ReactionConfigEntity from '../entity/ReactionConfig.entity';
 import ReactionRoleEntity from '../entity/ReactionRole.entity';
 import ReminderEntity from '../entity/Reminder.entity';
 import { Command } from '../types/Command';
@@ -430,7 +433,7 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
     }
 
     /**
-     * Handles a reaction
+     * Updates reaction roles, and triggers reaction actions (community mutes and pins) when a reaction is added.
      *
      * @param {MessageReaction | PartialMessageReaction} reaction The reaction to handle
      * @param {User | PartialUser} user The user that reacted
@@ -439,9 +442,13 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
      *
      * @author Soni
      * @since 6.0.0
+     * @see {@link Client.handleReactionAction}
      */
     async handleReaction(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, reactionExists: boolean): Promise<boolean | undefined>
     {
+        // Handle reaction actions (community mutes and pins) when a reaction is added
+        if (reactionExists) this.handleReactionAction(reaction).catch(e => this.logger.error(`An error occurred while handling a reaction action: ${e}`));
+
         // Get all matching reaction roles
         const matchingReactionRoles = await ReactionRoleEntity.find({ where: { message: reaction.message.id, reaction: reaction.emoji.toString() } });
 
@@ -476,5 +483,227 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
 
         // No reaction roles matched, return false
         return false;
+    }
+
+    /**
+     * Handles reaction actions (community mutes and pins) for an added reaction
+     *
+     * @param {MessageReaction | PartialMessageReaction} reaction The reaction that was added
+     * @returns {Promise<void>} Nothing
+     *
+     * @author Soni
+     * @since 7.6.0
+     * @see {@link ReactionConfigEntity}
+     */
+    async handleReactionAction(reaction: MessageReaction | PartialMessageReaction): Promise<void>
+    {
+        // Only handle reactions in servers
+        const guildId = reaction.message.guildId;
+        if (!guildId) return;
+
+        // Find the action this reaction belongs to, if any
+        const config = await ReactionConfigEntity.findOne({ where: { guild: guildId } });
+        if (!config) return;
+
+        const emote = reaction.emoji.toString();
+
+        // Determine the action type or return if emote has no action
+        let action: 'mute' | 'pin';
+        if (config.mute.enabled && emote === config.mute.emote) action = 'mute';
+        else if (config.pin.enabled && emote === config.pin.emote) action = 'pin';
+        else return;
+
+        // Make sure nothing is partial
+        const fullReaction = reaction.partial ? await reaction.fetch() : reaction;
+        const message = fullReaction.message.partial ? await fullReaction.message.fetch() : fullReaction.message;
+        if (!message.inGuild()) return;
+
+        // Never act on the bot's own messages, such as posts in the pin channel
+        if (message.author.id === this.user?.id) return;
+
+        // Make sure enough users have reacted
+        if (fullReaction.count < config[action].count) return;
+
+        // Never mute bots, and don't pin messages that are in the pin channel
+        if (action === 'mute' && message.author.bot) return;
+        if (action === 'pin' && message.channelId === config.pin.channel) return;
+
+        // Skip messages that already had this action performed
+        if (await ReactionActionEntity.exists({ where: { message: message.id, action } }))
+        {
+            this.logger.debug(`Skipped reaction ${action} of message ${message.id} in ${message.guild.name}: the message has already triggered a ${action}`);
+            return;
+        }
+
+        // Perform the action
+        if (action === 'mute') await this.reactionMute(message, config);
+        else await this.reactionPin(message, config);
+    }
+
+    /**
+     * Mutes the author of a message that received enough mute reactions
+     *
+     * @param {Message<true>} message The message that received the reactions
+     * @param {ReactionConfigEntity} config The reaction config of the server
+     * @returns {Promise<void>} Nothing
+     *
+     * @author Soni
+     * @since 7.6.0
+     */
+    async reactionMute(message: Message<true>, config: ReactionConfigEntity): Promise<void>
+    {
+        // Fetch the author as a member of the server
+        const member = await message.guild.members.fetch(message.author.id).catch(() => null);
+        if (!member) return;
+
+        // Make sure the member can be muted. This excludes the owner, admins and members above the bot's role
+        if (!member.moderatable)
+        {
+            this.logger.info(`Skipped reaction mute of ${member.user.tag} in ${message.guild.name}: the bot can't mute this user`);
+            return;
+        }
+
+        // Don't mute members that are already muted
+        if (member.isCommunicationDisabled()) return;
+
+        // Register the action, unless another reaction already did
+        const record = await this._registerReactionAction(message, 'mute');
+        if (!record) return;
+
+        // Mute the member, and unregister the action if it failed so it can be triggered again later
+        try
+        {
+            await member.timeout(config.mute.minutes * 60 * 1000, `Received ${config.mute.count} ${config.mute.emote} reaction(s) on ${message.url}`);
+            this.logger.info(`Reaction muted ${member.user.tag} in ${message.guild.name} for ${config.mute.minutes} minute(s)`);
+        }
+        catch (e)
+        {
+            this.logger.warn(`Failed to reaction mute ${member.user.tag} in ${message.guild.name}: ${e}`);
+            await record.remove();
+            return;
+        }
+
+        // Notify the user
+        if (config.mute.notify)
+        {
+            const embed = this.defaultEmbed()
+                .setTitle('You were muted by the community')
+                .addFields([
+                    {
+                        name: 'You were muted in the following server:',
+                        value: message.guild.name
+                    },
+                    {
+                        name: 'Reactions',
+                        value: `Your message received ${config.mute.count} ${config.mute.emote} reaction(s) from other members.`
+                    }
+                ]);
+
+            // Add the reason if the server has set one
+            if (config.mute.reason) embed.addFields([
+                {
+                    name: 'Reason',
+                    value: config.mute.reason
+                }
+            ]);
+
+            embed.addFields([
+                {
+                    name: 'Duration',
+                    value: `${config.mute.minutes} minute(s), expires <t:${Math.floor((Date.now() + config.mute.minutes * 60 * 1000) / 1000)}:R>`
+                },
+                {
+                    name: 'Message',
+                    value: `[Jump to message](${message.url})`
+                }
+            ]);
+
+            await member.send({ embeds: [ embed ] }).catch(e => this.logger.warn(`Failed to notify ${member.user.tag} of reaction mute: ${e}`));
+        }
+    }
+
+    /**
+     * Posts a message that received enough pin reactions to the pin channel
+     *
+     * @param {Message<true>} message The message that received the reactions
+     * @param {ReactionConfigEntity} config The reaction config of the server
+     * @returns {Promise<void>} Nothing
+     *
+     * @author Soni
+     * @since 7.6.0
+     */
+    async reactionPin(message: Message<true>, config: ReactionConfigEntity): Promise<void>
+    {
+        // Fetch the pin channel
+        if (!config.pin.channel) return;
+        const channel = await message.guild.channels.fetch(config.pin.channel).catch(() => null);
+
+        // Make sure the bot can send messages in the channel
+        if (!channel?.isSendable())
+        {
+            this.logger.warn(`Failed to reaction pin in ${message.guild.name}: the pin channel is missing or not a text channel`);
+            return;
+        }
+
+        // Register the action, unless another reaction already did
+        const record = await this._registerReactionAction(message, 'pin');
+        if (!record) return;
+
+        // Create the embed
+        const embed = this.defaultEmbed()
+            .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
+            .setDescription(message.content || null)
+            .addFields([
+                {
+                    name: 'Original message',
+                    value: `[Jump to message](${message.url}) in ${message.channel}`
+                }
+            ])
+            .setTimestamp(message.createdAt);
+
+        // Show the first image attached to the message, skipping spoilers since embeds can't hide them
+        const image = message.attachments.find(a => a.contentType?.startsWith('image/') && !a.spoiler);
+        if (image) embed.setImage(image.url);
+
+        // Post the embed, and unregister the action if it failed so it can be triggered again later
+        try
+        {
+            await channel.send({ embeds: [ embed ] });
+            this.logger.info(`Reaction pinned message ${message.id} in ${message.guild.name}`);
+        }
+        catch (e)
+        {
+            this.logger.warn(`Failed to reaction pin in ${message.guild.name}: ${e}`);
+            await record.remove();
+            return;
+        }
+    }
+
+    /**
+     * Registers that a reaction action is performed on a message
+     *
+     * @param {Message<true>} message The message the action is performed on
+     * @param {"mute" | "pin"} action The action that is performed
+     * @returns {Promise<ReactionActionEntity | null>} The registered action, or `null` if it was already registered
+     * @private
+     *
+     * @author Soni
+     * @since 7.6.0
+     */
+    private async _registerReactionAction(message: Message<true>, action: 'mute' | 'pin'): Promise<ReactionActionEntity | null>
+    {
+        // The unique index makes sure only one reaction can register the action
+        const record = new ReactionActionEntity({ message: message.id, action });
+        try
+        {
+            await record.save();
+            return record;
+        }
+        catch
+        {
+            // Saving fails if the action is already registered, meaning another reaction triggered it first
+            this.logger.debug(`Skipped reaction ${action} of message ${message.id} in ${message.guild.name}: another reaction triggered the ${action} at the same time`);
+            return null;
+        }
     }
 }
