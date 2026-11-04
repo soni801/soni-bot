@@ -1,6 +1,18 @@
 {
     "changelog": [
         {
+            "version": "7.6.0",
+            "changes": [
+                "Added the `/reactionconfig` command",
+                "Added a new joke",
+                "Fixed a bug where Soni Bot would not react to messages outside of regular text channels",
+                "Fixed a bug where reminders could not be sent in some channel types",
+                "Fixed a bug where uptime results wouldn't save",
+                "Fixed a bug that allowed users to create invalid reminders",
+                "Updated internal libraries"
+            ]
+        },
+        {
             "version": "7.5.3",
             "changes": [
                 "Added average uptime to the `/status` command",
