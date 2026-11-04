@@ -266,7 +266,9 @@ export default class Client<T extends boolean = boolean> extends DiscordClient<T
             const thread: Thread = new (await import(filePath)).default(this);
             const threadName = thread.constructor.name;
             this.threads.set(threadName, thread);
-            await thread.start();
+
+            // Start the thread without waiting for it, since threads run until they are stopped
+            thread.start();
             this.logger.debug(`Loaded thread ${threadName}`);
         }
 
