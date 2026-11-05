@@ -1,4 +1,4 @@
-import ReminderEntity from '../entity/Reminder.entity';
+import ReminderEntity, { RecurrenceType } from '../entity/Reminder.entity';
 import Thread from '../types/Thread';
 import type Client from '../util/Client';
 import Logger from '../util/Logger';
@@ -170,8 +170,54 @@ export default class Reminder implements Thread
         // Log the reminder
         this._logger.info(`Reminded ${user.username} of reminder #${reminder.id}`);
 
-        // Mark the reminder as inactive
-        reminder.active = false;
+        // Reschedule recurring reminders, otherwise mark the reminder as inactive
+        if (reminder.recurrence)
+        {
+            // Skip any occurrences that were missed (e.g. while the bot was offline)
+            let due = reminder.due;
+            do due = this._nextOccurrence(due, reminder.recurrence, reminder.recurrenceInterval);
+            while (due.getTime() <= Date.now());
+
+            reminder.due = due;
+            this._logger.verbose(`Rescheduled reminder #${reminder.id} to ${due.toISOString()}`);
+        }
+        else reminder.active = false;
+
         return await reminder.save();
+    }
+
+    /**
+     * Calculates the next occurrence of a recurring reminder.
+     * Monthly and yearly recurrences are clamped to the last day of the target month (e.g. Jan 31 -> Feb 28).
+     *
+     * @param {Date} date The current due date
+     * @param {RecurrenceType} recurrence The unit of recurrence
+     * @param {number} interval The amount of recurrence units between each occurrence
+     * @returns {Date} The next due date
+     */
+    private _nextOccurrence(date: Date, recurrence: RecurrenceType, interval = 1): Date
+    {
+        const next = new Date(date);
+        if (!Number.isInteger(interval) || interval < 1) interval = 1;
+
+        switch (recurrence)
+        {
+            case RecurrenceType.Hourly: next.setUTCHours(next.getUTCHours() + interval); break;
+            case RecurrenceType.Daily: next.setUTCDate(next.getUTCDate() + interval); break;
+            case RecurrenceType.Weekly: next.setUTCDate(next.getUTCDate() + 7 * interval); break;
+            case RecurrenceType.Monthly:
+            case RecurrenceType.Yearly:
+            {
+                const months = (recurrence === RecurrenceType.Monthly ? 1 : 12) * interval;
+                const day = next.getUTCDate();
+                next.setUTCDate(1);
+                next.setUTCMonth(next.getUTCMonth() + months);
+                const lastDay = new Date(Date.UTC(next.getUTCFullYear(), next.getUTCMonth() + 1, 0)).getUTCDate();
+                next.setUTCDate(Math.min(day, lastDay));
+                break;
+            }
+        }
+
+        return next;
     }
 }

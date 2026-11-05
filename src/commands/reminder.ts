@@ -3,10 +3,11 @@ import {
     ChatInputCommandInteraction,
     Message,
     SlashCommandBuilder,
+    SlashCommandIntegerOption,
     SlashCommandStringOption,
     SlashCommandSubcommandsOnlyBuilder
 } from 'discord.js';
-import ReminderEntity from '../entity/Reminder.entity';
+import ReminderEntity, { formatRecurrence, RecurrenceType } from '../entity/Reminder.entity';
 import type {Command} from '../types/Command';
 import type Client from '../util/Client';
 import {CONSTANTS} from '../util/config';
@@ -32,7 +33,16 @@ export default class Reminder implements Command
             .setName('reminder')
             .setDescription('The reminder to use')
             .setRequired(true)
-            .setAutocomplete(true)
+            .setAutocomplete(true),
+        recurrenceOption: new SlashCommandStringOption()
+            .setName('recurrence')
+            .setDescription('How often the reminder should repeat')
+            .addChoices(...Object.entries(RecurrenceType).map(([name, value]) => ({ name, value }))),
+        recurrenceIntervalOption: new SlashCommandIntegerOption()
+            .setName('every')
+            .setDescription('Repeat every N units of the recurrence, e.g. 3 with monthly = every 3 months')
+            .setMinValue(1)
+            .setMaxValue(1000)
     };
 
     /**
@@ -73,6 +83,11 @@ export default class Reminder implements Command
                 const hours = i.options.getInteger('hours', false);
                 const minutes = i.options.getInteger('minutes', false);
                 const seconds = i.options.getInteger('seconds', false);
+                const recurrence = i.options.getString('recurrence', false) as RecurrenceType | null;
+                const recurrenceInterval = i.options.getInteger('every', false) ?? 1;
+
+                // An interval is meaningless without a recurrence type
+                if (!recurrence && recurrenceInterval !== 1) return await this._replyMissingRecurrence(i);
 
                 // Make sure content is within a reasonable length limit
                 if (content.length > 1000) return await i.editReply({ embeds: [
@@ -100,7 +115,7 @@ export default class Reminder implements Command
                 const due = new Date(i.createdTimestamp + timeOffset);
 
                 // Create and save the reminder
-                const reminder = new ReminderEntity({ user, channel, content, due });
+                const reminder = new ReminderEntity({ user, channel, content, due, recurrence, recurrenceInterval });
                 await reminder.save();
 
                 // Send a confirmation to the user
@@ -115,7 +130,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>${recurrence ? `, repeating ${formatRecurrence(recurrence, recurrenceInterval)}` : ''}`
                             }
                         ])
                 ] });
@@ -131,6 +146,11 @@ export default class Reminder implements Command
                 const hour = i.options.getInteger('hour', false);
                 const minute = i.options.getInteger('minute', false);
                 const second = i.options.getInteger('second', false);
+                const recurrence = i.options.getString('recurrence', false) as RecurrenceType | null;
+                const recurrenceInterval = i.options.getInteger('every', false) ?? 1;
+
+                // An interval is meaningless without a recurrence type
+                if (!recurrence && recurrenceInterval !== 1) return await this._replyMissingRecurrence(i);
 
                 // Make sure content is within a reasonable length limit
                 if (content.length > 1000) return await i.editReply({ embeds: [
@@ -159,7 +179,7 @@ export default class Reminder implements Command
                 if (second !== null) due.setSeconds(second);
 
                 // Create and save the reminder
-                const reminder = new ReminderEntity({ user, channel, content, due });
+                const reminder = new ReminderEntity({ user, channel, content, due, recurrence, recurrenceInterval });
                 await reminder.save();
 
                 // Send a confirmation to the user
@@ -174,7 +194,7 @@ export default class Reminder implements Command
                             },
                             {
                                 name: "\u200b",
-                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>`
+                                value: `You will be reminded at <t:${(due.getTime() / 1000).toFixed(0)}:f>${recurrence ? `, repeating ${formatRecurrence(recurrence, recurrenceInterval)}` : ''}`
                             }
                         ])
                 ] });
@@ -187,7 +207,7 @@ export default class Reminder implements Command
 
                 // Determine the output (relevant reminders, stringified)
                 let output = '';
-                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>\n`);
+                reminders.forEach(r => output += `\u2022 \`${r.content}\`, due <t:${(r.due.getTime() / 1000).toFixed(0)}:R>${r.recurrence ? ` (repeats ${formatRecurrence(r.recurrence, r.recurrenceInterval)})` : ''}\n`);
                 if (output.length === 0) output = "You have no active reminders.\nCreate one with `/reminder create`.";
 
                 // Send result to the user
@@ -440,7 +460,9 @@ export default class Reminder implements Command
                     .addIntegerOption(option => option.setName('seconds')
                         .setDescription('The number of seconds to be reminded')
                         .setMinValue(0)
-                        .setMaxValue(59)))
+                        .setMaxValue(59))
+                    .addStringOption(this._commandOptions.recurrenceOption)
+                    .addIntegerOption(this._commandOptions.recurrenceIntervalOption))
                 .addSubcommand(command => command.setName('absolute')
                     .setDescription('Create a reminder at a specific time')
                     .addStringOption(option => option.setName('reminder')
@@ -483,7 +505,9 @@ export default class Reminder implements Command
                     .addIntegerOption(option => option.setName('second')
                         .setDescription('The second to be reminded')
                         .setMinValue(0)
-                        .setMaxValue(59))))
+                        .setMaxValue(59))
+                    .addStringOption(this._commandOptions.recurrenceOption)
+                    .addIntegerOption(this._commandOptions.recurrenceIntervalOption)))
             .addSubcommand(command => command.setName('list')
                 .setDescription('List all your reminders'))
             .addSubcommandGroup(group => group.setName('edit')
@@ -589,5 +613,26 @@ export default class Reminder implements Command
     {
         if (s.length > length) return `${s.slice(0, length - 3)}...`;
         return s;
+    }
+
+    /**
+     * Replies with an error stating that a recurrence interval was given without a recurrence type.
+     *
+     * @param {ChatInputCommandInteraction<'cached'>} i The interaction to reply to
+     * @returns {Promise<Message>} The reply sent by the bot
+     */
+    private async _replyMissingRecurrence(i: ChatInputCommandInteraction<'cached'>): Promise<Message>
+    {
+        return await i.editReply({ embeds: [
+            this.client.defaultEmbed()
+                .setColor(CONSTANTS.COLORS.warning)
+                .setTitle('An error occurred')
+                .addFields([
+                    {
+                        name: 'Missing recurrence',
+                        value: 'The `every` option requires `recurrence` to be set, e.g. `recurrence: Monthly` and `every: 3` for every 3 months'
+                    }
+                ])
+        ] });
     }
 }
